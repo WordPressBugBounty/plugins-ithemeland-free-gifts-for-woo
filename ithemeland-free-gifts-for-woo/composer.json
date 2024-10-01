@@ -1,0 +1,16 @@
+{
+    "name": "ithemeland/ithemeland-free-gifts-for-woocommerce-lite",
+    "authors": [
+        {
+            "name": "iThemeland",
+            "email": "info@ithemelandco.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "wgbl\\classes\\": "classes/"
+        }
+    },
+    "description": "iThemeland Free Gift Lite"
+}

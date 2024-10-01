@@ -1,0 +1,587 @@
+.wgbl-tabs-list a[data-content="purchase-verification"][data-el="false"]:after {
+    background: #d82121
+}
+
+#wgbl-license-info {
+    width: 100%;
+    display: block;
+    position: relative;
+    background: #f6f6f6;
+    padding: 30px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border-radius: 7px;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+    overflow: hidden;
+}
+
+#wgbl-license-info h1 {
+    line-height: 30px;
+    font-size: 16pt;
+    margin-bottom: 40px;
+}
+
+#wgbl-license-info .wgbl-license-status {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: block !important;
+}
+
+#wgbl-license-info .wgbl-license-status-active {
+    border-top: 50px solid #00a651;
+    border-right: 50px solid #00a651;
+    border-bottom: 50px solid transparent;
+    border-left: 50px solid transparent;
+}
+
+#wgbl-license-info .wgbl-license-status-deactivated {
+    border-top: 50px solid #e7a30f;
+    border-right: 50px solid #e7a30f;
+    border-bottom: 50px solid transparent;
+    border-left: 50px solid transparent;
+}
+
+#wgbl-license-info .wgbl-license-status-active span,
+#wgbl-license-info .wgbl-license-status-deactivated span {
+    width: 36px;
+    height: 36px;
+    font-size: 36px;
+    position: absolute;
+    top: -35px;
+    right: -35px;
+    color: #fff;
+}
+
+#wgbl-license-info .wgbl-license-renew {
+    width: 100%;
+    float: right;
+    margin: 0;
+}
+
+#wgbl-license-info .wgbl-license-renew button {
+    float: right;
+    margin: 0 !important;
+}
+
+#wgbl-license-info h1 form {
+    float: right;
+}
+
+#wgbl-license-info div {
+    width: 100%;
+    display: inline-table;
+    margin: 0 0 10px 0;
+}
+
+#wgbl-license-info .wgbl-license-info-half {
+    display: inline-table;
+    width: 100%;
+}
+
+#wgbl-license-info .wgbl-license-info-half div {
+    float: left;
+    width: 50%;
+}
+
+#wgbl-license-info div span {
+    width: 150px;
+    float: left;
+    margin-bottom: 15px;
+}
+
+#wgbl-license-activation-form {
+    display: inline-table;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 1px #dbdbdb solid;
+    font-size: 12pt;
+    margin: 20px 0 40px 0;
+}
+
+#wgbl-license-activation-form label {
+    min-width: 17%;
+    height: 45px;
+    font-weight: bold;
+    float: left;
+    line-height: 45px;
+}
+
+#wgbl-license-activation-form input[type=text],
+#wgbl-license-activation-form input[type=number],
+#wgbl-license-activation-form input[type=email] {
+    width: 50%;
+    height: 45px !important;
+    font-weight: bold;
+    float: left;
+}
+
+#wgbl-license-activation-form input[type=checkbox] {
+    margin-top: 15px;
+    float: left;
+}
+
+#wgbl-license-activation-form span {
+    float: left;
+    margin-left: 10px;
+    font: italic 16px Calibri, Tahoma;
+    line-height: 45px;
+}
+
+#wgbl-license-activation-form button {
+    float: right;
+    padding: 0 23px;
+}
+
+.wgbl-license-field {
+    width: 100%;
+    float: left;
+    margin-bottom: 15px;
+}
+
+#wgbl-license-activation-form {
+    display: inline-table;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 1px #dbdbdb solid;
+    font-size: 12pt;
+    margin: 20px 0 40px 0;
+}
+
+#wgbl-license-activation-form label {
+    min-width: 17%;
+    height: 45px;
+    font-weight: bold;
+    float: left;
+    line-height: 45px;
+}
+
+#wgbl-license-activation-form input[type=text],
+#wgbl-license-activation-form input[type=number],
+#wgbl-license-activation-form input[type=email] {
+    width: 50%;
+    height: 45px !important;
+    font-weight: bold;
+    float: left;
+}
+
+#wgbl-license-activation-form input[type=checkbox] {
+    margin-top: 15px;
+    float: left;
+}
+
+#wgbl-license-activation-form span {
+    float: left;
+    margin-left: 10px;
+    font: italic 16px Calibri, Tahoma;
+    line-height: 45px;
+}
+
+#wgbl-license-activation-form button {
+    float: right;
+    padding: 0 23px;
+}
+
+.wgbl-license-field {
+    width: 100%;
+    float: left;
+    margin-bottom: 15px;
+}
+
+#wgbl-rules .wgbl-rule-item {
+    width: 100%;
+    float: left;
+    margin: 2px 0;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header {
+    width: 100%;
+    min-height: 30px;
+    float: left;
+    background: #f7f7f7;
+    padding: 10px 4px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    border: 1px #979797 solid;
+    border-left: 5px rgb(17, 130, 56) solid;
+    cursor: pointer;
+    line-height: 23px;
+}
+
+#wgbl-rules .wgbl-rule-enable .wgbl-rule-header {
+    border-left-color: rgb(17, 130, 56) !important;
+}
+
+#wgbl-rules .wgbl-rule-disable .wgbl-rule-header {
+    border-left-color: rgb(207, 73, 68) !important;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header button {
+    color: #afafaf;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-sortable-btn {
+    float: left;
+    margin-right: 3px;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-delete:hover i {
+    color: red;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-duplicate:hover i {
+    color: #3e3e3e;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-sortable-btn:hover i {
+    color: #3e3e3e;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-title {
+    float: left;
+    font-size: 10pt;
+    font-weight: 600;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-method-name,
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-method-id {
+    float: left;
+    font-size: 10pt;
+    font-weight: 100;
+    color: rgb(161, 161, 161);
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-method-name::before,
+#wgbl-rules .wgbl-rule-item .wgbl-rule-header .wgbl-rule-method-id::before {
+    content: " | ";
+    margin: 0 8px;
+}
+
+#wgbl-rules .wgbl-rule-item .wgbl-rule-body {
+    display: none;
+    width: 100%;
+    height: auto;
+    float: left;
+    background: #fff;
+    border: 1px #979797 solid;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    margin-top: -1px;
+}
+
+.wgbl-form-group {
+    width: 100%;
+    float: left;
+    margin: 0 0 20px 0;
+}
+
+div[data-type="conditions"] .wgbl-form-group {
+    margin: 0;
+}
+
+div[data-type="conditions"] .wgbl-form-group input,
+div[data-type="conditions"] .wgbl-form-group select,
+div[data-type="conditions"] .wgbl-form-group .select2-container .select2-selection--single,
+div[data-type="conditions"] .select2-container--default .select2-selection--single .select2-selection__rendered,
+div[data-type="conditions"] .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 40px !important;
+    line-height: 40px !important;
+}
+
+div[data-type="conditions"] ul.select2-selection__rendered input {
+    height: auto !important;
+    line-height: 24px !important;
+    min-height: 24px;
+}
+
+.wgbl-form-group label {
+    width: 100%;
+    min-height: 26px;
+    float: left;
+    font-weight: 600;
+}
+
+.wgbl-form-group select,
+.wgbl-form-group input[type=number],
+.wgbl-form-group input[type=text] {
+    width: 100%;
+    float: left;
+    max-width: 100%;
+}
+
+.wgbl-form-group .wgbl-description {
+    line-height: 30px;
+    display: inline-table;
+    margin-left: 5px;
+    color: #6e6e6e;
+    font-style: italic;
+}
+
+.wgbl-rule-section {
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+}
+
+.wgbl-rule-section h3 {
+    width: 100%;
+    float: left;
+}
+
+.wgbl-rule-section .wgbl-rule-section-content {
+    width: 100%;
+    min-height: 70px;
+    float: left;
+    background: #f6f6f6;
+    border: 1px #c5c5c5 solid;
+    padding: 10px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.wgbl-rule-section .wgbl-rule-item-sortable-item {
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+}
+
+.wgbl-rule-section .wgbl-rule-item-sortable-item button {
+    color: #afafaf;
+    margin-top: 5px;
+}
+
+.wgbl-rule-section .wgbl-rule-item-sortable-item .wgbl-w70p {
+    float: left;
+    width: 65% !important;
+    margin-right: 1%;
+}
+
+.wgbl-rule-section .wgbl-rule-item-sortable-item .wgbl-w30p {
+    float: left;
+    width: 29%;
+    margin-right: 1%;
+}
+
+.wgbl-rule-section .wgbl-rule-item-sortable-item .wgbl-w32p {
+    float: left;
+    width: 30%;
+    margin-right: 1%;
+}
+
+.wgbl-rule-section .wgbl-rule-item-sortable-item .wgbl-w20p {
+    float: left;
+    width: 20%;
+    margin-right: 1%;
+}
+
+.wgbl-product-buy-extra-fields,
+.wgbl-condition-extra-fields {
+    width: 68%;
+    float: left;
+}
+
+.wgbl-product-buy-items,
+.wgbl-condition-items {
+    min-height: 50px;
+    margin-top: 10px;
+}
+
+.wgbl-condition-items .wgbl-rule-item-condition-sortable-btn:hover i,
+.wgbl-product-buy-items .wgbl-rule-item-product-buy-sortable-btn:hover i {
+    color: #3e3e3e;
+}
+
+.wgbl-product-buy-items .wgbl-product-item-delete:hover i,
+.wgbl-condition-items .wgbl-condition-delete:hover i {
+    color: red;
+}
+
+.wgbl-empty-rules-box {
+    width: 100%;
+    float: left;
+    text-align: center;
+}
+
+.wgbl-rule-item-status {
+    min-width: 130px !important;
+}
+
+#wgbl-settings label {
+    width: 25%;
+    float: left;
+}
+
+#wgbl-settings input[type=text],
+#wgbl-settings input[type=number],
+#wgbl-settings select {
+    width: 35%;
+    float: left;
+}
+
+@media screen and (max-width: 955px) {
+    .wgbl-modal {
+        width: 100%;
+        padding-left: 0;
+    }
+    .wgbl-modal-box-lg,
+    .wgbl-modal-box-sm {
+        width: 95%;
+    }
+    .wgbl-plugin-title {
+        position: static;
+        padding: 30px 20px 0 20px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+    }
+    #wgbl-header {
+        height: 285px;
+    }
+    .wgbl-header-left {
+        margin: 5px 0 0 20px;
+        float: left;
+    }
+    .wgbl-header-left #wgbl-full-screen {
+        display: none;
+    }
+    .wgbl-plugin-help .wgbl-plugin-help-text {
+        display: none;
+    }
+    .wgbl-tabs-list li {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+    }
+    .wgbl-tabs-list li a {
+        margin: 0 !important;
+    }
+    .wgbl-tabs-list li a.selected {
+        display: inline-table !important;
+    }
+}
+
+.select2-results>ul>li>.select2-results__options {
+    display: none;
+}
+
+.select2-results>ul>li>.select2-results__group {
+    background-color: #f6f6f6;
+}
+
+.select2-results>ul>li>.select2-results__group:before {
+    content: '\f139';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 1;
+    font-family: dashicons;
+    text-decoration: inherit;
+    font-weight: 400;
+    font-style: normal;
+    vertical-align: top;
+    text-align: center;
+}
+
+.select2-results>ul>li>.select2-results__group:hover {
+    background-color: #eeeeee;
+    cursor: pointer;
+}
+
+.select2-results li {
+    margin-bottom: 0;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+    max-height: 280px;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background-color: #73A9FF;
+    color: #ffffff;
+}
+
+*:focus {
+    outline: none;
+}
+
+.wgbl-setting-content-item {
+    display: none;
+}
+
+.wgbl-setting-content-item.active {
+    display: block;
+}
+
+.wgbl-setting-page-titles {
+    width: 100%;
+    float: left;
+    margin-bottom: 30px;
+    background-color: #f6f6f6;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.wgbl-setting-page-titles ul li {
+    float: left;
+    padding: 0 20px;
+    border-right: 1px #e3e3e3 solid;
+}
+
+.wgbl-setting-page-titles ul li:first-child {
+    padding-left: 0;
+}
+
+.wgbl-setting-page-titles ul li:last-child {
+    border: 0;
+}
+
+.wgbl-setting-page-titles ul li a {
+    float: left;
+    line-height: 20px;
+    color: #858585;
+}
+
+.wgbl-setting-page-titles ul li a.active {
+    color: #3e3e3e;
+    font-weight: bold;
+}
+
+.wgbl-checkbox-group label {
+    width: auto;
+    margin-top: 26px;
+}
+
+.wgbl-rule-method option[value="subtotal_repeat"],
+.wgbl-rule-method option[value="bulk_quantity"],
+.wgbl-rule-method option[value="bulk_pricing"],
+.wgbl-rule-method option[value="buy_x_get_x"],
+.wgbl-rule-method option[value="buy_x_get_x_repeat"],
+.wgbl-rule-method option[value="buy_x_get_y"],
+.wgbl-rule-method option[value="buy_x_get_y_repeat"],
+.wgbl-rule-method option[value="cheapest_item_in_cart"],
+.wgbl-rule-method option[value="tiered_quantity"] {
+    color: red !important;
+}
+
+.wgbl-rule-section .wgbl-rule-item-sortable-item .wgbl-w25p {
+    float: left;
+    width: 25%;
+    margin-right: 1%;
+}

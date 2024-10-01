@@ -1,0 +1,15 @@
+<wpml-config>
+    <admin-texts>
+        <key name="itg_localization_free_gift_removed"/>
+        <key name="itg_localization_free_gift_added"/>
+        <key name="itg_localization_our_gift"/>
+        <key name="itg_localization_free"/>
+        <key name="itg_localization_add_gift"/>
+        <key name="itg_localization_select_gift"/>
+        <key name="itg_localization_select_your_gift"/>
+        <key name="itg_localization_notice_checkout_message_link_here"/>
+        <key name="itg_localization_notice_checkout_message"/>
+        <key name="itg_localization_gift_require_checkout"/>
+        <key name="itg_localization_free_gift_removed"/>
+    </admin-texts>
+</wpml-config>

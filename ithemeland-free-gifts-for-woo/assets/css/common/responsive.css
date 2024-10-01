@@ -1,0 +1,32 @@
+@Media screen and (max-width: 1400px) {
+    .wgbl-widget-box {
+        padding: 25px 10px;
+    }
+}
+
+@Media screen and (max-width: 1280px) {
+    .wgbl-col-3 {
+        width: 50%;
+    }
+}
+
+@Media screen and (max-width: 1024px) {
+    .wgbl-col-6 {
+        width: 100%;
+    }
+    .wgbl-col-4, .wgbl-col-3 {
+        width: 50%;
+    }
+}
+
+@Media screen and (max-width: 768px) {
+    .wgbl-col-4 {
+        width: 100%;
+    }
+}
+
+@Media screen and (max-width: 650px) {
+    .wgbl-col-3, .wgbl-col-4, .wgbl-col-6, .wgbl-col-8, .wgbl-col-12 {
+        width: 100%;
+    }
+}

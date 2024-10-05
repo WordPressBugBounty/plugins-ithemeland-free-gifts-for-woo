@@ -373,7 +373,7 @@ function wgblSetOptionValues(values) {
 }
 
 function uidGenerator() {
-    return jQuery.now() + Math.floor((Math.random() * 999) + 100);
+    return Date.now() + Math.floor((Math.random() * 999) + 100);
 }
 
 function wgblAddRule(id, rule = [], callback = '') {

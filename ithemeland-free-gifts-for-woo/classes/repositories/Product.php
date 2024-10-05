@@ -47,7 +47,8 @@ class Product
         return wc_get_products([
             'type' => ['simple', 'variable', 'grouped', 'external', 'variation'],
             'include' => array_map('intval', $ids),
-            'orderby' => 'include'
+            'orderby' => 'include',
+            'limit' => -1
         ]);
     }
 

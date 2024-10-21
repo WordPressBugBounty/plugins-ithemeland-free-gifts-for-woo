@@ -112,6 +112,10 @@ class Sanitizer
         $allowed['td']['class'] = true;
         $allowed['td']['id'] = true;
 
+        $allowed['style'] = [];
+        $allowed['form']['action'] = true;
+        $allowed['form']['method'] = true;
+
         return $allowed;
     }
 }

@@ -30,6 +30,8 @@ class WGBL
         }
         add_action('admin_menu', [$this, 'add_menu']);
         add_action('admin_enqueue_scripts', [$this, 'load_assets']);
+
+        WGBL_Top_Banners::register();
         WGBL_Ajax::register_callback();
         WGBL_Post::register_callback();
         (new WGBL_Custom_Queries())->init();

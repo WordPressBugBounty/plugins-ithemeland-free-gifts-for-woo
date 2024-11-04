@@ -38,7 +38,7 @@ class WGBL_Post
             'items' => Sanitizer::array($_POST['rule']),
             'time' => time(),
         ]);
-        $this->redirect('rules', esc_html__('Success !', 'ithemeland-free-gifts-for-woocommerce-lite'));
+        $this->redirect('rules', esc_html__('Success !', 'ithemeland-free-gifts-for-woo'));
     }
 
     public function save_settings_general()
@@ -49,7 +49,7 @@ class WGBL_Post
 
         $setting_repository = Setting::get_instance();
         $setting_repository->update(Sanitizer::array($_POST['settings']));
-        $this->redirect(['sub_page' => 'general', 'hash' => 'settings'], esc_html__('Success !', 'ithemeland-free-gifts-for-woocommerce-lite'));
+        $this->redirect(['sub_page' => 'general', 'hash' => 'settings'], esc_html__('Success !', 'ithemeland-free-gifts-for-woo'));
     }
 
     public function save_settings_localization()
@@ -65,7 +65,7 @@ class WGBL_Post
             }
         }
 
-        $this->redirect(['sub_page' => 'localization', 'hash' => 'settings'], esc_html__('Success !', 'ithemeland-free-gifts-for-woocommerce-lite'));
+        $this->redirect(['sub_page' => 'localization', 'hash' => 'settings'], esc_html__('Success !', 'ithemeland-free-gifts-for-woo'));
     }
 
     private function redirect($active_tab = null, $message = null)

@@ -165,9 +165,9 @@ do_action( 'itg_before_gift_products_content' ) ;
 			<div class="wgb-pagination-cnt">
 				<input type="hidden" id="wgb-cart-pagination-max-num-pages" value="<?php echo esc_attr($max_num_pages);?>">
 				<div class="wgb-paging-item">
-					<span><?php echo esc_html__('Page', 'ithemeland-free-gifts-for-woocommerce');?>
+					<span><?php echo esc_html__('Page', 'ithemeland-free-gifts-for-woo');?>
 						<strong id="wgb-cart-pagination-current-page">1</strong>
-						<?php echo esc_html__('of', 'ithemeland-free-gifts-for-woocommerce');?>
+						<?php echo esc_html__('of', 'ithemeland-free-gifts-for-woo');?>
 						<?php echo esc_html($max_num_pages);?>
 					</span>
 					<div class="wgb-pages">
@@ -190,7 +190,7 @@ do_action( 'itg_before_gift_products_content' ) ;
 		else 
 		{
 		?>
-				<div id="loadMoregifts"><?php echo esc_html__('Load more', 'ithemeland-free-gifts-for-woocommerce');?></div>
+				<div id="loadMoregifts"><?php echo esc_html__('Load more', 'ithemeland-free-gifts-for-woo');?></div>
 				<input type="hidden" id="wgb-count-item" value="<?php echo esc_attr($count_items);?>">
 				</div>
 			</div>

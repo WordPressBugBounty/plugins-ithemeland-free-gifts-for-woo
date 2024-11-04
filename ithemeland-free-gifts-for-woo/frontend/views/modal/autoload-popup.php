@@ -142,7 +142,7 @@ foreach ($this->show_gift_item_for_cart['gifts'] as $gift_item_key => $gift) {
         $product_item .= '<td><a href="' . get_permalink($gift['item']) . '">' . sprintf("%s", $title) . '</a></td>';
 
         if ($item_hover == 'disable-hover') {
-            $product_item .= '<td>' . esc_html__('Out of stock', 'ithemeland-free-gifts-for-woocommerce-lite') . '</td>';
+            $product_item .= '<td>' . esc_html__('Out of stock', 'ithemeland-free-gifts-for-woo') . '</td>';
         } else {
             $product_item .= '<td>
                             <div class="wgb-add-gift-btn btn-add-gift-button" data-id="' . esc_attr($gift['key']) . '">
@@ -174,9 +174,9 @@ if ($product_item == '' || $flag_return) {
                 <table class="it-gift-products-table display" style="width:100%">
                     <thead>
                         <tr>
-                            <th><?php esc_html_e('Thumb', 'ithemeland-free-gifts-for-woocommerce-lite'); ?></th>
-                            <th><?php esc_html_e('Name', 'ithemeland-free-gifts-for-woocommerce-lite'); ?></th>
-                            <th><?php esc_html_e('Add To Cart', 'ithemeland-free-gifts-for-woocommerce-lite'); ?></th>
+                            <th><?php esc_html_e('Thumb', 'ithemeland-free-gifts-for-woo'); ?></th>
+                            <th><?php esc_html_e('Name', 'ithemeland-free-gifts-for-woo'); ?></th>
+                            <th><?php esc_html_e('Add To Cart', 'ithemeland-free-gifts-for-woo'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -184,9 +184,9 @@ if ($product_item == '' || $flag_return) {
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th><?php esc_html_e('Thumb', 'ithemeland-free-gifts-for-woocommerce-lite'); ?></th>
-                            <th><?php esc_html_e('Name', 'ithemeland-free-gifts-for-woocommerce-lite'); ?></th>
-                            <th><?php esc_html_e('Add To Cart', 'ithemeland-free-gifts-for-woocommerce-lite'); ?></th>
+                            <th><?php esc_html_e('Thumb', 'ithemeland-free-gifts-for-woo'); ?></th>
+                            <th><?php esc_html_e('Name', 'ithemeland-free-gifts-for-woo'); ?></th>
+                            <th><?php esc_html_e('Add To Cart', 'ithemeland-free-gifts-for-woo'); ?></th>
                         </tr>
                     </tfoot>
                 </table>

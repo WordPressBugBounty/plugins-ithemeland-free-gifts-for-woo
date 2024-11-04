@@ -42,50 +42,50 @@ class Rule
     public function get_rule_methods()
     {
         return [
-            'simple' => esc_html__('Simple', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'tiered_quantity' => esc_html__('Tiered Quantity - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'bulk_quantity' => esc_html__('Bulk Quantity - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'bulk_pricing' => esc_html__('Bulk Pricing - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'buy_x_get_x' => esc_html__('Buy x get x - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'buy_x_get_x_repeat' => esc_html__('Buy x get x repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'buy_x_get_y' => esc_html__('Buy x get y - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'buy_x_get_y_repeat' => esc_html__('Buy x get y repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'subtotal' => esc_html__('Subtotal', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'cheapest_item_in_cart' => esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
+            'simple' => esc_html__('Simple', 'ithemeland-free-gifts-for-woo'),
+            'tiered_quantity' => esc_html__('Tiered Quantity - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'bulk_quantity' => esc_html__('Bulk Quantity - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'bulk_pricing' => esc_html__('Bulk Pricing - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'buy_x_get_x' => esc_html__('Buy x get x - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'buy_x_get_x_repeat' => esc_html__('Buy x get x repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'buy_x_get_y' => esc_html__('Buy x get y - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'buy_x_get_y_repeat' => esc_html__('Buy x get y repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'subtotal' => esc_html__('Subtotal', 'ithemeland-free-gifts-for-woo'),
+            'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'cheapest_item_in_cart' => esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woo'),
         ];
     }
 
     public function get_rule_method_options()
     {
-        $output = '<optgroup label="' . esc_html__('Simple', 'ithemeland-free-gifts-for-woocommerce-lite') . '">
-            <option value="simple">' . esc_html__('Simple', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
+        $output = '<optgroup label="' . esc_html__('Simple', 'ithemeland-free-gifts-for-woo') . '">
+            <option value="simple">' . esc_html__('Simple', 'ithemeland-free-gifts-for-woo') . '</option>
             </optgroup>
 
-            <optgroup label="' . esc_html__('Cart Subtotal', 'ithemeland-free-gifts-for-woocommerce-lite') . '">
-            <option value="subtotal">' . esc_html__('Subtotal', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
-            <option value="subtotal_repeat" style="color: red;">' . esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
+            <optgroup label="' . esc_html__('Cart Subtotal', 'ithemeland-free-gifts-for-woo') . '">
+            <option value="subtotal">' . esc_html__('Subtotal', 'ithemeland-free-gifts-for-woo') . '</option>
+            <option value="subtotal_repeat" style="color: red;">' . esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
             </optgroup>
 
-            <optgroup label="' . esc_html__('Tiered', 'ithemeland-free-gifts-for-woocommerce-lite') . '">
-            <option value="tiered_quantity" style="color: red;">' . esc_html__('Tiered Quantity - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
+            <optgroup label="' . esc_html__('Tiered', 'ithemeland-free-gifts-for-woo') . '">
+            <option value="tiered_quantity" style="color: red;">' . esc_html__('Tiered Quantity - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
             </optgroup>
 
-            <optgroup label="' . esc_html__('Bulk', 'ithemeland-free-gifts-for-woocommerce-lite') . '">
-            <option value="bulk_quantity" style="color: red;">' . esc_html__('Bulk Quantity - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
-            <option value="bulk_pricing" style="color: red;">' . esc_html__('Bulk Pricing - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
+            <optgroup label="' . esc_html__('Bulk', 'ithemeland-free-gifts-for-woo') . '">
+            <option value="bulk_quantity" style="color: red;">' . esc_html__('Bulk Quantity - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
+            <option value="bulk_pricing" style="color: red;">' . esc_html__('Bulk Pricing - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
             </optgroup>
 
-            <optgroup label="' . esc_html__('Buy / Get', 'ithemeland-free-gifts-for-woocommerce-lite') . '">
-            <option value="buy_x_get_x" style="color: red;">' . esc_html__('Buy x get x - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
-            <option value="buy_x_get_x_repeat" style="color: red;">' . esc_html__('Buy x get x repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
-            <option value="buy_x_get_y" style="color: red;">' . esc_html__('Buy x get y - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
-            <option value="buy_x_get_y_repeat" style="color: red;">' . esc_html__('Buy x get y repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
+            <optgroup label="' . esc_html__('Buy / Get', 'ithemeland-free-gifts-for-woo') . '">
+            <option value="buy_x_get_x" style="color: red;">' . esc_html__('Buy x get x - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
+            <option value="buy_x_get_x_repeat" style="color: red;">' . esc_html__('Buy x get x repeat - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
+            <option value="buy_x_get_y" style="color: red;">' . esc_html__('Buy x get y - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
+            <option value="buy_x_get_y_repeat" style="color: red;">' . esc_html__('Buy x get y repeat - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
             </optgroup>
             
-            <optgroup label="' . esc_html__('Other', 'ithemeland-free-gifts-for-woocommerce-lite') . '">
-            <option value="cheapest_item_in_cart" style="color: red;">' . esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</option>
+            <optgroup label="' . esc_html__('Other', 'ithemeland-free-gifts-for-woo') . '">
+            <option value="cheapest_item_in_cart" style="color: red;">' . esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
             </optgroup>';
 
         return $output;
@@ -95,44 +95,44 @@ class Rule
     {
         return [
             'simple' => [
-                'label' => esc_html__('Simple', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                'label' => esc_html__('Simple', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
-                    'simple' => esc_html__('Simple', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                    'simple' => esc_html__('Simple', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
             'cart_subtotal' => [
-                'label' => esc_html__('Cart Subtotal', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                'label' => esc_html__('Cart Subtotal', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
-                    'subtotal' => esc_html__('Subtotal', 'ithemeland-free-gifts-for-woocommerce-lite'),
-                    'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                    'subtotal' => esc_html__('Subtotal', 'ithemeland-free-gifts-for-woo'),
+                    'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
             'tiered' => [
-                'label' => esc_html__('Tiered', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                'label' => esc_html__('Tiered', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
-                    'tiered_quantity' => esc_html__('Tiered Quantity - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                    'tiered_quantity' => esc_html__('Tiered Quantity - Pro version', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
             'bulk' => [
-                'label' => esc_html__('Bulk', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                'label' => esc_html__('Bulk', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
-                    'bulk_quantity' => esc_html__('Bulk Quantity - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-                    'bulk_pricing' => esc_html__('Bulk Pricing - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                    'bulk_quantity' => esc_html__('Bulk Quantity - Pro version', 'ithemeland-free-gifts-for-woo'),
+                    'bulk_pricing' => esc_html__('Bulk Pricing - Pro version', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
             'buy_get' => [
-                'label' => esc_html__('Buy / Get', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                'label' => esc_html__('Buy / Get', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
-                    'buy_x_get_x' => esc_html__('Buy x get x - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-                    'buy_x_get_x_repeat' => esc_html__('Buy x get x repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-                    'buy_x_get_y' => esc_html__('Buy x get y - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
-                    'buy_x_get_y_repeat' => esc_html__('Buy x get y repeat - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                    'buy_x_get_x' => esc_html__('Buy x get x - Pro version', 'ithemeland-free-gifts-for-woo'),
+                    'buy_x_get_x_repeat' => esc_html__('Buy x get x repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
+                    'buy_x_get_y' => esc_html__('Buy x get y - Pro version', 'ithemeland-free-gifts-for-woo'),
+                    'buy_x_get_y_repeat' => esc_html__('Buy x get y repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
             'other' => [
-                'label' => esc_html__('Other', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                'label' => esc_html__('Other', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
-                    'cheapest_item_in_cart' => esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woocommerce-lite'),
+                    'cheapest_item_in_cart' => esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
         ];

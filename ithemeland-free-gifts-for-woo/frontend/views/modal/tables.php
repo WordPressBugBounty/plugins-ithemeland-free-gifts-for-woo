@@ -80,7 +80,7 @@ foreach ($products_ids as $product_id) :
 			<div class="wgb-loading-icon wgb-d-none">
 				<div class="wgb-spinner wgb-spinner--2"></div>
 			</div>				
-			<?php esc_html_e('Add Gift', 'ithemeland-free-gifts-for-woocommerce'); ?>
+			<?php esc_html_e('Add Gift', 'ithemeland-free-gifts-for-woo'); ?>
 			<?php //echo esc_html($add_gift_lable); ?>
 		</a>		
     </div>

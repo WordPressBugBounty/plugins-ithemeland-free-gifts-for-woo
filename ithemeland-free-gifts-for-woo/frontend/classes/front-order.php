@@ -341,7 +341,7 @@ class iThemeland_front_order extends check_rule_condition
             // wp_enqueue_style('it-gift-style');
             wp_enqueue_script('pw-gift-add-jquery-adv');
 
-            echo '<button type="button" class="button btn_select_gift_in_coupon">' . esc_html__('Select Gift', 'ithemeland-free-gifts-for-woocommerce-lite') . '</button>';
+            echo '<button type="button" class="button btn_select_gift_in_coupon">' . esc_html__('Select Gift', 'ithemeland-free-gifts-for-woo') . '</button>';
         }
     }
 
@@ -416,9 +416,9 @@ class iThemeland_front_order extends check_rule_condition
 						<td class="product-thumbnail">' . wp_kses_post($img_html) . '</td>
 						<td class="product-name" data-title="' . esc_attr($title_gift) . '"><a href="' .
                     wp_kses_post(get_permalink($index['id_product'])) . '">' . wp_kses_post($title_gift) . '</a></td>
-						<td class="product-price" data-title="' . esc_html__("Price", 'ithemeland-free-gifts-for-woocommerce-lite') . '">' . wp_kses_post($price) . '</td>
-						<td class="product-quantity" data-title="' . esc_html__("Quantity", 'ithemeland-free-gifts-for-woocommerce-lite') . '">' . esc_html($gift_count) . '</td>
-						<td class="product-subtotal" data-title="' . esc_html__("Total", 'ithemeland-free-gifts-for-woocommerce-lite') . '">' . wp_kses_post($price_total) . '</td>
+						<td class="product-price" data-title="' . esc_html__("Price", 'ithemeland-free-gifts-for-woo') . '">' . wp_kses_post($price) . '</td>
+						<td class="product-quantity" data-title="' . esc_html__("Quantity", 'ithemeland-free-gifts-for-woo') . '">' . esc_html($gift_count) . '</td>
+						<td class="product-subtotal" data-title="' . esc_html__("Total", 'ithemeland-free-gifts-for-woo') . '">' . wp_kses_post($price_total) . '</td>
 					</tr>';
 
                 echo wp_kses_post(apply_filters('itgl_gifts_cart_content', $html, $values));
@@ -754,7 +754,7 @@ class iThemeland_front_order extends check_rule_condition
             );
             WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
         }
-        wc_add_notice('Gift product added successfully', 'ithemeland-free-gifts-for-woocommerce-lite');
+        wc_add_notice('Gift product added successfully', 'ithemeland-free-gifts-for-woo');
         wp_safe_redirect(get_permalink());
         exit();
     }
@@ -863,23 +863,23 @@ class iThemeland_front_order extends check_rule_condition
         try {
 
             if (!isset($_POST)) {
-                throw new exception(__('Cannot process action1', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action1', 'ithemeland-free-gifts-for-woo'));
             }
             $gift_product_id = sanitize_text_field($_REQUEST['gift_product_id']);
             if (empty($gift_product_id)) {
-                throw new exception(__('Cannot process action2', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action2', 'ithemeland-free-gifts-for-woo'));
             }
             // Return if cart object is not initialized.
             if (!is_object(WC()->cart)) {
-                throw new exception(__('Cannot process action3', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action3', 'ithemeland-free-gifts-for-woo'));
             }
             // return if cart is empty
             if (WC()->cart->get_cart_contents_count() == 0) {
-                throw new exception(__('Cannot process action4', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action4', 'ithemeland-free-gifts-for-woo'));
             }
 
             if (!($this->gift_item_key = $this->pw_get_gift_for_cart_checkout())) {
-                throw new exception(__('Cannot process action5', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action5', 'ithemeland-free-gifts-for-woo'));
             }
 
             if (!isset($_POST['add_qty']) || !is_numeric($_POST['add_qty'])) {
@@ -889,7 +889,7 @@ class iThemeland_front_order extends check_rule_condition
             }
 
             if (!array_key_exists($gift_product_id, $this->gift_item_variable['all_gifts'])) {
-                throw new exception(__('Cannot process action6', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action6', 'ithemeland-free-gifts-for-woo'));
             }
 
             $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
@@ -901,18 +901,18 @@ class iThemeland_front_order extends check_rule_condition
             $pw_number_gift_allowed = $this->gift_item_variable[$uid]['pw_number_gift_allowed'];
 
             if (array_key_exists($uid, $count_info['count_rule_gift']) && $count_info['count_rule_gift'][$uid]['q'] >= $pw_number_gift_allowed && !in_array($this->gift_item_variable[$uid]['method'], array('buy_x_get_x_repeat'), true)) {
-                throw new exception(__('Cannot process action7', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action7', 'ithemeland-free-gifts-for-woo'));
             } elseif (in_array(
                 $gift_product_id,
                 $count_info['gifts_set']
             ) && $this->gift_item_variable[$uid]['can_several_gift'] == 'no') {
-                throw new exception(__('Cannot process action8', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action8', 'ithemeland-free-gifts-for-woo'));
             } elseif (
                 $retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0 &&
                 $retrieved_group_input_value[$gift_product_id]['q'] >=
                 $pw_number_gift_allowed
             ) {
-                throw new exception(__('Cannot process action9', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action9', 'ithemeland-free-gifts-for-woo'));
             }
 
             //Check all gift Rule added Qty
@@ -932,7 +932,7 @@ class iThemeland_front_order extends check_rule_condition
                 }
             }
             if ($flag_stock == 1) {
-                throw new exception(__('Cannot process action10', 'ithemeland-free-gifts-for-woocommerce'));
+                throw new exception(__('Cannot process action10', 'ithemeland-free-gifts-for-woo'));
             }
             /**  End Check Quantity  **/
 
@@ -970,7 +970,7 @@ class iThemeland_front_order extends check_rule_condition
                 );
                 WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
             }
-            wc_add_notice('Gift product added successfully', 'ithemeland-free-gifts-for-woocommerce-lite');
+            wc_add_notice('Gift product added successfully', 'ithemeland-free-gifts-for-woo');
             wp_send_json_success(array('ok' => 1, 'qty_add' => $qty));
         } catch (Exception $ex) {
             wp_send_json_error(array('error' => $ex->getMessage()));

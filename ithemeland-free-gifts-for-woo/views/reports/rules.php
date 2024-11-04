@@ -5,7 +5,7 @@
             <div class="wgbl-col-12">
                 <div class="wgbl-alert wgbl-alert-danger">
                     <span class="wgbl-lh36">This option is not available in Free Version, Please upgrade to Pro Version</span>
-                    <a href="<?php echo esc_url(WGBL_UPGRADE_URL); ?>"><?php echo esc_html(WGBL_UPGRADE_TEXT); ?></a>
+                    <a href="<?php echo esc_url(WGBL_UPGRADE_URL); ?>">Download Pro Version</a>
                 </div>
             </div>
         </div>

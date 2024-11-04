@@ -25,27 +25,27 @@ class class_wc_advanced_gift_admin
     public function pw_woocommerce_order_item_display_meta_value($display_value)
     {
         if ($display_value == 'yes') {
-            $display_value = __('Yes', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Yes', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'buy_x_get_y') {
-            $display_value = __('Buy X Get Y', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Buy X Get Y', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'buy_x_get_y_repeat') {
-            $display_value = __('Buy X Get Y Repeat', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Buy X Get Y Repeat', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'buy_x_get_x_repeat') {
-            $display_value = __('Buy X Get X Repeat', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Buy X Get X Repeat', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'buy_x_get_x') {
-            $display_value = __('Buy X Get X', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Buy X Get X', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'simple') {
-            $display_value = __('Simple', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Simple', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'auto') {
-            $display_value = __('Autimatic', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Autimatic', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'subtotal_repeat') {
-            $display_value = __('Subtotal Repeat', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Subtotal Repeat', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'subtotal') {
-            $display_value = __('Subtotal', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Subtotal', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'manual') {
-            $display_value = __('Selected Manual', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Selected Manual', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_value == 'add_admin') {
-            $display_value = __('Added By Admin', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_value = __('Added By Admin', 'ithemeland-free-gifts-for-woo');
         }
 
         return $display_value;
@@ -55,13 +55,13 @@ class class_wc_advanced_gift_admin
     public function pw_woocommerce_order_item_display_meta_key($display_key)
     {
         if ($display_key == '_free_gift') {
-            $display_key = __('Free Gift', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_key = __('Free Gift', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_key == '_rule_id_free_gift') {
-            $display_key = __('Rule Gift ID', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_key = __('Rule Gift ID', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_key == '_free_gift_type') {
-            $display_key = __('Type', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_key = __('Type', 'ithemeland-free-gifts-for-woo');
         } elseif ($display_key == '_free_gift_method') {
-            $display_key = __('Method', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $display_key = __('Method', 'ithemeland-free-gifts-for-woo');
         }
 
         return $display_key;
@@ -69,7 +69,7 @@ class class_wc_advanced_gift_admin
 
     public function register_metaboxes()
     {
-        add_meta_box('woocommerce-customer-add-gift', __('Add Manual Gift To this Order', 'ithemeland-free-gifts-for-woocommerce-lite'), array(
+        add_meta_box('woocommerce-customer-add-gift', __('Add Manual Gift To this Order', 'ithemeland-free-gifts-for-woo'), array(
             $this,
             'render_gift_order'
         ), 'shop_order', 'normal', 'default');
@@ -99,9 +99,9 @@ class class_wc_advanced_gift_admin
 
         ?>
         <div class="add-gift-to-order">
-            <select id="gift_products_id" class="wc-product-search" multiple="multiple" style="width: 50%;" name="pw_gifts[]" data-placeholder="<?php esc_html_e('Search for a product', 'ithemeland-free-gifts-for-woocommerce-lite'); ?>" data-action="woocommerce_json_search_products_and_variations">
+            <select id="gift_products_id" class="wc-product-search" multiple="multiple" style="width: 50%;" name="pw_gifts[]" data-placeholder="<?php esc_html_e('Search for a product', 'ithemeland-free-gifts-for-woo'); ?>" data-action="woocommerce_json_search_products_and_variations">
             </select>
-            <button type="button" class="button add_gift_order"><?php esc_html_e('Add To This Order', 'ithemeland-free-gifts-for-woocommerce-lite'); ?></button> </div>
+            <button type="button" class="button add_gift_order"><?php esc_html_e('Add To This Order', 'ithemeland-free-gifts-for-woo'); ?></button> </div>
     <?php
     }
 
@@ -110,8 +110,9 @@ class class_wc_advanced_gift_admin
 
         global $woocommerce;
 
+		$security = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : '';
         // Where the request will be handled
-        if (!wp_verify_nonce($_REQUEST['security'], 'jkhKJS31z4576d2324Z')) {
+        if (!wp_verify_nonce($security, 'jkhKJS31z4576d2324Z')) {
             wp_die('Forbidden!!!');
         }
 
@@ -119,8 +120,25 @@ class class_wc_advanced_gift_admin
             return '';
         }
 
-        $product_ids = wp_unslash($_REQUEST['product_ids']);
-        $order_id    = wp_unslash($_REQUEST['order_id']);
+        //$product_ids = wp_unslash($_REQUEST['product_ids']);
+        //$order_id    = wp_unslash($_REQUEST['order_id']);
+		
+		// Check if product_ids is set and unslash the entire input
+		$product_ids = isset( $_REQUEST['product_ids'] ) ? wp_unslash( $_REQUEST['product_ids'] ) : '';
+
+		// Make sure $product_ids is an array, if it's not an array, it might have been improperly formed.
+		if ( ! empty( $product_ids ) && is_array( $product_ids ) ) {
+			// Sanitize each product ID to ensure they are integers
+			$sanitized_product_ids = array_map( 'absint', $product_ids );
+		} else {
+			$sanitized_product_ids = [];
+		}
+		// Step 1: Check if the order_id is set and unslash the value
+		$order_id = isset( $_REQUEST['order_id'] ) ? wp_unslash( $_REQUEST['order_id'] ) : '';
+
+		// Step 2: Sanitize the input to ensure it's a valid integer
+		$order_id = absint( $order_id );
+		
         $note        = 'The Gifts Added By Admin: ';
         $set_gift    = false;
         $order       = wc_get_order($order_id);

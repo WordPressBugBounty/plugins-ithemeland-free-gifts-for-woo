@@ -33,16 +33,16 @@ do_action('itg_before_gift_products_content');
     <table class="it-gift-products-table display" style="width:100%">
         <thead>
             <tr>
-                <th><?php esc_html_e('Thumb', 'ithemeland-free-gifts-for-woocommerce'); ?></th>
-                <th><?php esc_html_e('Name', 'ithemeland-free-gifts-for-woocommerce'); ?></th>
+                <th><?php esc_html_e('Thumb', 'ithemeland-free-gifts-for-woo'); ?></th>
+                <th><?php esc_html_e('Name', 'ithemeland-free-gifts-for-woo'); ?></th>
                 <?php
                 if ($settings['show_stock_quantity'] == 'true') {
                 ?>
-                    <th><?php esc_html_e('Gift Available', 'ithemeland-free-gifts-for-woocommerce'); ?></th>
+                    <th><?php esc_html_e('Gift Available', 'ithemeland-free-gifts-for-woo'); ?></th>
                 <?php
                 }
                 ?>
-                <th><?php esc_html_e('Add To Cart', 'ithemeland-free-gifts-for-woocommerce'); ?></th>
+                <th><?php esc_html_e('Add To Cart', 'ithemeland-free-gifts-for-woo'); ?></th>
             </tr>
         </thead>
         <tbody>

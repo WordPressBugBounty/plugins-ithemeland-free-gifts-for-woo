@@ -351,19 +351,19 @@ function get_timeframes() {
 
 		// Current
 		'current' => array(
-			'label'    => __( 'Current', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label'    => __( 'Current', 'ithemeland-free-gifts-for-woo' ),
 			'children' => array(
 				'current_day' => array(
-					'label' => __( 'current day', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+					'label' => __( 'current day', 'ithemeland-free-gifts-for-woo' ),
 					'value' => 'midnight',
 				),
 
 				'current_month' => array(
-					'label' => __( 'current month', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+					'label' => __( 'current month', 'ithemeland-free-gifts-for-woo' ),
 					'value' => 'midnight first day of this month',
 				),
 				'current_year'  => array(
-					'label' => __( 'current year', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+					'label' => __( 'current year', 'ithemeland-free-gifts-for-woo' ),
 					'value' => 'midnight first day of january',
 				),
 			),
@@ -371,25 +371,25 @@ function get_timeframes() {
 
 		// Days
 		'days'    => array(
-			'label'    => __( 'Days', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label'    => __( 'Days', 'ithemeland-free-gifts-for-woo' ),
 			'children' => array(),
 		),
 
 		// Weeks
 		'weeks'   => array(
-			'label'    => __( 'Weeks', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label'    => __( 'Weeks', 'ithemeland-free-gifts-for-woo' ),
 			'children' => array(),
 		),
 
 		// Months
 		'months'  => array(
-			'label'    => __( 'Months', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label'    => __( 'Months', 'ithemeland-free-gifts-for-woo' ),
 			'children' => array(),
 		),
 
 		// Years
 		'years'   => array(
-			'label'    => __( 'Years', 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label'    => __( 'Years', 'ithemeland-free-gifts-for-woo' ),
 			'children' => array(),
 		),
 	);
@@ -397,7 +397,7 @@ function get_timeframes() {
 	// Generate list of days
 	for ( $i = 1; $i <= 6; $i ++ ) {
 		$timeframes['days']['children'][ $i . '_day' ] = array(
-			'label' => $i . ' ' . _n( 'day', 'days', $i, 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label' => $i . ' ' . _n( 'day', 'days', $i, 'ithemeland-free-gifts-for-woo' ),
 			'value' => '-' . $i . ( $i === 1 ? ' day' : ' days' ),
 		);
 	}
@@ -405,7 +405,7 @@ function get_timeframes() {
 	// Generate list of weeks
 	for ( $i = 1; $i <= 4; $i ++ ) {
 		$timeframes['weeks']['children'][ $i . '_week' ] = array(
-			'label' => $i . ' ' . _n( 'week', 'weeks', $i, 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label' => $i . ' ' . _n( 'week', 'weeks', $i, 'ithemeland-free-gifts-for-woo' ),
 			'value' => '-' . $i . ( $i === 1 ? ' week' : ' weeks' ),
 		);
 	}
@@ -413,7 +413,7 @@ function get_timeframes() {
 	// Generate list of months
 	for ( $i = 1; $i <= 12; $i ++ ) {
 		$timeframes['months']['children'][ $i . '_month' ] = array(
-			'label' => $i . ' ' . _n( 'month', 'months', $i, 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label' => $i . ' ' . _n( 'month', 'months', $i, 'ithemeland-free-gifts-for-woo' ),
 			'value' => '-' . $i . ( $i === 1 ? ' month' : ' months' ),
 		);
 	}
@@ -421,7 +421,7 @@ function get_timeframes() {
 	// Generate list of years
 	for ( $i = 2; $i <= 10; $i ++ ) {
 		$timeframes['years']['children'][ $i . '_year' ] = array(
-			'label' => $i . ' ' . _n( 'year', 'years', $i, 'ithemeland-free-gifts-for-woocommerce-lite' ),
+			'label' => $i . ' ' . _n( 'year', 'years', $i, 'ithemeland-free-gifts-for-woo' ),
 			'value' => '-' . $i . ( $i === 1 ? ' year' : ' years' ),
 		);
 	}

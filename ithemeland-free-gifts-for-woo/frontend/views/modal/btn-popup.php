@@ -136,7 +136,7 @@ foreach ($products_ids as $gift_item_key => $gift) {
         $product_item .= '<a class="wgb-popup-post-title" href="' . get_permalink($gift['item']) . '">' . sprintf("%s", $title) . '</a>';
 
         if ($item_hover == 'disable-hover') {
-            $product_item .= '<div class="wgb-popup-post-add-button">' . esc_html__('Out of stock', 'ithemeland-free-gifts-for-woocommerce-lite') . '</div>';
+            $product_item .= '<div class="wgb-popup-post-add-button">' . esc_html__('Out of stock', 'ithemeland-free-gifts-for-woo') . '</div>';
         } else {
             $product_item .= '<div class="wgb-popup-post-add-button">
                             <div class="wgb-add-gift-btn btn-add-gift-button" data-id="' . esc_attr($gift['key']) . '">

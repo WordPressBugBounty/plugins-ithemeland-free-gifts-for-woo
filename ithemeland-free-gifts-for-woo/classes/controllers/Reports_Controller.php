@@ -20,7 +20,7 @@ class Reports_Controller
         $this->rule_methods = $this->rule_repository->get_rule_methods();
         $this->rule_methods_grouped = $this->rule_repository->get_rule_methods_grouped();
 
-        $this->page_title = esc_html__('iThemeland Free Gifts For WooCommerce', 'ithemeland-free-gifts-for-woocommerce-lite');
+        $this->page_title = esc_html__('iThemeland Free Gifts For WooCommerce', 'ithemeland-free-gifts-for-woo');
         $this->doc_link = "https://ithemelandco.com/support-center/";
     }
 

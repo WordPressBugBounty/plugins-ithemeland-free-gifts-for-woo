@@ -4,9 +4,9 @@
 	Plugin URI: https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy
 	Description: Free Gifts for WooCommerce allows you to offer Free Gifts to your customers whenever they make a purchase on your site.
 	Author: iThemelandco
-	Version: 2.3.6
+	Version: 2.3.7
 	Tags: woocommerce,woocommerce gift
-	Text Domain: ithemeland-free-gifts-for-woocommerce-lite
+	Text Domain: ithemeland-free-gifts-for-woo
 	Domain Path: /languages
 	Author URI: https://www.ithemelandco.com
 	Requires Plugins: woocommerce
@@ -22,7 +22,7 @@ defined('ABSPATH') || exit();
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-define('WGBL_NAME', 'ithemeland-free-gifts-for-woocommerce-lite');
+define('WGBL_NAME', 'ithemeland-free-gifts-for-woo');
 define('WGBL_LABEL', 'iThemeland Free Gift Lite');
 define('WGBL_DIR', trailingslashit(plugin_dir_path(__FILE__)));
 define('WGBL_MAIN_PAGE', admin_url('admin.php?page=wgbl'));
@@ -37,7 +37,7 @@ define('WGBL_IMAGES_URL', trailingslashit(WGBL_ASSETS_URL . 'images'));
 define('WGBL_JS_URL', trailingslashit(WGBL_ASSETS_URL . 'js'));
 define('WGBL_WP_TESTED', '6.6');
 define('WGBL_WP_REQUIRE', '5.0.0');
-define('WGBL_VERSION', '2.3.6');
+define('WGBL_VERSION', '2.3.7');
 define('WGBL_UPGRADE_URL', 'https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy');
 define('WGBL_UPGRADE_TEXT', 'Download Pro Version');
 
@@ -64,8 +64,8 @@ add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'itg_action_links
 function itg_action_links($links)
 {
     return array_merge(array(
-        '<a href="' . esc_url(apply_filters('woocommerce_docs_url', 'https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy', WGBL_NAME)) . '"><span style="color: red;background-color: #FFFF00">' . __('Get Pro Version', 'ithemeland-free-gifts-for-woocommerce-lite') . '</span></a>',
-        '<a href="' . esc_url(apply_filters('woocommerce_docs_url', 'https://ithemelandco.com/docs/free-gifts-for-woocommerce/', WGBL_NAME)) . '">' . __('Docs', 'ithemeland-free-gifts-for-woocommerce-lite') . '</a>',
+        '<a href="' . esc_url(apply_filters('woocommerce_docs_url', 'https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy', WGBL_NAME)) . '"><span style="color: red;background-color: #FFFF00">' . __('Get Pro Version', 'ithemeland-free-gifts-for-woo') . '</span></a>',
+        '<a href="' . esc_url(apply_filters('woocommerce_docs_url', 'https://ithemelandco.com/docs/free-gifts-for-woocommerce/', WGBL_NAME)) . '">' . __('Docs', 'ithemeland-free-gifts-for-woo') . '</a>',
 
     ), $links);
 }

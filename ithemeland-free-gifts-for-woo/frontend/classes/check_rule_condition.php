@@ -9,6 +9,12 @@ if (!defined('ABSPATH')) {
 class check_rule_condition
 {
     protected $item_cart;
+    protected $show_gift_item_for_cart;
+    protected $product_qty_in_cart;
+    protected $gift_item_variable;
+    protected $gift_rule_exclude;
+    protected $pw_gifts_cache_simple_variation;
+    protected $pw_gifts_cache_simple_childes;
 
     public function __construct()
     {

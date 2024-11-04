@@ -66,21 +66,21 @@ class WGBL
          * 
          * @since 1.0
          */
-        $locale = apply_filters('plugin_locale', $locale, 'ithemeland-free-gifts-for-woocommerce-lite');
+        $locale = apply_filters('plugin_locale', $locale, 'ithemeland-free-gifts-for-woo');
 
         // Unload the text domain if other plugins/themes loaded the same text domain by mistake.
-        unload_textdomain('ithemeland-free-gifts-for-woocommerce-lite');
+        unload_textdomain('ithemeland-free-gifts-for-woo');
         // Load the text domain from the "wp-content" languages folder. we have handles the plugin folder in languages folder for easily handle it.
-        load_textdomain('ithemeland-free-gifts-for-woocommerce-lite', WP_LANG_DIR . '/ithemeland-free-gifts-for-woo/ithemeland-free-gifts-for-woocommerce-lite-' . $locale . '.mo');
+        load_textdomain('ithemeland-free-gifts-for-woo', WP_LANG_DIR . '/ithemeland-free-gifts-for-woo/ithemeland-free-gifts-for-woo-' . $locale . '.mo');
         // Load the text domain from the current plugin languages folder.
-        load_plugin_textdomain('ithemeland-free-gifts-for-woocommerce-lite', false, WGBL_LANGUAGES_DIR);
+        load_plugin_textdomain('ithemeland-free-gifts-for-woo', false, WGBL_LANGUAGES_DIR);
     }
 
     public function add_menu()
     {
-        add_menu_page(esc_html__('Woo Free Gift', 'ithemeland-free-gifts-for-woocommerce-lite'), esc_html__('Woo Free Gift', 'ithemeland-free-gifts-for-woocommerce-lite'), 'manage_woocommerce', 'wgbl', [new Rules_Controller, 'index'], WGBL_IMAGES_URL . 'wgbl_icon.svg', 2);
-        add_submenu_page('wgbl', esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woocommerce-lite'), esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woocommerce-lite'), 'manage_woocommerce', 'wgbl');
-        add_submenu_page('wgbl', esc_html__('Reports', 'ithemeland-free-gifts-for-woocommerce-lite'), esc_html__('Reports', 'ithemeland-free-gifts-for-woocommerce-lite'), 'manage_woocommerce', 'wgbl-reports', [new Reports_Controller, 'index']);
+        add_menu_page(esc_html__('Woo Free Gift', 'ithemeland-free-gifts-for-woo'), esc_html__('Woo Free Gift', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgbl', [new Rules_Controller, 'index'], WGBL_IMAGES_URL . 'wgbl_icon.svg', 2);
+        add_submenu_page('wgbl', esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgbl');
+        add_submenu_page('wgbl', esc_html__('Reports', 'ithemeland-free-gifts-for-woo'), esc_html__('Reports', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgbl-reports', [new Reports_Controller, 'index']);
     }
 
     public function load_assets($page)

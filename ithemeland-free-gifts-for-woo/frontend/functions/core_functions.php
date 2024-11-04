@@ -90,9 +90,9 @@ function itg_quantities_gift_stock($product, $product_qty_in_cart, $gift_id, $pr
             $text_stock_qty = 'out of stock';
             $stock_status = 'out_of_stock';
         } else if ($product_type != 'variable' && $settings['show_stock_quantity'] == 'true') {
-            $text_stock_qty = $x . ' ' . __('in stock', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $text_stock_qty = $x . ' ' . __('in stock', 'ithemeland-free-gifts-for-woo');
         } elseif ($product_type == 'variable' && $settings['show_stock_quantity'] == 'true') {
-            $text_stock_qty = sprintf('%s', $x) . ' ' . __('in stock', 'ithemeland-free-gifts-for-woocommerce-lite');
+            $text_stock_qty = sprintf('%s', $x) . ' ' . __('in stock', 'ithemeland-free-gifts-for-woo');
         } else {
             $text_stock_qty = '';
         }
@@ -688,11 +688,11 @@ if (!function_exists('itg_render_stock_status')) {
     {
 
         if ($gift_product['add_or_select'] == 'select') {
-            $stack_status =  __('Available Gift', 'ithemeland-free-gifts-for-woocommerce');
+            $stack_status =  __('Available Gift', 'ithemeland-free-gifts-for-woo');
         } else if ($stock_qty <= 0) {
-            $stack_status = __('Gift Unavailable', 'ithemeland-free-gifts-for-woocommerce');
+            $stack_status = __('Gift Unavailable', 'ithemeland-free-gifts-for-woo');
         } else {
-            $stack_status =  __('Available Gift', 'ithemeland-free-gifts-for-woocommerce') . ' : ' . $stock_qty;
+            $stack_status =  __('Available Gift', 'ithemeland-free-gifts-for-woo') . ' : ' . $stock_qty;
         }
 
         if ($echo) {

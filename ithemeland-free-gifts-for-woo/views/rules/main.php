@@ -29,9 +29,9 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                 ?>
             </div>
             <div class="wgbl-col-12" style="padding: 0 !important;">
-                <p class="wgbl-empty-rules-box" style="<?php echo (!empty($rules['items'])) ? 'display:none' : ''; ?>"><?php esc_html_e("No rules configured.", 'ithemeland-free-gifts-for-woocommerce'); ?></p>
-                <button type="button" class="wgbl-button wgbl-button-white-green wgbl-float-right wgbl-add-rule wgbl-mt10" style="margin-right: 0 !important;"><?php esc_html_e("Add Rule", 'ithemeland-free-gifts-for-woocommerce'); ?></button>
-                <button type="button" class="wgbl-button wgbl-button-blue wgbl-float-left wgbl-mt10" id="wgbl-rules-save-changes"><?php esc_html_e("Save Changes", 'ithemeland-free-gifts-for-woocommerce'); ?></button>
+                <p class="wgbl-empty-rules-box" style="<?php echo (!empty($rules['items'])) ? 'display:none' : ''; ?>"><?php esc_html_e("No rules configured.", 'ithemeland-free-gifts-for-woo'); ?></p>
+                <button type="button" class="wgbl-button wgbl-button-white-green wgbl-float-right wgbl-add-rule wgbl-mt10" style="margin-right: 0 !important;"><?php esc_html_e("Add Rule", 'ithemeland-free-gifts-for-woo'); ?></button>
+                <button type="button" class="wgbl-button wgbl-button-blue wgbl-float-left wgbl-mt10" id="wgbl-rules-save-changes"><?php esc_html_e("Save Changes", 'ithemeland-free-gifts-for-woo'); ?></button>
             </div>
             <textarea name="option_values" id="wgbl-option-values" style="display: none !important;"></textarea>
         </form>

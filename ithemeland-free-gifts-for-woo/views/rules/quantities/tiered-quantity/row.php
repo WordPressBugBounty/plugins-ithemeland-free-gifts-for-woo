@@ -11,12 +11,12 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
         </div>
         <div class="wgbl-col-3-5 wgbl-quantity-item" data-type="quantities-from">
             <div class="wgbl-form-group">
-                <input name="rule[<?php echo esc_attr($rule_id); ?>][quantity][items][<?php echo esc_attr($i); ?>][from]" type="text" placeholder="<?php esc_html_e('From', 'ithemeland-free-gifts-for-woocommerce'); ?>" value="<?php echo (!empty($rule_item['quantity']['items'][$i]['from'])) ? esc_attr($rule_item['quantity']['items'][$i]['from']) : ''; ?>" <?php echo (!empty($rule_item) && $rule_item['method'] != 'tiered_quantity') ? 'disabled' : ''; ?>>
+                <input name="rule[<?php echo esc_attr($rule_id); ?>][quantity][items][<?php echo esc_attr($i); ?>][from]" type="text" placeholder="<?php esc_html_e('From', 'ithemeland-free-gifts-for-woo'); ?>" value="<?php echo (!empty($rule_item['quantity']['items'][$i]['from'])) ? esc_attr($rule_item['quantity']['items'][$i]['from']) : ''; ?>" <?php echo (!empty($rule_item) && $rule_item['method'] != 'tiered_quantity') ? 'disabled' : ''; ?>>
             </div>
         </div>
         <div class="wgbl-col-3-5 wgbl-quantity-item" data-type="quantities-to">
             <div class="wgbl-form-group">
-                <input name="rule[<?php echo esc_attr($rule_id); ?>][quantity][items][<?php echo esc_attr($i); ?>][to]" type="text" placeholder="<?php esc_html_e('To', 'ithemeland-free-gifts-for-woocommerce'); ?>" value="<?php echo (!empty($rule_item['quantity']['items'][$i]['to'])) ? esc_attr($rule_item['quantity']['items'][$i]['to']) : ''; ?>" <?php echo (!empty($rule_item) && $rule_item['method'] != 'tiered_quantity') ? 'disabled' : ''; ?>>
+                <input name="rule[<?php echo esc_attr($rule_id); ?>][quantity][items][<?php echo esc_attr($i); ?>][to]" type="text" placeholder="<?php esc_html_e('To', 'ithemeland-free-gifts-for-woo'); ?>" value="<?php echo (!empty($rule_item['quantity']['items'][$i]['to'])) ? esc_attr($rule_item['quantity']['items'][$i]['to']) : ''; ?>" <?php echo (!empty($rule_item) && $rule_item['method'] != 'tiered_quantity') ? 'disabled' : ''; ?>>
             </div>
         </div>
         <div class="wgbl-col-3-5 wgbl-quantity-item" data-type="quantities-get">

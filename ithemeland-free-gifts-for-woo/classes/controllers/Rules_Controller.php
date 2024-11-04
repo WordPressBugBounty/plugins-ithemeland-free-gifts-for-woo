@@ -13,15 +13,15 @@ class Rules_Controller
 
     public function __construct()
     {
-        $this->page_title = esc_html__('iThemeland Free Gifts For WooCommerce', 'ithemeland-free-gifts-for-woocommerce-lite');
+        $this->page_title = esc_html__('iThemeland Free Gifts For WooCommerce', 'ithemeland-free-gifts-for-woo');
         $this->doc_link = "https://ithemelandco.com/support-center/";
     }
 
     public function index()
     {
         $tabs_title = [
-            'rules' => esc_html__('Rules', 'ithemeland-free-gifts-for-woocommerce-lite'),
-            'settings' => esc_html__('Settings', 'ithemeland-free-gifts-for-woocommerce-lite'),
+            'rules' => esc_html__('Rules', 'ithemeland-free-gifts-for-woo'),
+            'settings' => esc_html__('Settings', 'ithemeland-free-gifts-for-woo'),
         ];
         $tabs_content = [
             'rules' => WGBL_VIEWS_DIR . "rules/main.php",

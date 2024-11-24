@@ -31,6 +31,11 @@ class WGBL
         add_action('admin_menu', [$this, 'add_menu']);
         add_action('admin_enqueue_scripts', [$this, 'load_assets']);
 
+        add_filter('safe_style_css', function ($styles) {
+            $styles[] = 'display';
+            return $styles;
+        });
+
         WGBL_Top_Banners::register();
         WGBL_Ajax::register_callback();
         WGBL_Post::register_callback();

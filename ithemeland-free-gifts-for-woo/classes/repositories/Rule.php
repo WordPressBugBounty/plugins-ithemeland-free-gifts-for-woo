@@ -54,6 +54,7 @@ class Rule
             'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
             'subtotal_repeat' => esc_html__('Subtotal repeat - Pro version', 'ithemeland-free-gifts-for-woo'),
             'cheapest_item_in_cart' => esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woo'),
+            'free_shipping' => esc_html__('Free shipping - Pro version', 'ithemeland-free-gifts-for-woo'),
         ];
     }
 
@@ -86,6 +87,7 @@ class Rule
             
             <optgroup label="' . esc_html__('Other', 'ithemeland-free-gifts-for-woo') . '">
             <option value="cheapest_item_in_cart" style="color: red;">' . esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
+            <option value="free_shipping" style="color: red;">' . esc_html__('Free shipping - Pro version', 'ithemeland-free-gifts-for-woo') . '</option>
             </optgroup>';
 
         return $output;
@@ -133,6 +135,7 @@ class Rule
                 'label' => esc_html__('Other', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
                     'cheapest_item_in_cart' => esc_html__('Cheapest item in cart - Pro version', 'ithemeland-free-gifts-for-woo'),
+                    'free_shipping' => esc_html__('Free shipping - Pro version', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
         ];
@@ -141,6 +144,54 @@ class Rule
     public function get_all_options()
     {
         return get_option('wgbl_option_values');
+    }
+
+    public function get_shipping_methods_options()
+    {
+        $shipping_zones = \WC_Shipping_Zones::get_zones();
+        $shipping_zones[] = new \WC_Shipping_Zone(0);
+        $zones_count = count($shipping_zones);
+        $options = [];
+        foreach ($shipping_zones as $shipping_zone) {
+            if (is_array($shipping_zone) && isset($shipping_zone['zone_id'])) {
+                $shipping_zone = \WC_Shipping_Zones::get_zone($shipping_zone['zone_id']);
+            } else if (! is_object($shipping_zone)) {
+                continue;
+            }
+
+            $zone_id = $shipping_zone->get_id();
+
+            $options['all'] = [
+                'title' => __('General', 'conditional-shipping-for-woo'),
+                'options' => [
+                    'all' => [
+                        'title' => __('All shipping methods', 'conditional-shipping-for-woo')
+                    ]
+                ],
+            ];
+
+            $options[$zone_id] = array(
+                'title' => $shipping_zone->get_zone_name(),
+                'options' => array(),
+            );
+
+            foreach ($shipping_zone->get_shipping_methods() as $instance_id => $shipping_method) {
+                if ($zones_count > 1) {
+                    $title = sprintf('%s (%s)', $shipping_method->title, $shipping_zone->get_zone_name());
+                } else {
+                    $title = $shipping_method->title;
+                }
+                $options[$zone_id]['options'][$instance_id] = array(
+                    'title' => $title,
+                );
+            }
+        }
+
+        $options = array_filter($options, function ($option) {
+            return ! empty($option['options']);
+        });
+
+        return $options;
     }
 
     private function update_option_values($values)
@@ -275,7 +326,7 @@ class Rule
             $ex_tax_condition_2 = " AND ( pw_posts.post_parent NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) AND  pw_products.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) )) ";
         }
 
-       // $simple_variation = "SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id";
+        // $simple_variation = "SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id";
 
         $result = $this->wpdb->get_results("SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id"); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 

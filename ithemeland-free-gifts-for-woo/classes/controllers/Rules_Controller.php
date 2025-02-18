@@ -40,7 +40,7 @@ class Rules_Controller
         $setting_repository = Setting::get_instance();
         $settings = $setting_repository->get();
         $localization = $setting_repository->get_localization();
-
+        $shipping_methods_options = $rule_repository->get_shipping_methods_options();
         include_once WGBL_VIEWS_DIR . "layout/rules.php";
     }
 

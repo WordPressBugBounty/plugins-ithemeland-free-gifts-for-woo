@@ -4,7 +4,7 @@ Donate link: https://ithemelandco.com/
 Tags: woocommerce gift, boost sale, free gift, buy one get one , Gift Product Woocommerce
 Requires at least: 5.3
 Tested up to: 6.7
-Stable tag: 2.3.8
+Stable tag: 2.3.9
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -261,6 +261,10 @@ You can easily translate the plugin into the desired languages by using translat
 12. free gifts for woocommerce datatable layout
 
 == Changelog ==
+= 2.3.9 =
+Tested up to: WP 6.7.x
+Tested up to: WC 9.6.x
+
 = 2.3.8 =
 Added : Black Friday Discount Banner
 Tested up to: WP 6.7.x

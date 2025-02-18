@@ -312,6 +312,7 @@ div[data-type="conditions"] ul.select2-selection__rendered input {
     min-height: 26px;
     float: left;
     font-weight: 600;
+    font-size: 13px;
 }
 
 .wgbl-form-group select,
@@ -576,7 +577,9 @@ div[data-type="conditions"] ul.select2-selection__rendered input {
 .wgbl-rule-method option[value="buy_x_get_y"],
 .wgbl-rule-method option[value="buy_x_get_y_repeat"],
 .wgbl-rule-method option[value="cheapest_item_in_cart"],
-.wgbl-rule-method option[value="tiered_quantity"] {
+.wgbl-rule-method option[value="tiered_quantity"], 
+.wgbl-rule-method option[value="free_shipping"] {
+
     color: red !important;
 }
 

@@ -9,7 +9,8 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "wgbl\\classes\\": "classes/"
+            "wgbl\\classes\\": "classes/",
+            "wgbl\\framework\\": "framework/"
         }
     },
     "description": "iThemeland Free Gift Lite"

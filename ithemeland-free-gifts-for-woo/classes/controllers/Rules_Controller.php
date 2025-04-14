@@ -5,11 +5,13 @@ namespace wgbl\classes\controllers;
 use wgbl\classes\repositories\Flush_Message;
 use wgbl\classes\repositories\Rule;
 use wgbl\classes\repositories\Setting;
+use wgbl\framework\onboarding\Onboarding;
 
 class Rules_Controller
 {
     private $page_title;
     private $doc_link;
+    private $flush_message_repository;
 
     public function __construct()
     {
@@ -28,8 +30,12 @@ class Rules_Controller
             'settings' => $this->get_setting_view(),
         ];
 
-        $flush_message_repository = new Flush_Message();
-        $flush_message = $flush_message_repository->get();
+        $this->flush_message_repository = new Flush_Message();
+
+        if (!Onboarding::is_completed() && !defined('WBEBL_NAME')) {
+            return $this->activation_page();
+        }
+        $flush_message = $this->flush_message_repository->get();
 
         $rule_repository = Rule::get_instance();
         $rules = $rule_repository->get();
@@ -42,6 +48,11 @@ class Rules_Controller
         $localization = $setting_repository->get_localization();
         $shipping_methods_options = $rule_repository->get_shipping_methods_options();
         include_once WGBL_VIEWS_DIR . "layout/rules.php";
+    }
+
+    private function activation_page()
+    {
+        include_once WGBL_FW_DIR . "onboarding/views/main.php";
     }
 
     private function get_setting_view()

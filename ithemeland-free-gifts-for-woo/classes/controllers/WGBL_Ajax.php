@@ -2,6 +2,8 @@
 
 namespace wgbl\classes\controllers;
 
+use wgbl\classes\services\activation\Activation_Service;
+use wgbl\classes\services\activation\Analytics_Tracker;
 use wgbl\classes\presenters\reports\Report_Presenter;
 use wgbl\classes\repositories\Product;
 use wgbl\classes\repositories\User;
@@ -356,7 +358,7 @@ class WGBL_Ajax
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'wgbl_ajax_nonce')) {
             die();
         }
-        
+
         $page_data = [];
         if (!empty($_POST['dates']['from']) && !empty($_POST['dates']['from'])) {
             $page_data = [

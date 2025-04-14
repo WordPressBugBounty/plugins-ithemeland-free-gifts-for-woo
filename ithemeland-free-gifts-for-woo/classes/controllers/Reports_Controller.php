@@ -5,6 +5,7 @@ namespace wgbl\classes\controllers;
 use wgbl\classes\helpers\Plugin_Helper;
 use wgbl\classes\repositories\Rule;
 use wgbl\classes\repositories\Setting;
+use wgbl\framework\onboarding\Onboarding;
 
 class Reports_Controller
 {
@@ -20,17 +21,25 @@ class Reports_Controller
         $this->rule_methods = $this->rule_repository->get_rule_methods();
         $this->rule_methods_grouped = $this->rule_repository->get_rule_methods_grouped();
 
-        $this->page_title = esc_html__('iThemeland Free Gifts For WooCommerce', 'ithemeland-free-gifts-for-woo');
+        $this->page_title = esc_html__('iThemeland Free Gifts For Woo', 'ithemeland-free-gifts-for-woo');
         $this->doc_link = "https://ithemelandco.com/support-center/";
     }
 
     public function index()
     {
         $methods = $this->get_page_methods();
+        if (!Onboarding::is_completed() && !defined('WBEBL_NAME')) {
+            return $this->activation_page();
+        }
         $method = (!empty($_GET['sub-page']) && !empty($methods[$_GET['sub-page']])) ? $methods[$_GET['sub-page']] : 'dashboard'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
         // if (!method_exists($this, $method)) {
         // }
         $this->{$method}();
+    }
+
+    private function activation_page()
+    {
+        include_once WGBL_FW_DIR . "onboarding/views/main.php";
     }
 
     private function get_page_methods()

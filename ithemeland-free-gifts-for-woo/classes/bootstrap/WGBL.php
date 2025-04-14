@@ -11,6 +11,8 @@ use wgbl\classes\repositories\Rule;
 use wgbl\classes\repositories\Setting;
 use wgbl\classes\services\render\Condition_Render;
 use wgbl\classes\services\render\Product_Buy_Render;
+use wgbl\framework\analytics\AnalyticsTracker;
+use wgbl\framework\onboarding\Onboarding;
 
 class WGBL
 {
@@ -36,6 +38,8 @@ class WGBL
             return $styles;
         });
 
+        AnalyticsTracker::register();
+        Onboarding::register();
         WGBL_Top_Banners::register();
         WGBL_Ajax::register_callback();
         WGBL_Post::register_callback();
@@ -89,6 +93,19 @@ class WGBL
     }
 
     public function load_assets($page)
+    {
+        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) {
+
+            if (Onboarding::is_completed() || defined('WBEBL_NAME')) {
+                $this->main_load_assets();
+            } else {
+
+                $this->activation_load_assets();
+            }
+        }
+    }
+
+    public function main_load_assets()
     {
         if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $rule_repository = Rule::get_instance();
@@ -162,6 +179,23 @@ class WGBL
 
             wp_localize_script('wgbl-reports-main', 'WGBL_REPORTS_DATA', $this->get_reports_js_data());
         }
+    }
+
+    private function activation_load_assets()
+    {
+        wp_enqueue_style('wgbl-reset', WGBL_CSS_URL . 'common/reset.css', [], WGBL_VERSION);
+        wp_enqueue_style('wgbl-sweetalert', WGBL_CSS_URL . 'common/sweetalert.css', [], WGBL_VERSION);
+        wp_enqueue_style('wgbl-onboarding', WGBL_FW_URL . 'onboarding/assets/css/onboarding.css', [], WGBL_VERSION);
+
+        wp_enqueue_script('wgbl-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], WGBL_VERSION);
+        wp_enqueue_script('wgbl-onboarding', WGBL_FW_URL . 'onboarding/assets/js/onboarding.js', ['jquery'], WGBL_VERSION);
+
+        wp_localize_script('wgbl-onboarding', 'ithemeland_onboarding', [
+            'nonce' => wp_create_nonce('ithemeland_onboarding_action'),
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'redirecting_text' => __('Redirecting...', 'ithemeland-woocommerce-bulk-gift-woo'),
+            'skip_text' => __('Skip', 'ithemeland-woocommerce-bulk-gift-woo')
+        ]);
     }
 
     public static function wp_loaded()

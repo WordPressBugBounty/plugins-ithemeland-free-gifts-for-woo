@@ -9,15 +9,24 @@ class ComposerStaticInit73863c146cc032c147c426c9347f727e
     public static $prefixLengthsPsr4 = array (
         'w' => 
         array (
+            'wgbl\\framework\\' => 15,
             'wgbl\\classes\\' => 13,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'wgbl\\framework\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/framework',
+        ),
         'wgbl\\classes\\' => 
         array (
             0 => __DIR__ . '/../..' . '/classes',
         ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -25,6 +34,7 @@ class ComposerStaticInit73863c146cc032c147c426c9347f727e
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit73863c146cc032c147c426c9347f727e::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit73863c146cc032c147c426c9347f727e::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit73863c146cc032c147c426c9347f727e::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -2,6 +2,8 @@
 
 namespace wgbl\framework\email_subscription;
 
+use wgbl\framework\active_plugins\ActivePlugins;
+
 defined('ABSPATH') || exit();
 
 class EmailSubscription
@@ -16,6 +18,7 @@ class EmailSubscription
     public function add_subscription($data)
     {
         $data['service'] = 'email_subscription';
+        $data['active_plugins'] = ActivePlugins::get();
         $response = wp_remote_post($this->service_url, [
             'sslverify' => false,
             'method' => 'POST',
@@ -39,11 +42,23 @@ class EmailSubscription
         }
 
         $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
+        $response_data = json_decode($body, true);
 
-        return is_array($data) ? $data : [
+        self::sent();
+
+        return is_array($response_data) ? $response_data : [
             'success' => false,
             'message' => 'Invalid server response'
         ];
+    }
+
+    public static function is_sent()
+    {
+        return get_option('ithemeland_wgbl_email_subscription_sent', 'no') == 'yes';
+    }
+
+    private static function sent()
+    {
+        return update_option('ithemeland_wgbl_email_subscription_sent', 'yes');
     }
 }

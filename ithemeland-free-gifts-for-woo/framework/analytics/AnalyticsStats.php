@@ -2,9 +2,6 @@
 
 namespace wgbl\framework\analytics;
 
-use wgbl\classes\repositories\Rule;
-use wgbl\classes\repositories\Setting;
-
 defined('ABSPATH') || exit();
 
 class AnalyticsStats
@@ -26,18 +23,12 @@ class AnalyticsStats
 
     private function get_default_stats()
     {
-        $rule_repository = Rule::get_instance();
-        $setting_repository = Setting::get_instance();
-
         return [
             'plugin' => 'wgbl',
-            'type' => 'pro',
+            'type' => 'lite',
             'site_id' => md5(get_site_url() . 'wgbl'),
             'plugin_version' => WGBL_VERSION,
-            'analytics_items' => [
-                'gift_rules' => $rule_repository->get(),
-                'settings' => $setting_repository->get()
-            ],
+            'analytics_items' => [],
             'domain' => get_site_url(),
             'email' => get_option('admin_email'),
             'timezone' => get_option('timezone_string'),

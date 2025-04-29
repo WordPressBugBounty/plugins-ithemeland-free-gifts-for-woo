@@ -2,8 +2,9 @@
 
 namespace wgbl\framework\onboarding;
 
+use wgbl\framework\active_plugins\ActivePlugins;
+use wgbl\framework\analytics\AnalyticsService;
 use wgbl\framework\email_subscription\EmailSubscription;
-use wgbl\framework\analytics\AnalyticsTracker;
 
 defined('ABSPATH') || exit();
 
@@ -14,18 +15,17 @@ class Onboarding
     public static function register()
     {
         if (is_null(self::$instance)) {
-            new self();
+            self::$instance = new self();
         }
     }
 
     public function __construct()
     {
-        add_action('wp_ajax_ithemeland_onboarding_plugin', [$this, 'ithemeland_onboarding_plugin']);
+        add_action('wp_ajax_wgbl_ithemeland_onboarding_plugin', [$this, 'onboarding_action']);
     }
 
-    public function ithemeland_onboarding_plugin()
+    public function onboarding_action()
     {
-
         // Verify nonce
         if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'ithemeland_onboarding_action')) {
             wp_send_json_error([
@@ -45,13 +45,10 @@ class Onboarding
         $activation_type = sanitize_text_field($_POST['activation_type']);
         $message = __('Error! Please try again.', 'ithemeland-free-gifts-for-woo');
 
-
         if ($activation_type === 'skip') {
-            $this->update_ithemeland_onboarding_allowed('skipped');
-
-            self::update_opt_in(0);
-            self::update_ithemeland_usage_track(0);
-
+            self::update_opt_in('no');
+            self::update_usage_track('no');
+            self::onboarding_complete('skipped');
             wp_send_json_success([
                 'redirect' => WGBL_MAIN_PAGE,
                 'message' => __('Activation skipped', 'ithemeland-free-gifts-for-woo')
@@ -60,22 +57,21 @@ class Onboarding
         }
 
         if ($activation_type === 'allow') {
-
-            $opt_in = !empty($_POST['ithemeland_opt_in']);
-            $usage_tracking = !empty($_POST['ithemeland_usage_track']);
+            $opt_in = !empty($_POST['ithemeland_opt_in']) ? 'yes' : 'no';
+            $usage_tracking = !empty($_POST['ithemeland_usage_track']) ? 'yes' : 'no';
 
             self::update_opt_in($opt_in);
-            self::update_ithemeland_usage_track($usage_tracking);
+            self::update_usage_track($usage_tracking);
 
-            if ($opt_in && class_exists('wgbl\framework\email_subscription\EmailSubscription')) {
+            if ($opt_in == 'yes' && class_exists('wgbl\framework\email_subscription\EmailSubscription')) {
+                ActivePlugins::update('wgbl', 'gift:free');
                 $email_subscription_service = new EmailSubscription();
                 $admin_email = get_option('admin_email');
                 $info = $email_subscription_service->add_subscription([
-                    'email' => $admin_email,
+                    'email' => sanitize_email($admin_email),
                     'domain' => sanitize_text_field($_SERVER['SERVER_NAME']),
                     'product_id' => 'wgbl',
-                    'product_name' => WGBL_LABEL,
-                    'industry' => 'wordpress'
+                    'product_name' => WGBL_LABEL
                 ]);
 
                 if (is_array($info)) {
@@ -89,11 +85,12 @@ class Onboarding
                     }
                 }
             }
-            $this->update_ithemeland_onboarding_allowed('yes');
 
-            if ($usage_tracking) {
-                $tracker = new AnalyticsTracker;
-                $tracker->send();
+            self::onboarding_complete('allowed');
+
+            if ($usage_tracking == 'yes') {
+                $analytics_service = AnalyticsService::get_instance();
+                $analytics_service->send();
             }
 
             wp_send_json_success([
@@ -109,33 +106,31 @@ class Onboarding
 
     public static function is_completed()
     {
-        $allowed = get_option('ّithemeland_onboarding_allowed', 'no');
-        return ($allowed == 'yes' || $allowed == 'skipped');
-    }
-
-    public static function skipped()
-    {
-        $skipped = get_option('ّithemeland_onboarding_allowed', 'no');
-
-        return $skipped == 'skipped';
+        return (get_option('wgbl_onboarding', 'no') != 'no');
     }
 
     public static function update_opt_in($data)
     {
-        update_option('ithemeland_opt_in', $data);
-    }
-    public static function update_ithemeland_usage_track($data)
-    {
-        update_option('ithemeland_usage_track', $data);
+        update_option('wgbl_opt_in', sanitize_text_field($data));
     }
 
-    public static function update_ithemeland_onboarding_allowed($data)
+    public static function update_usage_track($data)
     {
-        update_option('ithemeland_onboarding_allowed', $data);
+        update_option('wgbl_usage_track', sanitize_text_field($data));
     }
 
-    public static function get_admin_email()
+    public static function onboarding_complete($data)
     {
-        return get_option('admin_email');
+        update_option('wgbl_onboarding', sanitize_text_field($data));
+    }
+
+    public static function opt_in_is_allowed()
+    {
+        return get_option('wgbl_opt_in', 'no') == 'yes';
+    }
+
+    public static function usage_track_is_allowed()
+    {
+        return get_option('wgbl_usage_track', 'no') == 'yes';
     }
 }

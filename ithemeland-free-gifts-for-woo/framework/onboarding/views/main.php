@@ -1,6 +1,6 @@
 <div class="onboarding-section">
     <div class="ithemeland-onboarding-head">
-        <img src="<?php echo esc_url(WGBL_FW_URL . 'onboarding/assets/images/iThemeland-popup-icon.png'); ?>" style="width:250px" alt="<?php echo esc_attr__('onboarding-icon', 'ithemeland-free-gifts-for-woo'); ?>">
+        <img src="<?php echo esc_url(WGBL_FW_URL . 'onboarding/assets/images/iThemeland-popup-icon.png'); ?>" style="width:250px" alt="onboarding-icon">
     </div>
     <div class="ithemeland-onboarding-container">
         <div class="ithemeland-onboarding-box">
@@ -30,13 +30,13 @@
                     <button type="button" name="ithemeland_usage_track_submit" class="ithemeland-allow-continue">
                         <?php _e('Allow & Continue', 'ithemeland-free-gifts-for-woo'); ?>
                     </button>
-                    <a href="#" class="ithemeland-skip"><?php _e('Skip', 'ithemeland-free-gifts-for-woo'); ?></a>
+                    <button type="button" class="ithemeland-skip"><?php _e('Skip', 'ithemeland-free-gifts-for-woo'); ?></button>
                 </div>
             </form>
             <div class="ithemeland-footer-note">
-                <h4><?php echo esc_html('This Will Be Allow iThemeland Team', 'ithemeland-woocommerce-bulk-orders-editing-lite') ?></h4>
                 <div class="ithemeland-links">
-                    <a href="https://ithemelandco.com/privacy-policy/" target="_blank"><?php _e('Privacy Policy', 'iithemeland-free-gifts-for-woo'); ?></a> |
+                    <a href="https://ithemelandco.com/privacy-policy/" target="_blank"><?php _e('Privacy Policy', 'ithemeland-free-gifts-for-woo'); ?></a>
+                    |
                     <a href="https://ithemelandco.com/term-of-use/" target="_blank"><?php _e('Terms of Service', 'ithemeland-free-gifts-for-woo'); ?></a>
                 </div>
             </div>

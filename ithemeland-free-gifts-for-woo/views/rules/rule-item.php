@@ -254,12 +254,12 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
                                         <label class="" style="float: left;"><?php esc_html_e('Select shipping methods for free', 'ithemeland-free-gifts-for-woo'); ?></label>
                                     </div>
                                     <div class="wgbl-col-6">
-                                        <select name="rule[<?php echo $rule_id; ?>][quantity][free_shipping_methods][]" class="wgbl-col-6 wgbl-select2" style="float: left" data-type="select2" required multiple <?php echo ($rule_item['method'] != 'free_shipping') ? 'disabled' : ''; ?>>
+                                        <select name="rule[<?php echo esc_attr($rule_id); ?>][quantity][free_shipping_methods][]" class="wgbl-col-6 wgbl-select2" style="float: left" data-type="select2" required multiple <?php echo ($rule_item['method'] != 'free_shipping') ? 'disabled' : ''; ?>>
                                             <?php
                                             if (!empty($shipping_methods_options)) :
                                                 foreach ($shipping_methods_options as $zone_id => $zone) :
                                             ?>
-                                                    <optgroup label="<?php esc_attr_e($zone['title']); ?>">
+                                                    <optgroup label="<?php echo esc_attr($zone['title'], 'ithemeland-free-gifts-for-woo'); ?>">
                                                         <?php foreach ($zone['options'] as $instance_id => $method) : ?>
                                                             <option value="<?php echo esc_attr($instance_id); ?>" <?php echo !empty($rule_item['quantity']['free_shipping_methods']) && in_array($instance_id, $rule_item['quantity']['free_shipping_methods']) ? 'selected' : ''; ?>><?php echo esc_html($method['title']); ?></option>
                                                         <?php endforeach; ?>

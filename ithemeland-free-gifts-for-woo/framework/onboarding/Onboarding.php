@@ -27,7 +27,10 @@ class Onboarding
     public function onboarding_action()
     {
         // Verify nonce
-        if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'ithemeland_onboarding_action')) {
+        if (
+            !isset($_POST['_wpnonce']) ||
+            !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'ithemeland_onboarding_action')
+        ) {
             wp_send_json_error([
                 'message' => __('Security verification failed', 'ithemeland-free-gifts-for-woo')
             ], 403);
@@ -42,7 +45,7 @@ class Onboarding
             exit;
         }
 
-        $activation_type = sanitize_text_field($_POST['activation_type']);
+        $activation_type = sanitize_text_field(wp_unslash($_POST['activation_type']));
         $message = __('Error! Please try again.', 'ithemeland-free-gifts-for-woo');
 
         if ($activation_type === 'skip') {
@@ -69,7 +72,7 @@ class Onboarding
                 $admin_email = get_option('admin_email');
                 $info = $email_subscription_service->add_subscription([
                     'email' => sanitize_email($admin_email),
-                    'domain' => sanitize_text_field($_SERVER['SERVER_NAME']),
+                    'domain' => isset($_SERVER['SERVER_NAME']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_NAME'])) : '',
                     'product_id' => 'wgbl',
                     'product_name' => WGBL_LABEL
                 ]);
@@ -106,31 +109,31 @@ class Onboarding
 
     public static function is_completed()
     {
-        return (get_option('wgbl_onboarding', 'no') != 'no');
+        return (get_option('wgb_onboarding', 'no') != 'no');
     }
 
     public static function update_opt_in($data)
     {
-        update_option('wgbl_opt_in', sanitize_text_field($data));
+        update_option('wgb_opt_in', sanitize_text_field($data));
     }
 
     public static function update_usage_track($data)
     {
-        update_option('wgbl_usage_track', sanitize_text_field($data));
+        update_option('wgb_usage_track', sanitize_text_field($data));
     }
 
     public static function onboarding_complete($data)
     {
-        update_option('wgbl_onboarding', sanitize_text_field($data));
+        update_option('wgb_onboarding', sanitize_text_field($data));
     }
 
     public static function opt_in_is_allowed()
     {
-        return get_option('wgbl_opt_in', 'no') == 'yes';
+        return get_option('wgb_opt_in', 'no') == 'yes';
     }
 
     public static function usage_track_is_allowed()
     {
-        return get_option('wgbl_usage_track', 'no') == 'yes';
+        return get_option('wgb_usage_track', 'no') == 'yes';
     }
 }

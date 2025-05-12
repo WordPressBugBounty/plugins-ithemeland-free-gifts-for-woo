@@ -62,7 +62,7 @@ class AnalyticsStats
             'product_count' => $this->get_product_count(),
             'settings' => $this->get_plugin_settings(),
             'server_info' => [
-                'server_software' => $_SERVER['SERVER_SOFTWARE'] ?? '',
+                'server_software' => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) : '',
                 'php_memory_limit' => ini_get('memory_limit')
             ]
         ];

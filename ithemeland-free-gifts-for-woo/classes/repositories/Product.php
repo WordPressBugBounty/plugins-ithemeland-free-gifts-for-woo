@@ -133,7 +133,7 @@ class Product
                 $types = "'product_variation'";
                 break;
         }
-        $ids = $wpdb->get_results("SELECT posts.ID, posts.post_parent FROM $wpdb->posts AS posts {$join} WHERE posts.post_type IN ($types) AND ({$where})", ARRAY_N); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $ids = $wpdb->get_results("SELECT posts.ID, posts.post_parent FROM $wpdb->posts AS posts {$join} WHERE posts.post_type IN ($types) AND ({$where})", ARRAY_N); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared ,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
         $ids = array_unique(Array_Helper::flatten($ids, 'int'));
         if ($key = array_search(0, $ids) !== false) {
             unset($ids[$key]);

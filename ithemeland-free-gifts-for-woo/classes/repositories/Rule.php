@@ -162,10 +162,10 @@ class Rule
             $zone_id = $shipping_zone->get_id();
 
             $options['all'] = [
-                'title' => __('General', 'conditional-shipping-for-woo'),
+                'title' => __('General', 'ithemeland-free-gifts-for-woo'),
                 'options' => [
                     'all' => [
-                        'title' => __('All shipping methods', 'conditional-shipping-for-woo')
+                        'title' => __('All shipping methods', 'ithemeland-free-gifts-for-woo')
                     ]
                 ],
             ];

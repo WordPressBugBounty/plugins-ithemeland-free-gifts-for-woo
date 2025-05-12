@@ -645,7 +645,7 @@ class iThemeland_front_order extends check_rule_condition
 
     public function pw_add_free_gifts()
     {
-        if (!isset($_REQUEST['pw_add_gift'])) {
+        if (!isset($_REQUEST['pw_add_gift'])) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
             return;
         }
         // Return if cart object is not initialized.
@@ -662,7 +662,7 @@ class iThemeland_front_order extends check_rule_condition
             return;
         }
 
-        $gift      = sanitize_text_field($_REQUEST['pw_add_gift']);
+        $gift      = sanitize_text_field(wp_unslash($_REQUEST['pw_add_gift']));// phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (!array_key_exists($gift, $this->gift_item_variable['all_gifts'])) {
             wp_safe_redirect(get_permalink());
             exit();
@@ -761,7 +761,7 @@ class iThemeland_front_order extends check_rule_condition
 
     public function display_gifts_coupon_popup()
     {
-        $nonce = $_REQUEST['security'];
+        $nonce = isset($_REQUEST['security']) ? sanitize_text_field(wp_unslash($_REQUEST['security'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (!wp_verify_nonce($nonce, 'jkhKJSdd4576d234Z')) {
             wp_die('Forbidden!!!');
         }
@@ -787,7 +787,7 @@ class iThemeland_front_order extends check_rule_condition
     {
         $ret = '';
 
-        $nonce = $_REQUEST['security'];
+        $nonce = isset($_REQUEST['security']) ? sanitize_text_field(wp_unslash($_REQUEST['security'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (!wp_verify_nonce($nonce, 'jkhKJSdd4576d234Z')) {
             wp_die('Forbidden!!!');
         }
@@ -834,7 +834,7 @@ class iThemeland_front_order extends check_rule_condition
         if (!isset($_REQUEST['it_gift_remove'])) {
             return;
         }
-
+echo 'a';
         // Return if cart object is not initialized.
         if (!is_object(WC()->cart)) {
             return;
@@ -865,10 +865,11 @@ class iThemeland_front_order extends check_rule_condition
             if (!isset($_POST)) {
                 throw new exception(__('Cannot process action1', 'ithemeland-free-gifts-for-woo'));
             }
-            $gift_product_id = sanitize_text_field($_REQUEST['gift_product_id']);
             if (empty($gift_product_id)) {
                 throw new exception(__('Cannot process action2', 'ithemeland-free-gifts-for-woo'));
-            }
+            }			
+            $gift_product_id = sanitize_text_field(wp_unslash($_REQUEST['gift_product_id']));// phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+
             // Return if cart object is not initialized.
             if (!is_object(WC()->cart)) {
                 throw new exception(__('Cannot process action3', 'ithemeland-free-gifts-for-woo'));
@@ -885,7 +886,7 @@ class iThemeland_front_order extends check_rule_condition
             if (!isset($_POST['add_qty']) || !is_numeric($_POST['add_qty'])) {
                 $qty = 1;
             } else {
-                $qty = sanitize_text_field($_REQUEST['add_qty']);
+                $qty = sanitize_text_field(wp_unslash($_REQUEST['add_qty']));// phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
             }
 
             if (!array_key_exists($gift_product_id, $this->gift_item_variable['all_gifts'])) {

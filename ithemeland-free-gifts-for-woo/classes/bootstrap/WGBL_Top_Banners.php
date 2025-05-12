@@ -31,7 +31,7 @@ class WGBL_Top_Banners
             add_action('admin_post_wgbl_black_friday_banner_dismiss', [$this, 'black_friday_banner_dismiss']);
         }
     }
-
+/*
     public function add_black_friday_banner()
     {
         $url = 'https://ithemelandco.com/bfcm2024/?utm_source=plugin&utm_medium=banner&utm_campaign=BF2024';
@@ -81,7 +81,7 @@ class WGBL_Top_Banners
 
         echo wp_kses($output, Sanitizer::allowed_html_tags());
     }
-
+*/
     public function black_friday_banner_dismiss()
     {
         update_option('it_black_friday_banner_dismissed', 'yes');

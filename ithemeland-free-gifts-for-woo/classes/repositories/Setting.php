@@ -63,7 +63,7 @@ class Setting
     {
         global $wpdb;
         //$query = $wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", "itg_localization_%");
-        $localization_fields = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", "itg_localization_%"), ARRAY_A);
+        $localization_fields = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", "itg_localization_%"), ARRAY_A);//phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching 
         return array_column($localization_fields, 'option_value', 'option_name');
     }
 

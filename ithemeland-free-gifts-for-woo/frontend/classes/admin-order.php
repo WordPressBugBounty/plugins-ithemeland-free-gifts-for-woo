@@ -87,7 +87,7 @@ class class_wc_advanced_gift_admin
         $order_id    = method_exists($order, 'get_id') ? $order->get_id() : $order->id;
         $customer_id = $order->get_user_id();
 
-        wp_register_script('it-order-shop-js', WGBL_JS_URL . 'frontend/order_shop.js', ['jquery']);
+        wp_register_script('it-order-shop-js', WGBL_JS_URL . 'frontend/order_shop.js', ['jquery'], true, WGBL_VERSION);
         wp_localize_script('it-order-shop-js', 'it_wc_gift_add_order_ajax', array(
             'ajax_url'    => admin_url('admin-ajax.php'),
             'security'    => wp_create_nonce('jkhKJS31z4576d2324Z'),
@@ -97,12 +97,13 @@ class class_wc_advanced_gift_admin
         ));
         wp_enqueue_script('it-order-shop-js');
 
-        ?>
+?>
         <div class="add-gift-to-order">
             <select id="gift_products_id" class="wc-product-search" multiple="multiple" style="width: 50%;" name="pw_gifts[]" data-placeholder="<?php esc_html_e('Search for a product', 'ithemeland-free-gifts-for-woo'); ?>" data-action="woocommerce_json_search_products_and_variations">
             </select>
-            <button type="button" class="button add_gift_order"><?php esc_html_e('Add To This Order', 'ithemeland-free-gifts-for-woo'); ?></button> </div>
-    <?php
+            <button type="button" class="button add_gift_order"><?php esc_html_e('Add To This Order', 'ithemeland-free-gifts-for-woo'); ?></button>
+        </div>
+<?php
     }
 
     public function pw_ajax_add_free_gifts_to_order()
@@ -110,7 +111,7 @@ class class_wc_advanced_gift_admin
 
         global $woocommerce;
 
-		$security = isset( $_REQUEST['security'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['security'] ) ) : '';
+        $security = isset($_REQUEST['security']) ? sanitize_text_field(wp_unslash($_REQUEST['security'])) : '';
         // Where the request will be handled
         if (!wp_verify_nonce($security, 'jkhKJS31z4576d2324Z')) {
             wp_die('Forbidden!!!');
@@ -122,23 +123,23 @@ class class_wc_advanced_gift_admin
 
         //$product_ids = wp_unslash($_REQUEST['product_ids']);
         //$order_id    = wp_unslash($_REQUEST['order_id']);
-		
-		// Check if product_ids is set and unslash the entire input
-		$product_ids = isset( $_REQUEST['product_ids'] ) ? wp_unslash( $_REQUEST['product_ids'] ) : '';
 
-		// Make sure $product_ids is an array, if it's not an array, it might have been improperly formed.
-		if ( ! empty( $product_ids ) && is_array( $product_ids ) ) {
-			// Sanitize each product ID to ensure they are integers
-			$sanitized_product_ids = array_map( 'absint', $product_ids );
-		} else {
-			$sanitized_product_ids = [];
-		}
-		// Step 1: Check if the order_id is set and unslash the value
-		$order_id = isset( $_REQUEST['order_id'] ) ? wp_unslash( $_REQUEST['order_id'] ) : '';
+        // Check if product_ids is set and unslash the entire input
+        $product_ids = isset($_REQUEST['product_ids']) ? sanitize_text_field(wp_unslash($_REQUEST['product_ids'])) : '';
 
-		// Step 2: Sanitize the input to ensure it's a valid integer
-		$order_id = absint( $order_id );
-		
+        // Make sure $product_ids is an array, if it's not an array, it might have been improperly formed.
+        if (! empty($product_ids) && is_array($product_ids)) {
+            // Sanitize each product ID to ensure they are integers
+            $sanitized_product_ids = array_map('absint', $product_ids);
+        } else {
+            $sanitized_product_ids = [];
+        }
+        // Step 1: Check if the order_id is set and unslash the value
+        $order_id = isset($_REQUEST['order_id']) ? sanitize_text_field(wp_unslash($_REQUEST['order_id'])) : '';
+
+        // Step 2: Sanitize the input to ensure it's a valid integer
+        $order_id = absint($order_id);
+
         $note        = 'The Gifts Added By Admin: ';
         $set_gift    = false;
         $order       = wc_get_order($order_id);

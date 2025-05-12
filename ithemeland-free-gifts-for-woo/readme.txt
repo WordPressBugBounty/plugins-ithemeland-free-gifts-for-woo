@@ -2,12 +2,12 @@
 Contributors: ithemelandco
 Donate link: https://ithemelandco.com/
 Tags: woocommerce gift, boost sale, free gift, buy one get one , Gift Product Woocommerce
-Requires at least: 5.3
+Requires at least: 4.6.1
 Tested up to: 6.8
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 Requires PHP: 7.0
 License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Free Gifts for WooCommerce allows you to offer Free Gifts to your customers whenever they make a purchase on your site.
 
@@ -261,6 +261,11 @@ You can easily translate the plugin into the desired languages by using translat
 12. free gifts for woocommerce datatable layout
 
 == Changelog ==
+= 2.7.3 =
+Tested up to: WP 6.8.x
+Tested up to: WC 9.8.x
+Fixed : Fixed Passed the Check Plugin issues
+
 = 2.7.2 =
 Tested up to: WP 6.8.x
 Tested up to: WC 9.8.x

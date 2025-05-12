@@ -28,7 +28,7 @@ class Reports_Controller
     public function index()
     {
         $methods = $this->get_page_methods();
-        if (!Onboarding::is_completed() && !defined('WBEBL_NAME')) {
+        if (!Onboarding::is_completed()) {
             return $this->activation_page();
         }
         $method = (!empty($_GET['sub-page']) && !empty($methods[$_GET['sub-page']])) ? $methods[$_GET['sub-page']] : 'dashboard'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended

@@ -96,7 +96,7 @@ class WGBL
     {
         if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) {
 
-            if (Onboarding::is_completed() || defined('WBEBL_NAME')) {
+            if (Onboarding::is_completed()) {
                 $this->main_load_assets();
             } else {
 
@@ -187,14 +187,14 @@ class WGBL
         wp_enqueue_style('wgbl-sweetalert', WGBL_CSS_URL . 'common/sweetalert.css', [], WGBL_VERSION);
         wp_enqueue_style('wgbl-onboarding', WGBL_FW_URL . 'onboarding/assets/css/onboarding.css', [], WGBL_VERSION);
 
-        wp_enqueue_script('wgbl-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], WGBL_VERSION);
-        wp_enqueue_script('wgbl-onboarding', WGBL_FW_URL . 'onboarding/assets/js/onboarding.js', ['jquery'], WGBL_VERSION);
+        wp_enqueue_script('wgbl-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], true, WGBL_VERSION);
+        wp_enqueue_script('wgbl-onboarding', WGBL_FW_URL . 'onboarding/assets/js/onboarding.js', ['jquery'], true, WGBL_VERSION);
 
         wp_localize_script('wgbl-onboarding', 'ithemeland_onboarding', [
             'nonce' => wp_create_nonce('ithemeland_onboarding_action'),
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'redirecting_text' => __('Redirecting...', 'ithemeland-woocommerce-bulk-gift-woo'),
-            'skip_text' => __('Skip', 'ithemeland-woocommerce-bulk-gift-woo')
+            'redirecting_text' => __('Redirecting...', 'ithemeland-free-gifts-for-woo'),
+            'skip_text' => __('Skip', 'ithemeland-free-gifts-for-woo')
         ]);
     }
 

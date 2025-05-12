@@ -32,7 +32,7 @@ class Rules_Controller
 
         $this->flush_message_repository = new Flush_Message();
 
-        if (!Onboarding::is_completed() && !defined('WBEBL_NAME')) {
+        if (!Onboarding::is_completed()) {
             return $this->activation_page();
         }
         $flush_message = $this->flush_message_repository->get();

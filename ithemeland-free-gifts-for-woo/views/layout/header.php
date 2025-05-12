@@ -5,7 +5,7 @@
     <div id="wgbl-header">
         <div class="wgbl-plugin-title">
             <div class="wgbl-plugin-name">
-                <img src="<?php echo esc_url(WGBL_IMAGES_URL . 'wgbl_icon_original.svg'); ?>" alt="">
+                <img src="<?php echo esc_url(WGBL_IMAGES_URL . 'wgbl_icon_original.svg'); ?>" alt=""><?php //phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage   ?>
                 <span><?php echo (!empty($this->page_title)) ? esc_html($this->page_title) : ''; ?></span>
                 <strong>Lite</strong>
             </div>

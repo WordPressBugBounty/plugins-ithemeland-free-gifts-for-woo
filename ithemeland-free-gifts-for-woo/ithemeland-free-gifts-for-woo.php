@@ -4,7 +4,7 @@
 	Plugin URI: https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy
 	Description: Free Gifts for WooCommerce allows you to offer Free Gifts to your customers whenever they make a purchase on your site.
 	Author: iThemelandco
-	Version: 2.7.3
+	Version: 2.7.4
 	Tags: woocommerce,woocommerce gift
 	Text Domain: ithemeland-free-gifts-for-woo
 	Domain Path: /languages
@@ -40,7 +40,7 @@ define('WGBL_IMAGES_URL', trailingslashit(WGBL_ASSETS_URL . 'images'));
 define('WGBL_JS_URL', trailingslashit(WGBL_ASSETS_URL . 'js'));
 define('WGBL_WP_TESTED', '6.8');
 define('WGBL_WP_REQUIRE', '5.0.0');
-define('WGBL_VERSION', '2.7.3');
+define('WGBL_VERSION', '2.7.4');
 define('WGBL_UPGRADE_URL', 'https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy');
 define('WGBL_UPGRADE_TEXT', 'Download Pro Version');
 
@@ -60,11 +60,12 @@ function wgbl_init()
 			
             require_once __DIR__ . '/frontend/main.php';
             wgbl\classes\bootstrap\WGBL::init();
-        }		
+        }
+		add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'itg_action_links');
 	}
 }
 
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'itg_action_links');
+
 function itg_action_links($links)
 {
     return array_merge(array(

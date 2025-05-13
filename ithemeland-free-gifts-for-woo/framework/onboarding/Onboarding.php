@@ -67,7 +67,7 @@ class Onboarding
             self::update_usage_track($usage_tracking);
 
             if ($opt_in == 'yes' && class_exists('wgbl\framework\email_subscription\EmailSubscription')) {
-                ActivePlugins::update('wgbl', 'gift:free');
+                ActivePlugins::update('wgbl', 'giftproduct:free');
                 $email_subscription_service = new EmailSubscription();
                 $admin_email = get_option('admin_email');
                 $info = $email_subscription_service->add_subscription([

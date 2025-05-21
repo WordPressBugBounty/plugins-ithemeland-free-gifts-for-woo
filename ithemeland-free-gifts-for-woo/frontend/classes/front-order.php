@@ -834,7 +834,7 @@ class iThemeland_front_order extends check_rule_condition
         if (!isset($_REQUEST['it_gift_remove'])) {
             return;
         }
-echo 'a';
+
         // Return if cart object is not initialized.
         if (!is_object(WC()->cart)) {
             return;

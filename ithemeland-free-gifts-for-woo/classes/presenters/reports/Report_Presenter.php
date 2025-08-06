@@ -4,6 +4,8 @@ namespace wgbl\classes\presenters\reports;
 
 use wgbl\classes\presenters\reports\handlers\Dashboard_Handler;
 
+defined('ABSPATH') || exit();
+
 class Report_Presenter
 {
     private static $instance;

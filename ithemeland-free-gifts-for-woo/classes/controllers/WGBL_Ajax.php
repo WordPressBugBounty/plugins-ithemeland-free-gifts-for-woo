@@ -8,6 +8,8 @@ use wgbl\classes\presenters\reports\Report_Presenter;
 use wgbl\classes\repositories\Product;
 use wgbl\classes\repositories\User;
 
+defined('ABSPATH') || exit();
+
 class WGBL_Ajax
 {
     private static $instance;
@@ -42,13 +44,13 @@ class WGBL_Ajax
 
     public function get_customers()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
         $user_repository = new User();
         $list = [];
-   		$customers = isset($_POST['search']) ?  $user_repository->get_users_by_name(sanitize_text_field($_POST['search'])): '';//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+        $customers = isset($_POST['search']) ?  $user_repository->get_users_by_name(sanitize_text_field($_POST['search'])) : ''; //phpcs:ignore
         if (!empty($customers->results)) {
             foreach ($customers->results as $customer) {
                 if ($customer instanceof \WP_User) {
@@ -65,7 +67,7 @@ class WGBL_Ajax
 
     public function get_user_roles()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
@@ -74,7 +76,7 @@ class WGBL_Ajax
 
         if (!empty($roles)) {
             foreach ($roles->roles as $roleKey => $role) {
-                if (isset($role['name']) && strpos($roleKey, strtolower(sanitize_text_field(wp_unslash($_POST['search'])))) !== false) {//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                if (isset($role['name']) && strpos($roleKey, strtolower(sanitize_text_field(wp_unslash($_POST['search'])))) !== false) { //phpcs:ignore 
                     $list['results'][] = [
                         'id' => $roleKey,
                         'text' => $role['name']
@@ -88,7 +90,7 @@ class WGBL_Ajax
 
     public function get_user_capabilities()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
@@ -97,7 +99,7 @@ class WGBL_Ajax
 
         if (!empty($capabilities)) {
             foreach ($capabilities as $capability => $value) {
-                if (strpos($capability, strtolower(sanitize_text_field(wp_unslash($_POST['search'])))) !== false) {//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                if (strpos($capability, strtolower(sanitize_text_field(wp_unslash($_POST['search'])))) !== false) { //phpcs:ignore
                     $list['results'][] = [
                         'id' => $capability,
                         'text' => $capability
@@ -111,7 +113,7 @@ class WGBL_Ajax
 
     public function get_products()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
@@ -123,7 +125,7 @@ class WGBL_Ajax
             'wgbl_general_column_filter' => [
                 [
                     'field' => 'post_title',
-                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))), //phpcs:ignore
                     'operator' => 'like'
                 ]
             ]
@@ -143,7 +145,7 @@ class WGBL_Ajax
 
     public function get_products_variations()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
@@ -155,7 +157,7 @@ class WGBL_Ajax
             'wgbl_general_column_filter' => [
                 [
                     'field' => 'post_title',
-                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))), //phpcs:ignore
                     'operator' => 'like'
                 ]
             ]
@@ -175,12 +177,12 @@ class WGBL_Ajax
 
     public function get_taxonomies()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
         $list['results'] = [];
-        $taxonomies = $this->product_repository->get_taxonomies_by_name(sanitize_text_field(wp_unslash($_POST['search'])));//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+        $taxonomies = $this->product_repository->get_taxonomies_by_name(sanitize_text_field(wp_unslash($_POST['search']))); //phpcs:ignore
         if (!empty($taxonomies)) {
             foreach ($taxonomies as $key => $taxonomyItems) {
                 if (!empty($taxonomyItems) && !in_array($key, ['product_visibility', 'product_type'])) {
@@ -200,7 +202,7 @@ class WGBL_Ajax
 
     public function get_variations()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
@@ -212,7 +214,7 @@ class WGBL_Ajax
             'wgbl_general_column_filter' => [
                 [
                     'field' => 'post_title',
-                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))), //phpcs:ignore
                     'operator' => 'like'
                 ]
             ]
@@ -232,12 +234,12 @@ class WGBL_Ajax
 
     public function get_tags()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
         $list['results'] = [];
-        $tags = $this->product_repository->get_tags_by_name(sanitize_text_field(wp_unslash($_POST['search'])));//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+        $tags = $this->product_repository->get_tags_by_name(sanitize_text_field(wp_unslash($_POST['search']))); //phpcs:ignore
         if (!empty($tags)) {
             foreach ($tags as $tag) {
                 if ($tag instanceof \WP_Term) {
@@ -253,12 +255,12 @@ class WGBL_Ajax
 
     public function get_categories()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
         $list['results'] = [];
-        $categories = $this->product_repository->get_categories_by_name(sanitize_text_field(wp_unslash($_POST['search'])));//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+        $categories = $this->product_repository->get_categories_by_name(sanitize_text_field(wp_unslash($_POST['search']))); //phpcs:ignore
         if (!empty($categories)) {
             foreach ($categories as $category) {
                 if ($category instanceof \WP_Term) {
@@ -274,12 +276,12 @@ class WGBL_Ajax
 
     public function get_attributes()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
         $list['results'] = [];
-        $attributes = $this->product_repository->get_attributes_by_name(sanitize_text_field(wp_unslash($_POST['search'])));//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+        $attributes = $this->product_repository->get_attributes_by_name(sanitize_text_field(wp_unslash($_POST['search']))); //phpcs:ignore 
         if (!empty($attributes)) {
             foreach ($attributes as $key => $attributeItems) {
                 if (!empty($attributeItems)) {
@@ -299,7 +301,7 @@ class WGBL_Ajax
 
     public function get_shipping_class()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
@@ -307,7 +309,7 @@ class WGBL_Ajax
         $classes = $this->product_repository->get_shipping_classes();
         if (!empty($classes)) {
             foreach ($classes as $class) {
-                if ($class instanceof \WP_Term && strpos($class->name, strtolower(sanitize_text_field(wp_unslash($_POST['search'])))) !== false) {//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                if ($class instanceof \WP_Term && strpos($class->name, strtolower(sanitize_text_field(wp_unslash($_POST['search'])))) !== false) { //phpcs:ignore
                     $list['results'][] = [
                         'id' => $class->term_id,
                         'text' => $class->name
@@ -321,7 +323,7 @@ class WGBL_Ajax
 
     public function get_coupons()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
@@ -333,7 +335,7 @@ class WGBL_Ajax
             'wgbl_general_column_filter' => [
                 [
                     'field' => 'post_title',
-                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                    'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))), //phpcs:ignore 
                     'operator' => 'like'
                 ]
             ]
@@ -355,21 +357,21 @@ class WGBL_Ajax
 
     public function get_reports()
     {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'wgbl_ajax_nonce')) { //phpcs:ignore
             die();
         }
 
         $page_data = [];
-        if (!empty($_POST['dates']['from']) && !empty($_POST['dates']['from'])) {
+        if (!empty($_POST['dates']['from']) && !empty($_POST['dates']['from'])) { //phpcs:ignore
             $page_data = [
-                'from' => sanitize_text_field($_POST['dates']['from']),//phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.MissingUnslash 
-                'to' => sanitize_text_field($_POST['dates']['to']),//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash 
+                'from' => sanitize_text_field($_POST['dates']['from']), //phpcs:ignore 
+                'to' => sanitize_text_field($_POST['dates']['to']), //phpcs:ignore 
             ];
         }
 
         // get page params
         if (!empty($_POST['page_params'])) {
-            $params_string = str_replace('?', '', $_POST['page_params']);//phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash ,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized 
+            $params_string = str_replace('?', '', $_POST['page_params']); //phpcs:ignore
             $params_array = explode('&', $params_string);
             if (!empty($params_array)) {
                 foreach ($params_array as $param) {

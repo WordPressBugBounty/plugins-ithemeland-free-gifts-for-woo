@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
 <div id="wgbl-main">
     <div id="wgbl-loading" class="wgbl-loading">
         <?php esc_html_e('Loading ...', 'ithemeland-free-gifts-for-woo') ?>

@@ -2,6 +2,8 @@
 
 namespace wgbl\classes\presenters\reports;
 
+defined('ABSPATH') || exit();
+
 interface Handler_Interface
 {
     public static function get_instance();

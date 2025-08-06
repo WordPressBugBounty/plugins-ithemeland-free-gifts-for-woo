@@ -350,6 +350,8 @@ class iThemeland_front_order extends check_rule_condition
 
         global $woocommerce, $product;
         $cart_page_id = get_permalink(wc_get_page_id('cart'));
+		global $wp;
+		$cart_page_id = home_url( $wp->request );			
         if (substr($cart_page_id, -1) == "/") {
             $cart_page_id = substr($cart_page_id, 0, -1);
         }
@@ -358,6 +360,7 @@ class iThemeland_front_order extends check_rule_condition
         } else {
             $cart_page_id = $cart_page_id . '?';
         }
+	
         $txt_free = get_option('itg_localization_txt_free', 'Free');
         $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
         if ($retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0) {
@@ -410,8 +413,7 @@ class iThemeland_front_order extends check_rule_condition
                 $html =
                     '<tr class="woocommerce-cart-form__cart-item cart_item">
 						<td class="product-remove">
-							<a class="remove gift-close-link" href="' . esc_url($cart_page_id) . 'it_gift_remove=' .
-                    esc_attr($index['id']) . '">×</a>
+							<a class="remove gift-close-link" href="' . esc_url($cart_page_id) . 'it_gift_remove=' . esc_attr($index['id']) . '&_wpnonce=' . wp_create_nonce('wgbl_post_nonce').'">×</a>
 						</td>
 						<td class="product-thumbnail">' . wp_kses_post($img_html) . '</td>
 						<td class="product-name" data-title="' . esc_attr($title_gift) . '"><a href="' .
@@ -645,7 +647,7 @@ class iThemeland_front_order extends check_rule_condition
 
     public function pw_add_free_gifts()
     {
-        if (!isset($_REQUEST['pw_add_gift'])) {// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if (!isset($_REQUEST['pw_add_gift'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             return;
         }
         // Return if cart object is not initialized.
@@ -662,7 +664,7 @@ class iThemeland_front_order extends check_rule_condition
             return;
         }
 
-        $gift      = sanitize_text_field(wp_unslash($_REQUEST['pw_add_gift']));// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $gift      = sanitize_text_field(wp_unslash($_REQUEST['pw_add_gift'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         if (!array_key_exists($gift, $this->gift_item_variable['all_gifts'])) {
             wp_safe_redirect(get_permalink());
             exit();
@@ -801,7 +803,7 @@ class iThemeland_front_order extends check_rule_condition
 
         wp_enqueue_script('pw-gift-add-jquery-adv');
 
-        $variable  = sanitize_text_field($_POST['pw_gift_variable']);
+        $variable  = sanitize_text_field(wp_unslash($_POST['pw_gift_variable']));
         $p_product = wc_get_product($variable);
 
         $product_type = $p_product->get_type();
@@ -815,7 +817,7 @@ class iThemeland_front_order extends check_rule_condition
 
             $atts = [
                 'products_ids'        => $variation_ids,
-                'uid'                 => sanitize_text_field($_POST['pw_gift_uid']),
+                'uid'                 => (isset($_POST['pw_gift_uid'])) ? sanitize_text_field(wp_unslash($_POST['pw_gift_uid'])) : '',
                 'gift_item_variable'  => $this->gift_item_variable,
                 'gift_rule_exclude'   => $this->gift_rule_exclude,
                 'product_qty_in_cart' => $this->product_qty_in_cart,
@@ -834,6 +836,10 @@ class iThemeland_front_order extends check_rule_condition
         if (!isset($_REQUEST['it_gift_remove'])) {
             return;
         }
+		if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) { //phpcs:ignore
+            return;
+        }		
+
 
         // Return if cart object is not initialized.
         if (!is_object(WC()->cart)) {
@@ -846,7 +852,7 @@ class iThemeland_front_order extends check_rule_condition
         }
         //Remove Gift Cart
         $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-        if ($retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0 && array_key_exists($_GET['it_gift_remove'], $retrieved_group_input_value)) {
+        if ($retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0 && array_key_exists($_GET['it_gift_remove'], $retrieved_group_input_value)) { //phpcs:ignore
             unset($retrieved_group_input_value[$_GET['it_gift_remove']]);
             WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
         }
@@ -867,8 +873,8 @@ class iThemeland_front_order extends check_rule_condition
             }
             if (empty($gift_product_id)) {
                 throw new exception(__('Cannot process action2', 'ithemeland-free-gifts-for-woo'));
-            }			
-            $gift_product_id = sanitize_text_field(wp_unslash($_REQUEST['gift_product_id']));// phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+            }
+            $gift_product_id = sanitize_text_field(wp_unslash($_REQUEST['gift_product_id'])); // phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
 
             // Return if cart object is not initialized.
             if (!is_object(WC()->cart)) {
@@ -886,7 +892,7 @@ class iThemeland_front_order extends check_rule_condition
             if (!isset($_POST['add_qty']) || !is_numeric($_POST['add_qty'])) {
                 $qty = 1;
             } else {
-                $qty = sanitize_text_field(wp_unslash($_REQUEST['add_qty']));// phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+                $qty = sanitize_text_field(wp_unslash($_REQUEST['add_qty'])); // phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
             }
 
             if (!array_key_exists($gift_product_id, $this->gift_item_variable['all_gifts'])) {

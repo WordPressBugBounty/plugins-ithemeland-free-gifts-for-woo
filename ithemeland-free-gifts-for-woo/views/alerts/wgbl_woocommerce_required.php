@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
+<?php
 function wgbl_woocommerce_required_error()
 {
     $class = 'notice notice-error';

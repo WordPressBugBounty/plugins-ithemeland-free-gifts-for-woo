@@ -347,105 +347,106 @@ function wgblSetGottenGiftsByCustomerPageItems(data) {
 }
 
 function wgblReInitChart1(data) {
-    var chart1Data = data;
+    let period = jQuery('#wgbl-chart1-buttons').find('button.active').val();
+    period = (period && period !== '') ? period : 'month';
+    let chartData = data[period];
 
-    am4core.ready(function () {
-        // chart1 init
-        if (jQuery('#amchart1').length > 0) {
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
-            am4core.options.autoDispose = true;
+    let chartElement = document.getElementById('wgbl-report-dashboard-chart1');
 
-            // Create chart instance
-            var chart = am4core.create("amchart1", am4charts.XYChart);
+    let chartInstance = Chart.getChart(chartElement);
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
 
-            // Export
-            // chart.exporting.menu = new am4core.ExportMenu();
-
-            // Data for both series
-            let period = jQuery('#wgbl-chart1-buttons').find('button.active').val();
-            period = (period && period !== '') ? period : 'month';
-            var data = chart1Data[period];
-
-            /* Create axes */
-            var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
-            categoryAxis.dataFields.category = "category";
-            categoryAxis.renderer.minGridDistance = 30;
-
-            /* Create value axis */
-            var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-            valueAxis.min = 0;
-            valueAxis.renderer.minGridDistance = 30;
-
-            /* Create series */
-            var columnSeries = chart.series.push(new am4charts.ColumnSeries());
-            columnSeries.name = "Count";
-            columnSeries.dataFields.valueY = "count";
-            columnSeries.dataFields.categoryX = "category";
-            columnSeries.columns.template.stroke = am4core.color("#603ecd");
-            columnSeries.columns.template.fill = am4core.color("#603ecd");
-            columnSeries.columns.template.tooltipText = "[#fff font-size: 15px]{name} in {categoryX}:\n[/][#fff font-size: 20px]{valueY}[/] [#fff]{additional}[/]"
-            columnSeries.columns.template.propertyFields.fillOpacity = "fillOpacity";
-            columnSeries.columns.template.propertyFields.stroke = "stroke";
-            columnSeries.columns.template.propertyFields.strokeWidth = "strokeWidth";
-            columnSeries.columns.template.propertyFields.strokeDasharray = "columnDash";
-            columnSeries.tooltip.label.textAlign = "middle";
-
-            chart.data = data;
-
-            // Set cell size in pixels
-            var cellSize = 50;
-            chart.events.on("datavalidated", function (ev) {
-
-                // Get objects of interest
-                var chart = ev.target;
-                var categoryAxis = chart.yAxes.getIndex(0);
-
-                // Calculate how we need to adjust chart height
-                var adjustHeight = chart.data.length * cellSize - categoryAxis.pixelHeight;
-
-                // get current chart height
-                var targetHeight = chart.pixelHeight + adjustHeight;
-
-                // Set it on chart's container
-                chart.svgContainer.htmlElement.style.height = targetHeight + "px";
-            });
+    new Chart(chartElement, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [
+                {
+                    label: 'Value',
+                    data: chartData.values,
+                    borderColor: '#3385ff',
+                    backgroundColor: '#3385ff',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'top',
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        font: {
+                            size: 10
+                        },
+                        align: 'center',
+                        maxRotation: 0,
+                        minRotation: 0
+                    }
+                }
+            }
         }
-    })
+    });
 }
 
 function wgblReInitChart2(data) {
-    var chart2Data = data;
+    let chartType = jQuery('#wgbl-chart2-buttons button.active').val();
+    let chartData = (chartType && chartType !== '') ? data[chartType] : data.product;
 
-    am4core.ready(function () {
-        // chart2 init
-        if (jQuery('#amchart2').length > 0) {
-            // Themes begin
-            am4core.useTheme(am4themes_animated);
+    let chartElement = document.getElementById('wgbl-report-dashboard-chart2');
 
-            am4core.options.autoDispose = true;
+    let chartInstance = Chart.getChart(chartElement);
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
 
-            // Create chart instance
-            var chart2 = am4core.create("amchart2", am4charts.PieChart);
-
-            // Add data
-            let chartType = jQuery('#wgbl-chart2-buttons button.active').val();
-            chart2.data = (chartType && chartType !== '') ? chart2Data[chartType] : chart2Data.product;
-
-            // Add and configure Series
-            var pieSeries = chart2.series.push(new am4charts.PieSeries());
-            pieSeries.dataFields.value = "count";
-            pieSeries.dataFields.category = "name";
-            pieSeries.labels.template.text = "";
-            pieSeries.slices.template.stroke = am4core.color("#fff");
-            pieSeries.slices.template.strokeWidth = 2;
-            pieSeries.slices.template.strokeOpacity = 1;
-
-            // This creates initial animation
-            pieSeries.hiddenState.properties.opacity = 1;
-            pieSeries.hiddenState.properties.endAngle = -90;
-            pieSeries.hiddenState.properties.startAngle = -90;
-
+    new Chart(chartElement, {
+        type: 'pie',
+        data: {
+            labels: chartData.labels,
+            datasets: [
+                {
+                    label: 'Value',
+                    data: chartData.values,
+                    borderColor: '#3385ff',
+                    backgroundColor: '#3385ff',
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'top',
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        font: {
+                            size: 10
+                        },
+                        align: 'center',
+                        maxRotation: 0,
+                        minRotation: 0
+                    }
+                }
+            }
         }
     });
 }

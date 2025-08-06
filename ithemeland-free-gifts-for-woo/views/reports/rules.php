@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
 <?php include WGBL_VIEWS_DIR . "layout/reports_header.php"; ?>
 <div class="wgbl-wrap">
     <div class="wgbl-tab-middle-content">

@@ -2,6 +2,8 @@
 
 namespace wgbl\classes\repositories;
 
+defined('ABSPATH') || exit();
+
 class Rule
 {
     private static $instance;
@@ -207,166 +209,280 @@ class Rule
 
     public function get_used_rules($from_date = null, $to_date = null)
     {
+        global $wpdb;
+
         $date_query = '';
+        $params = [];
+
         if (!is_null($from_date) && !is_null($to_date)) {
-            $from = gmdate('Y-m-d H:i:s', strtotime($from_date));
-            $to = gmdate('Y-m-d H:i:s', strtotime($to_date));
-            $date_query = "AND orders.post_date BETWEEN '{$from}' AND '{$to}'";
+            $from = gmdate('Y-m-d', strtotime($from_date)) . ' 00:00';
+            $to = gmdate('Y-m-d', strtotime($to_date)) . ' 23:59';
+            $date_query = "AND orders.post_date BETWEEN %s AND %s";
+            $params[] = $from;
+            $params[] = $to;
         }
 
-        return $this->wpdb->get_results("SELECT itemmeta.order_item_id, itemmeta.meta_value FROM {$this->wpdb->posts} as orders LEFT JOIN {$this->wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id) WHERE itemmeta.meta_key = '_rule_id_free_gift' {$date_query}", ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $sql = "SELECT itemmeta.order_item_id, itemmeta.meta_value
+            FROM {$wpdb->posts} as orders
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id)
+            WHERE itemmeta.meta_key = '_rule_id_free_gift'
+            {$date_query}
+        ";
+
+        if (!empty($params)) {
+            $prepared_sql = $wpdb->prepare($sql, ...$params); //phpcs:ignore
+        } else {
+            $prepared_sql = $sql;
+        }
+
+        return $wpdb->get_results($prepared_sql, ARRAY_A); //phpcs:ignore
     }
 
     public function get_used_rules_with_customer($filters = [])
     {
-        $filter_query = '';
+        global $wpdb;
 
-        if (!empty($filters['date']) && !empty($filters['date']['from']) && !empty($filters['date']['to'])) {
+        $filter_clauses = [];
+        $filter_params = [];
+
+        if (!empty($filters['date']['from']) && !empty($filters['date']['to'])) {
             $from = sanitize_text_field($filters['date']['from']);
             $to = sanitize_text_field($filters['date']['to']);
-            $filter_query .= " AND orders.post_date BETWEEN '{$from}' AND '{$to}'";
+            $filter_clauses[] = "orders.post_date BETWEEN %s AND %s";
+            $filter_params[] = $from;
+            $filter_params[] = $to;
         }
 
         if (!empty($filters['order_id'])) {
-            $order_id = intval(sanitize_text_field($filters['order_id']));
-            $filter_query .= " AND orders.ID = {$order_id}";
+            $order_id = intval($filters['order_id']);
+            $filter_clauses[] = "orders.ID = %d";
+            $filter_params[] = $order_id;
         }
 
         if (!empty($filters['customer_email'])) {
-            $customer_email = sanitize_text_field($filters['customer_email']);
-            $filter_query .= " AND IF(users.user_email != '', users.user_email LIKE '%{$customer_email}%', postmeta2.meta_value LIKE '%{$customer_email}%')";
+            $customer_email = '%' . $wpdb->esc_like(sanitize_text_field($filters['customer_email'])) . '%';
+            $filter_clauses[] = "(users.user_email != '' AND users.user_email LIKE %s OR postmeta2.meta_value LIKE %s)";
+            $filter_params[] = $customer_email;
+            $filter_params[] = $customer_email;
         }
 
         if (!empty($filters['customer_ids'])) {
-            $customer_ids = sanitize_text_field($filters['customer_ids']);
-            $filter_query .= " AND users.ID IN ({$customer_ids})";
+            if (is_array($filters['customer_ids'])) {
+                $customer_ids = array_map('intval', $filters['customer_ids']);
+            } else {
+                $customer_ids = array_map('intval', explode(',', $filters['customer_ids']));
+            }
+            if (!empty($customer_ids)) {
+                $placeholders = implode(',', array_fill(0, count($customer_ids), '%d'));
+                $filter_clauses[] = "users.ID IN ({$placeholders})";
+                $filter_params = array_merge($filter_params, $customer_ids);
+            }
         }
 
         if (!empty($filters['rule_ids'])) {
-            $rule_ids = sanitize_text_field($filters['rule_ids']);
-            $filter_query .= " AND itemmeta.meta_value IN ({$rule_ids})";
+            if (is_array($filters['rule_ids'])) {
+                $rule_ids = array_map('intval', $filters['rule_ids']);
+            } else {
+                $rule_ids = array_map('intval', explode(',', $filters['rule_ids']));
+            }
+            if (!empty($rule_ids)) {
+                $placeholders = implode(',', array_fill(0, count($rule_ids), '%d'));
+                $filter_clauses[] = "itemmeta.meta_value IN ({$placeholders})";
+                $filter_params = array_merge($filter_params, $rule_ids);
+            }
         }
 
-        return $this->wpdb->get_results("SELECT orders.ID as order_id, orders.post_date as order_date, IF(users.user_login != '', users.user_login, 'Guest') as user_login, IF(users.user_email != '', users.user_email, postmeta2.meta_value) as user_email, itemmeta.order_item_id, itemmeta.meta_value as rule_id FROM {$this->wpdb->posts} as orders LEFT JOIN {$this->wpdb->prefix}postmeta as postmeta ON (orders.ID = postmeta.post_id) LEFT JOIN {$this->wpdb->prefix}postmeta as postmeta2 ON (orders.ID = postmeta2.post_id) LEFT JOIN {$this->wpdb->users} as users ON (users.ID = postmeta.meta_value) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id) WHERE itemmeta.meta_key = '_rule_id_free_gift' AND postmeta.meta_key = '_customer_user' AND postmeta2.meta_key = '_billing_email' {$filter_query}", ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $filter_query = '';
+        if (!empty($filter_clauses)) {
+            $filter_query = ' AND ' . implode(' AND ', $filter_clauses);
+        }
+
+        $sql = "SELECT
+                orders.ID as order_id,
+                orders.post_date as order_date,
+                IF(users.user_login != '', users.user_login, 'Guest') as user_login,
+                IF(users.user_email != '', users.user_email, postmeta2.meta_value) as user_email,
+                itemmeta.order_item_id,
+                itemmeta.meta_value as rule_id
+            FROM {$wpdb->posts} as orders
+            LEFT JOIN {$wpdb->prefix}postmeta as postmeta ON (orders.ID = postmeta.post_id)
+            LEFT JOIN {$wpdb->prefix}postmeta as postmeta2 ON (orders.ID = postmeta2.post_id)
+            LEFT JOIN {$wpdb->users} as users ON (users.ID = postmeta.meta_value)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id)
+            WHERE
+                itemmeta.meta_key = '_rule_id_free_gift'
+                AND postmeta.meta_key = '_customer_user'
+                AND postmeta2.meta_key = '_billing_email'
+                {$filter_query}
+        ";
+
+        if (!empty($filter_params)) {
+            $prepared_sql = $wpdb->prepare($sql, ...$filter_params); //phpcs:ignore
+        } else {
+            $prepared_sql = $sql;
+        }
+
+        return $wpdb->get_results($prepared_sql, ARRAY_A); //phpcs:ignore
     }
+
 
     public function get_total_customers_used_gift($from_date = null, $to_date = null)
     {
+        global $wpdb;
+
         $date_query = '';
+        $params = [];
+
         if (!is_null($from_date) && !is_null($to_date)) {
-            $from = gmdate('Y-m-d H:i:s', strtotime($from_date));
-            $to = gmdate('Y-m-d H:i:s', strtotime($to_date));
-            $date_query = "AND orders.post_date BETWEEN '{$from}' AND '{$to}'";
+            $from = gmdate('Y-m-d', strtotime($from_date)) . ' 00:00';
+            $to = gmdate('Y-m-d', strtotime($to_date)) . ' 23:59';
+            $date_query = "AND orders.post_date BETWEEN %s AND %s";
+            $params[] = $from;
+            $params[] = $to;
         }
-        return $this->wpdb->get_results("SELECT DISTINCT postmeta.meta_value as customer_id FROM {$this->wpdb->posts} as orders LEFT JOIN {$this->wpdb->prefix}postmeta as postmeta ON (postmeta.post_id = orders.ID) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id) WHERE itemmeta.meta_key = '_rule_id_free_gift' AND postmeta.meta_key = '_customer_user' {$date_query} GROUP BY customer_id", ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+        $sql = "SELECT DISTINCT postmeta.meta_value as customer_id
+            FROM {$wpdb->posts} as orders
+            LEFT JOIN {$wpdb->prefix}postmeta as postmeta ON (postmeta.post_id = orders.ID)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id)
+            WHERE itemmeta.meta_key = '_rule_id_free_gift'
+            AND postmeta.meta_key = '_customer_user'
+            {$date_query}
+            GROUP BY customer_id
+        ";
+
+        if (!empty($params)) {
+            $prepared_sql = $wpdb->prepare($sql, ...$params); //phpcs:ignore
+        } else {
+            $prepared_sql = $sql;
+        }
+
+        return $wpdb->get_results($prepared_sql, ARRAY_A); //phpcs:ignore
     }
 
     public function get_option_cache($rule)
     {
+        global $wpdb;
+
         $value_trans = 'gifts';
         $return_query = [];
         $id = $rule['uid'];
-        //delete_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id);
-        //delete_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id);
-        $include_product = isset($rule['include_products']) ? $rule['include_products'] : "";
-        $exclude_product = isset($rule['exclude_products']) ? $rule['exclude_products'] : "";
-        $include_taxonomy = isset($rule['include_taxonomy']) ? $rule['include_taxonomy'] : "";
-        $exclude_taxonomy = isset($rule['exclude_taxonomy']) ? $rule['exclude_taxonomy'] : "";
 
-        $ex_product_condition_1 = "";
-        $ex_product_condition_2 = "";
+        $include_product = isset($rule['include_products']) && is_array($rule['include_products']) ? array_map('intval', $rule['include_products']) : [];
+        $exclude_product = isset($rule['exclude_products']) && is_array($rule['exclude_products']) ? array_map('intval', $rule['exclude_products']) : [];
+        $include_taxonomy = isset($rule['include_taxonomy']) && is_array($rule['include_taxonomy']) ? $rule['include_taxonomy'] : [];
+        $exclude_taxonomy = isset($rule['exclude_taxonomy']) && is_array($rule['exclude_taxonomy']) ? $rule['exclude_taxonomy'] : [];
 
-        $in_product_condition_1 = '';
-        $in_product_condition_2 = '';
+        $where_clauses_1 = ["pw_posts.post_type = 'product'", "pw_posts.post_status = 'publish'"];
+        $where_clauses_2 = ["term_taxonomy.taxonomy = 'product_type'", "terms.slug = 'variable'", "pw_posts.post_type='product_variation'", "pw_posts.post_status = 'publish'", "pw_products.post_type='product'", "pw_posts.post_parent > 0"];
 
-        $in_tax_condition_1 = '';
-        $in_tax_condition_2 = '';
+        $params = [];
+        $params2 = [];
 
-        $ex_tax_condition_1 = "";
-        $ex_tax_condition_2 = "";
-
-        $product_ids = '';
-        if (is_array($include_product)) {
-            $product_ids = implode(",", $include_product);
-
-            $in_product_condition_1 = " AND pw_posts.ID IN ($product_ids) ";
-            $in_product_condition_2 = "  AND (pw_posts.ID IN ($product_ids) OR pw_products.ID IN ($product_ids)) ";
+        if (!empty($include_product)) {
+            $placeholders = implode(',', array_fill(0, count($include_product), '%d'));
+            $where_clauses_1[] = "pw_posts.ID IN ($placeholders)";
+            $where_clauses_2[] = "(pw_posts.ID IN ($placeholders) OR pw_products.ID IN ($placeholders))";
+            $params = array_merge($params, $include_product);
+            $params2 = array_merge($params2, $include_product, $include_product);
         }
 
-        if ($exclude_product) {
-            $product_ids = implode(",", $exclude_product);
-
-            $ex_product_condition_1 = " AND pw_posts.ID NOT IN ($product_ids) ";
-            $ex_product_condition_2 = "  AND (pw_posts.ID NOT IN ($product_ids) AND pw_products.ID NOT IN ($product_ids)) ";
+        if (!empty($exclude_product)) {
+            $placeholders = implode(',', array_fill(0, count($exclude_product), '%d'));
+            $where_clauses_1[] = "pw_posts.ID NOT IN ($placeholders)";
+            $where_clauses_2[] = "(pw_posts.ID NOT IN ($placeholders) AND pw_products.ID NOT IN ($placeholders))";
+            $params = array_merge($params, $exclude_product);
+            $params2 = array_merge($params2, $exclude_product, $exclude_product);
         }
 
-        if ($include_taxonomy && !is_array($include_product)) {
+        if (!empty($include_taxonomy)) {
             $terms_id = [];
             foreach ($include_taxonomy as $inc_tax) {
                 $tax = explode("__", $inc_tax);
-                $terms_id[] = $tax[1];
+                if (isset($tax[1])) {
+                    $terms_id[] = intval($tax[1]);
+                }
             }
-            $terms_id = implode(",", $terms_id);
-
-            $in_tax_condition_1 = " AND ( pw_posts.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-            $in_tax_condition_2 = " AND ( pw_posts.post_parent IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) OR pw_products.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
+            if ($terms_id) {
+                $placeholders = implode(',', array_fill(0, count($terms_id), '%d'));
+                $where_clauses_1[] = "pw_posts.ID IN (SELECT object_id FROM {$wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($placeholders))";
+                $where_clauses_2[] = "(pw_posts.post_parent IN (SELECT object_id FROM {$wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($placeholders)) OR pw_products.ID IN (SELECT object_id FROM {$wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($placeholders)))";
+                $params = array_merge($params, $terms_id);
+                $params2 = array_merge($params2, $terms_id, $terms_id);
+            }
         }
 
-        if ($exclude_taxonomy && !is_array($include_product)) {
-
+        if (!empty($exclude_taxonomy)) {
             $terms_id = [];
             foreach ($exclude_taxonomy as $ex_tax) {
                 $tax = explode("__", $ex_tax);
-                $terms_id[] = $tax[1];
+                if (isset($tax[1])) {
+                    $terms_id[] = intval($tax[1]);
+                }
             }
-
-            $terms_id = implode(",", $terms_id);
-
-            $ex_tax_condition_1 = " AND ( pw_posts.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-            $ex_tax_condition_2 = " AND ( pw_posts.post_parent NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) AND  pw_products.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) )) ";
+            if ($terms_id) {
+                $placeholders = implode(',', array_fill(0, count($terms_id), '%d'));
+                $where_clauses_1[] = "pw_posts.ID NOT IN (SELECT object_id FROM {$wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($placeholders))";
+                $where_clauses_2[] = "(pw_posts.post_parent NOT IN (SELECT object_id FROM {$wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($placeholders)) AND pw_products.ID NOT IN (SELECT object_id FROM {$wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($placeholders)))";
+                $params = array_merge($params, $terms_id);
+                $params2 = array_merge($params2, $terms_id, $terms_id);
+            }
         }
 
-        // $simple_variation = "SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id";
+        $sql1 = "SELECT pw_posts.post_title as product_name, pw_posts.post_date as product_date, pw_posts.post_modified as modified_date, pw_posts.ID as product_id
+            FROM {$wpdb->prefix}posts as pw_posts
+            WHERE " . implode(' AND ', $where_clauses_1) . "
+            GROUP BY product_id
+        ";
 
-        $result = $this->wpdb->get_results("SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id"); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $prepared_sql1 = !empty($params) ? $wpdb->prepare($sql1, ...$params) : $sql1; //phpcs:ignore
+        $result1 = $wpdb->get_results($prepared_sql1); //phpcs:ignore
 
-        $simple_variation_arrray = [];
-        foreach ($result as $items) {
-            $simple_variation_arrray[] = $items->product_id;
+        $simple_variation_array = [];
+        foreach ($result1 as $items) {
+            $simple_variation_array[] = $items->product_id;
         }
 
-        if (is_array($include_product)) {
-            $simple_variation_arrray = array_merge($include_product, $simple_variation_arrray);
-            $simple_variation_arrray = array_filter($simple_variation_arrray);
-            $simple_variation_arrray = array_unique($simple_variation_arrray);
-            $return_query['pw_' . $value_trans . '_cache_simple_variation_'] = $simple_variation_arrray;
-            //set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
-        } else {
-            $simple_variation_arrray = array_unique($simple_variation_arrray);
-            $return_query['pw_' . $value_trans . '_cache_simple_variation_'] = $simple_variation_arrray;
-            //set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
+        if (!empty($include_product)) {
+            $simple_variation_array = array_merge($include_product, $simple_variation_array);
+        }
+        $simple_variation_array = array_filter(array_unique($simple_variation_array));
+        $return_query['pw_' . $value_trans . '_cache_simple_variation_'] = $simple_variation_array;
+
+        $sql2 = "SELECT pw_posts.ID as id, pw_posts.post_title as variation_name, pw_posts.ID as variation_id, pw_posts.post_date as product_date, pw_posts.post_modified as modified_date,
+                pw_products.ID as product_id, pw_products.post_title as product_name, pw_posts.post_parent AS variation_parent_id
+            FROM {$wpdb->prefix}posts as pw_posts
+            LEFT JOIN {$wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent
+            LEFT JOIN {$wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id
+            LEFT JOIN {$wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id
+            LEFT JOIN {$wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id
+            WHERE " . implode(' AND ', $where_clauses_2) . "
+            GROUP BY pw_posts.ID
+            ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC
+        ";
+
+        $prepared_sql2 = !empty($params2) ? $wpdb->prepare($sql2, ...$params2) : $sql2; //phpcs:ignore
+        $result2 = $wpdb->get_results($prepared_sql2); //phpcs:ignore
+
+        $simple_childes_array = [];
+        $simple_childes_parent_array = [];
+        $temp_simple = $simple_variation_array;
+
+        foreach ($result2 as $items) {
+            $simple_childes_array[] = $items->id;
+            $simple_childes_parent_array[] = $items->variation_parent_id;
         }
 
-        //$simple_childes = "SELECT pw_posts.ID as id ,pw_posts.post_title as variation_name	,pw_posts.ID as variation_id ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_products.ID as product_id ,pw_products.post_title as product_name ,pw_posts.post_parent AS variation_parent_id FROM {$this->wpdb->prefix}posts as pw_posts LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id  WHERE term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'variable' AND pw_posts.post_type='product_variation' AND pw_posts.post_status = 'publish' AND pw_products.post_type='product' AND pw_posts.post_parent > 0 $in_tax_condition_2 $in_product_condition_2  $ex_tax_condition_2 $ex_product_condition_2  GROUP BY pw_posts.ID ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC";
-
-        $result = $this->wpdb->get_results("SELECT pw_posts.ID as id ,pw_posts.post_title as variation_name	,pw_posts.ID as variation_id ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_products.ID as product_id ,pw_products.post_title as product_name ,pw_posts.post_parent AS variation_parent_id FROM {$this->wpdb->prefix}posts as pw_posts LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id  WHERE term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'variable' AND pw_posts.post_type='product_variation' AND pw_posts.post_status = 'publish' AND pw_products.post_type='product' AND pw_posts.post_parent > 0 $in_tax_condition_2 $in_product_condition_2  $ex_tax_condition_2 $ex_product_condition_2  GROUP BY pw_posts.ID ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC"); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-        $simple_childes_arrray = [];
-        $simple_childes_final_arrray = [];
-        $simple_childes_parent_arrray = [];
-        $temp_simple = $simple_variation_arrray;
-        foreach ($result as $items) {
-            $simple_childes_arrray[] = $items->id;
-            $simple_childes_parent_arrray[] = $items->variation_parent_id;
+        if (is_array($simple_childes_parent_array)) {
+            $temp_simple = array_diff($temp_simple, $simple_childes_parent_array);
         }
 
-        if (is_array($simple_childes_parent_arrray)) {
-            $temp_simple = array_diff($temp_simple, $simple_childes_parent_arrray);
-        }
+        $simple_childes_final_array = array_unique(array_merge($temp_simple, $simple_childes_array));
+        $return_query['pw_' . $value_trans . '_cache_simple_childes_'] = $simple_childes_final_array;
 
-        $simple_childes_final_arrray = array_merge($temp_simple, $simple_childes_arrray);
-        $simple_childes_final_arrray = array_unique($simple_childes_final_arrray);
-        $return_query['pw_' . $value_trans . '_cache_simple_childes_'] = $simple_childes_final_arrray;
-        //set_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id, $simple_childes_final_arrray);
         return $return_query;
     }
 
@@ -375,113 +491,126 @@ class Rule
         if (!is_array($rules['items']) || count($rules['items']) <= 0) {
             return false;
         }
+
         $value_trans = 'gifts';
 
         foreach ($rules['items'] as $rule) {
-            $id = $rule['uid'];
+            $id = sanitize_key($rule['uid']);
             delete_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id);
             delete_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id);
 
-            if ($rule['status'] == 'disable') {
+            if ($rule['status'] === 'disable') {
                 continue;
             }
+
             $args = $rule;
 
-            $include_product = isset($args['include_products']) ? $args['include_products'] : "";
-            $exclude_product = isset($args['exclude_products']) ? $args['exclude_products'] : "";
-            $include_taxonomy = isset($args['include_taxonomy']) ? $args['include_taxonomy'] : "";
-            $exclude_taxonomy = isset($args['exclude_taxonomy']) ? $args['exclude_taxonomy'] : "";
+            $include_product = isset($args['include_products']) ? array_map('absint', (array)$args['include_products']) : [];
+            $exclude_product = isset($args['exclude_products']) ? array_map('absint', (array)$args['exclude_products']) : [];
 
-            $ex_product_condition_1 = "";
-            $ex_product_condition_2 = "";
+            $include_taxonomy = isset($args['include_taxonomy']) ? $args['include_taxonomy'] : [];
+            $exclude_taxonomy = isset($args['exclude_taxonomy']) ? $args['exclude_taxonomy'] : [];
 
-            $in_product_condition_1 = '';
-            $in_product_condition_2 = '';
+            $in_product_condition_1 = $include_product ? " AND pw_posts.ID IN (" . implode(',', $include_product) . ")" : '';
+            $in_product_condition_2 = $include_product ? " AND (pw_posts.ID IN (" . implode(',', $include_product) . ") OR pw_products.ID IN (" . implode(',', $include_product) . "))" : '';
 
-            $in_tax_condition_1 = '';
-            $in_tax_condition_2 = '';
+            $ex_product_condition_1 = $exclude_product ? " AND pw_posts.ID NOT IN (" . implode(',', $exclude_product) . ")" : '';
+            $ex_product_condition_2 = $exclude_product ? " AND (pw_posts.ID NOT IN (" . implode(',', $exclude_product) . ") AND pw_products.ID NOT IN (" . implode(',', $exclude_product) . "))" : '';
 
-            $ex_tax_condition_1 = "";
-            $ex_tax_condition_2 = "";
+            $in_tax_condition_1 = $in_tax_condition_2 = '';
+            $ex_tax_condition_1 = $ex_tax_condition_2 = '';
 
-            $product_ids = '';
-            if (is_array($include_product)) {
-                $product_ids = implode(",", $include_product);
+            if (!empty($include_taxonomy)) {
+                $terms_id = array_map(function ($tax) {
+                    $parts = explode("__", sanitize_text_field($tax));
+                    return isset($parts[1]) ? absint($parts[1]) : null;
+                }, $include_taxonomy);
+                $terms_id = array_filter($terms_id);
 
-                $in_product_condition_1 = " AND pw_posts.ID IN ($product_ids) ";
-                $in_product_condition_2 = "  AND (pw_posts.ID IN ($product_ids) OR pw_products.ID IN ($product_ids)) ";
-            }
-
-            if ($exclude_product) {
-                $product_ids = implode(",", $exclude_product);
-
-                $ex_product_condition_1 = " AND pw_posts.ID NOT IN ($product_ids) ";
-                $ex_product_condition_2 = "  AND (pw_posts.ID NOT IN ($product_ids) AND pw_products.ID NOT IN ($product_ids)) ";
-            }
-
-            if ($include_taxonomy && !is_array($include_product)) {
-                $terms_id = [];
-                foreach ($include_taxonomy as $inc_tax) {
-                    $tax = explode("__", $inc_tax);
-                    $terms_id[] = $tax[1];
+                if (!empty($terms_id)) {
+                    $terms_str = implode(',', $terms_id);
+                    $in_tax_condition_1 = " AND (pw_posts.ID IN (SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_str)))";
+                    $in_tax_condition_2 = " AND (pw_posts.post_parent IN (SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_str)) OR pw_products.ID IN (SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_str)))";
                 }
-                $terms_id = implode(",", $terms_id);
-
-                $in_tax_condition_1 = " AND ( pw_posts.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-                $in_tax_condition_2 = " AND ( pw_posts.post_parent IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) OR pw_products.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
             }
 
-            if ($exclude_taxonomy && !is_array($include_product)) {
+            if (!empty($exclude_taxonomy)) {
+                $terms_id = array_map(function ($tax) {
+                    $parts = explode("__", sanitize_text_field($tax));
+                    return isset($parts[1]) ? absint($parts[1]) : null;
+                }, $exclude_taxonomy);
+                $terms_id = array_filter($terms_id);
 
-                $terms_id = [];
-                foreach ($exclude_taxonomy as $ex_tax) {
-                    $tax = explode("__", $ex_tax);
-                    $terms_id[] = $tax[1];
+                if (!empty($terms_id)) {
+                    $terms_str = implode(',', $terms_id);
+                    $ex_tax_condition_1 = " AND (pw_posts.ID NOT IN (SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_str)))";
+                    $ex_tax_condition_2 = " AND (pw_posts.post_parent NOT IN (SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_str)) AND pw_products.ID NOT IN (SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_str)))";
                 }
-
-                $terms_id = implode(",", $terms_id);
-
-                $ex_tax_condition_1 = " AND ( pw_posts.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-                $ex_tax_condition_2 = " AND ( pw_posts.post_parent NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) AND  pw_products.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) )) ";
             }
 
-            //$simple_variation = "SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id";
-
-            $result = $this->wpdb->get_results("SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id"); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            // Fetch simple products
+            $query = "SELECT pw_posts.post_title as product_name, pw_posts.post_date as product_date,
+                    pw_posts.post_modified as modified_date, pw_posts.ID as product_id
+                FROM {$this->wpdb->prefix}posts as pw_posts
+                WHERE pw_posts.post_type = %s
+                AND pw_posts.post_status = %s
+                {$in_tax_condition_1} {$in_product_condition_1} {$ex_tax_condition_1} {$ex_product_condition_1}
+                GROUP BY product_id
+            ";
+            $result = $this->wpdb->get_results($this->wpdb->prepare($query, 'product', 'publish')); //phpcs:ignore
 
             $simple_variation_arrray = [];
             foreach ($result as $items) {
-                $simple_variation_arrray[] = $items->product_id;
+                $simple_variation_arrray[] = (int)$items->product_id;
             }
 
-            if (is_array($include_product)) {
+            if (!empty($include_product)) {
                 $simple_variation_arrray = array_merge($include_product, $simple_variation_arrray);
                 $simple_variation_arrray = array_filter($simple_variation_arrray);
                 $simple_variation_arrray = array_unique($simple_variation_arrray);
-                set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
             } else {
                 $simple_variation_arrray = array_unique($simple_variation_arrray);
-                set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
             }
 
-            //$simple_childes = "SELECT pw_posts.ID as id ,pw_posts.post_title as variation_name	,pw_posts.ID as variation_id ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_products.ID as product_id ,pw_products.post_title as product_name ,pw_posts.post_parent AS variation_parent_id FROM {$this->wpdb->prefix}posts as pw_posts LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id  WHERE term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'variable' AND pw_posts.post_type='product_variation' AND pw_posts.post_status = 'publish' AND pw_products.post_type='product' AND pw_posts.post_parent > 0 $in_tax_condition_2 $in_product_condition_2  $ex_tax_condition_2 $ex_product_condition_2  GROUP BY pw_posts.ID ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC";
+            set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
 
-            $result = $this->wpdb->get_results("SELECT pw_posts.ID as id ,pw_posts.post_title as variation_name	,pw_posts.ID as variation_id ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_products.ID as product_id ,pw_products.post_title as product_name ,pw_posts.post_parent AS variation_parent_id FROM {$this->wpdb->prefix}posts as pw_posts LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id  WHERE term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'variable' AND pw_posts.post_type='product_variation' AND pw_posts.post_status = 'publish' AND pw_products.post_type='product' AND pw_posts.post_parent > 0 $in_tax_condition_2 $in_product_condition_2  $ex_tax_condition_2 $ex_product_condition_2  GROUP BY pw_posts.ID ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC"); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $query = "SELECT pw_posts.ID as id, pw_posts.post_title as variation_name, pw_posts.ID as variation_id,
+                    pw_posts.post_date as product_date, pw_posts.post_modified as modified_date,
+                    pw_products.ID as product_id, pw_products.post_title as product_name,
+                    pw_posts.post_parent AS variation_parent_id
+                FROM {$this->wpdb->prefix}posts as pw_posts
+                LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent
+                LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id
+                LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id
+                LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id
+                WHERE term_taxonomy.taxonomy = %s
+                AND terms.slug = %s
+                AND pw_posts.post_type = %s
+                AND pw_posts.post_status = %s
+                AND pw_products.post_type = %s
+                AND pw_posts.post_parent > 0
+                {$in_tax_condition_2} {$in_product_condition_2} {$ex_tax_condition_2} {$ex_product_condition_2}
+                GROUP BY pw_posts.ID
+                ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC
+            ";
+            $result = $this->wpdb->get_results($this->wpdb->prepare($query, 'product_type', 'variable', 'product_variation', 'publish', 'product')); //phpcs:ignore
+
             $simple_childes_arrray = [];
-            $simple_childes_final_arrray = [];
             $simple_childes_parent_arrray = [];
-            $temp_simple = $simple_variation_arrray;
+
             foreach ($result as $items) {
-                $simple_childes_arrray[] = $items->id;
-                $simple_childes_parent_arrray[] = $items->variation_parent_id;
+                $simple_childes_arrray[] = (int)$items->id;
+                $simple_childes_parent_arrray[] = (int)$items->variation_parent_id;
             }
 
-            if (is_array($simple_childes_parent_arrray)) {
+            $temp_simple = $simple_variation_arrray;
+
+            if (!empty($simple_childes_parent_arrray)) {
                 $temp_simple = array_diff($temp_simple, $simple_childes_parent_arrray);
             }
 
-            $simple_childes_final_arrray = array_merge($temp_simple, $simple_childes_arrray);
-            $simple_childes_final_arrray = array_unique($simple_childes_final_arrray);
+            $simple_childes_final_arrray = array_unique(array_merge($temp_simple, $simple_childes_arrray));
+
             set_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id, $simple_childes_final_arrray);
         }
     }

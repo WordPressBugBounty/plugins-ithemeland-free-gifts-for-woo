@@ -4,7 +4,7 @@ Donate link: https://ithemelandco.com/
 Tags: woocommerce gift, boost sale, free gift, buy one get one , Gift Product Woocommerce
 Requires at least: 4.6.1
 Tested up to: 6.8
-Stable tag: 2.7.5
+Stable tag: 2.8.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -261,6 +261,14 @@ You can easily translate the plugin into the desired languages by using translat
 12. free gifts for woocommerce datatable layout
 
 == Changelog ==
+= 2.8.0 =
+* Fixed Important Security issues
+
+= 2.7.6 =
+Tested up to: WP 6.8.x
+Tested up to: WC 9.8.x
+
+
 = 2.7.5 =
 Tested up to: WP 6.8.x
 Tested up to: WC 9.8.x
@@ -487,3 +495,13 @@ compatible with WooCommerce 5.5.2
 == Upgrade Notice ==
 = 2.2.0 =
 This version checked with last wordpress(6.3.2) and woocommerce(8.0.2) version.
+
+
+== External Services ==
+This plugin uses the following external services:
+**iThemeland Usage Tracking Service**
+	- **Purpose:** To improve plugin quality, compatibility, and user experience by collecting anonymous, non-personal data about your site configuration . https://ithemelandco.com/usage-tracking/
+	- **When Data is Sent:** Only when the user explicitly enables this feature, and once per week thereafter.
+	- **Data Handling:** All data is anonymized and contains no personally identifiable information (PII).   
+	- **Privacy Policy:** [https://ithemelandco.com/privacy-policy/](https://ithemelandco.com/privacy-policy/)
+	- **Terms of Service:** [https://ithemelandco.com/term-of-use/](https://ithemelandco.com/term-of-use/)

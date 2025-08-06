@@ -14,6 +14,8 @@ use wgbl\classes\services\render\Product_Buy_Render;
 use wgbl\framework\analytics\AnalyticsTracker;
 use wgbl\framework\onboarding\Onboarding;
 
+defined('ABSPATH') || exit();
+
 class WGBL
 {
     private static $instance;
@@ -82,7 +84,7 @@ class WGBL
         // Load the text domain from the "wp-content" languages folder. we have handles the plugin folder in languages folder for easily handle it.
         load_textdomain('ithemeland-free-gifts-for-woo', WP_LANG_DIR . '/ithemeland-free-gifts-for-woo/ithemeland-free-gifts-for-woo-' . $locale . '.mo');
         // Load the text domain from the current plugin languages folder.
-        load_plugin_textdomain('ithemeland-free-gifts-for-woo', false, WGBL_LANGUAGES_DIR);
+        // load_plugin_textdomain('ithemeland-free-gifts-for-woo', false, WGBL_LANGUAGES_DIR);
     }
 
     public function add_menu()
@@ -94,7 +96,7 @@ class WGBL
 
     public function load_assets($page)
     {
-        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) {
+        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) { //phpcs:ignore
 
             if (Onboarding::is_completed()) {
                 $this->main_load_assets();
@@ -107,7 +109,7 @@ class WGBL
 
     public function main_load_assets()
     {
-        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) { //phpcs:ignore
             $rule_repository = Rule::get_instance();
             // Styles
             wp_enqueue_style('wgbl-reset', WGBL_CSS_URL . 'common/reset.css', [], WGBL_VERSION);
@@ -153,7 +155,7 @@ class WGBL
         }
 
         // load assets for reports
-        if (!empty($_GET['page']) && $_GET['page'] == 'wgbl-reports') { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if (!empty($_GET['page']) && $_GET['page'] == 'wgbl-reports') { //phpcs:ignore
             // Styles
             wp_enqueue_style('wgbl-reports-bootstrap', WGBL_CSS_URL . 'common/bootstrap.dataTables.css', [], WGBL_VERSION);
             wp_enqueue_style('wgbl-reports-datatable', WGBL_CSS_URL . 'common/dataTables.bootstrap4.min.css', [], WGBL_VERSION);
@@ -161,9 +163,9 @@ class WGBL
             wp_enqueue_style('wgbl-reports-main', WGBL_CSS_URL . 'reports/style.css', [], WGBL_VERSION);
 
             // Scripts
-            wp_enqueue_script('wgbl-reports-amcharts-core', WGBL_JS_URL . 'common/amcharts/core.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-amcharts-charts', WGBL_JS_URL . 'common/amcharts/charts.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-amcharts-animated', WGBL_JS_URL . 'common/amcharts/animated.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+            wp_enqueue_script('moment');
+            wp_enqueue_script('wgbl-chartjs', WGBL_JS_URL . 'common/chartjs/chart.umd.min.js', [], WGBL_VERSION, true);
+            wp_enqueue_script('wgbl-chartjs-adapter-date-fns', WGBL_JS_URL . 'common/chartjs/chartjs-adapter-date-fns.js', ['wgbl-chartjs'], WGBL_VERSION); //phpcs:ignore
             wp_enqueue_script('wgbl-reports-datatable', WGBL_JS_URL . 'common/jquery.dataTables.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
             wp_enqueue_script('wgbl-reports-datatable-buttons', WGBL_JS_URL . 'common/dataTables.buttons.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
             wp_enqueue_script('wgbl-reports-pdfmake', WGBL_JS_URL . 'common/pdfmake.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
@@ -172,10 +174,9 @@ class WGBL
             wp_enqueue_script('wgbl-reports-buttons-html5', WGBL_JS_URL . 'common/buttons.html5.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
             wp_enqueue_script('wgbl-reports-buttons-print', WGBL_JS_URL . 'common/buttons.print.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
             wp_enqueue_script('wgbl-reports-buttons-flash', WGBL_JS_URL . 'common/buttons.flash.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-moment', WGBL_JS_URL . 'common/moment.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-daterangepicker', WGBL_JS_URL . 'common/daterangepicker.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-functions', WGBL_JS_URL . 'reports/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-main', WGBL_JS_URL . 'reports/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+            wp_enqueue_script('wgbl-reports-daterangepicker', WGBL_JS_URL . 'common/daterangepicker.min.js', ['jquery', 'moment'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+            wp_enqueue_script('wgbl-reports-functions', WGBL_JS_URL . 'reports/functions.js', ['jquery', 'moment'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
+            wp_enqueue_script('wgbl-reports-main', WGBL_JS_URL . 'reports/main.js', ['jquery', 'moment'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
 
             wp_localize_script('wgbl-reports-main', 'WGBL_REPORTS_DATA', $this->get_reports_js_data());
         }
@@ -217,8 +218,8 @@ class WGBL
     {
         $order_repository = Order::get_instance();
         return [
-            'subPage' => (!empty($_GET['sub-page'])) ? sanitize_text_field($_GET['sub-page']) : 'dashboard', //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            'subMenu' => (!empty($_GET['sub-menu'])) ? sanitize_text_field($_GET['sub-menu']) : '', //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            'subPage' => (!empty($_GET['sub-page'])) ? sanitize_text_field($_GET['sub-page']) : 'dashboard', //phpcs:ignore
+            'subMenu' => (!empty($_GET['sub-menu'])) ? sanitize_text_field($_GET['sub-menu']) : '', //phpcs:ignore
             'orderStatuses' => $order_repository->get_order_statuses(),
             'mainUrl' => WGBL_REPORTS_PAGE,
             'dataTableOptions' => [

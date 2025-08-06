@@ -4,6 +4,8 @@ namespace wgbl\classes\repositories;
 
 use wgbl\classes\helpers\Array_Helper;
 
+defined('ABSPATH') || exit();
+
 class User
 {
     public function get_users_by_name($name)

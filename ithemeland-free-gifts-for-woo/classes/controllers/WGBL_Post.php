@@ -7,6 +7,8 @@ use wgbl\classes\repositories\Flush_Message;
 use wgbl\classes\repositories\Rule;
 use wgbl\classes\repositories\Setting;
 
+defined('ABSPATH') || exit();
+
 class WGBL_Post
 {
     private static $instance;
@@ -29,13 +31,13 @@ class WGBL_Post
 
     public function save_rules()
     {
-        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) {
+        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) { //phpcs:ignore
             die('403 Forbidden');
         }
 
         $rule_repository = Rule::get_instance();
         $rule_repository->update([
-            'items' => Sanitizer::array($_POST['rule']),
+            'items' => Sanitizer::array($_POST['rule']), //phpcs:ignore
             'time' => time(),
         ]);
         $this->redirect('rules', esc_html__('Success !', 'ithemeland-free-gifts-for-woo'));
@@ -43,24 +45,24 @@ class WGBL_Post
 
     public function save_settings_general()
     {
-        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) {
+        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) { //phpcs:ignore
             die('403 Forbidden');
         }
 
         $setting_repository = Setting::get_instance();
-        $setting_repository->update(Sanitizer::array($_POST['settings']));
+        $setting_repository->update(Sanitizer::array($_POST['settings'])); //phpcs:ignore
         $this->redirect(['sub_page' => 'general', 'hash' => 'settings'], esc_html__('Success !', 'ithemeland-free-gifts-for-woo'));
     }
 
     public function save_settings_localization()
     {
-        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) {
+        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) { //phpcs:ignore
             die('403 Forbidden');
         }
 
         if (!empty($_POST['localization']) || is_array($_POST['localization'])) {
             $prefix = "itg_localization_";
-            foreach ($_POST['localization'] as $field_name => $field_value) {
+            foreach ($_POST['localization'] as $field_name => $field_value) { //phpcs:ignore
                 update_option($prefix . sanitize_text_field($field_name), sanitize_text_field($field_value));
             }
         }

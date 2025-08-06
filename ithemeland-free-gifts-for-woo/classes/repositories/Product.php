@@ -4,6 +4,8 @@ namespace wgbl\classes\repositories;
 
 use wgbl\classes\helpers\Array_Helper;
 
+defined('ABSPATH') || exit();
+
 class Product
 {
     private static $instance;
@@ -116,28 +118,40 @@ class Product
         return wc()->shipping()->get_shipping_classes();
     }
 
-    public function get_ids_by_custom_query($join, $where, $types_in = 'all')
+    public function get_ids_by_custom_query($join = '', $where = [], $types_in = 'all')
     {
         global $wpdb;
-        switch ($types_in) {
-            case 'all':
-                $types = "'product','product_variation','shop_coupon'";
-                break;
-            case 'product':
-                $types = "'product'";
-                break;
-            case 'shop_coupon':
-                $types = "'shop_coupon'";
-                break;
-            case 'product_variation':
-                $types = "'product_variation'";
-                break;
+
+        $allowed_types = [
+            'all' => "'product','product_variation','shop_coupon'",
+            'product' => "'product'",
+            'shop_coupon' => "'shop_coupon'",
+            'product_variation' => "'product_variation'",
+        ];
+
+        $types = $allowed_types[$types_in] ?? $allowed_types['all'];
+        $join = trim($join);
+
+        if (empty($where) || !isset($where['clause']) || !isset($where['params']) || empty($where['clause'])) {
+            return '';
         }
-        $ids = $wpdb->get_results("SELECT posts.ID, posts.post_parent FROM $wpdb->posts AS posts {$join} WHERE posts.post_type IN ($types) AND ({$where})", ARRAY_N); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared ,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.DirectQuery
-        $ids = array_unique(Array_Helper::flatten($ids, 'int'));
-        if ($key = array_search(0, $ids) !== false) {
+
+        $sql = "SELECT posts.ID, posts.post_parent
+            FROM {$wpdb->posts} AS posts
+            {$join}
+            WHERE posts.post_type IN ({$types})
+            AND ({$where['clause']})
+        ";
+
+        $prepared_sql = $wpdb->prepare($sql, ...$where['params']); //phpcs:ignore
+        $results = $wpdb->get_results($prepared_sql, ARRAY_N); //phpcs:ignore
+
+        $ids = array_unique(array_map('intval', wp_list_pluck($results, 0)));
+        $key = array_search(0, $ids);
+        if ($key !== false) {
             unset($ids[$key]);
         }
+
         return implode(',', $ids);
     }
 
@@ -295,21 +309,53 @@ class Product
 
     public function get_products_by_item_ids($order_item_ids, $limit = null)
     {
-        if (empty($this->gift_product_ids)) {
-            if (empty($order_item_ids) || !is_array($order_item_ids)) {
-                return false;
-            }
-            $order_item_ids = implode(',', array_map('intval', $order_item_ids));
-            $this->gift_product_ids = $this->wpdb->get_results("SELECT IF(itemmeta2.meta_value = 0, itemmeta.meta_value, itemmeta2.meta_value) as product_id, SUM(itemmeta3.meta_value) as product_count, products.post_title as product_name FROM {$this->wpdb->prefix}woocommerce_order_items as order_items LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta2 ON (order_items.order_item_id = itemmeta2.order_item_id) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta3 ON (order_items.order_item_id = itemmeta3.order_item_id) LEFT JOIN {$this->wpdb->posts} as products ON IF(itemmeta2.meta_value = 0, itemmeta.meta_value = products.ID,itemmeta2.meta_value = products.ID) WHERE itemmeta.order_item_id IN ({$order_item_ids}) AND itemmeta.meta_key = '_product_id' AND itemmeta2.meta_key = '_variation_id' AND itemmeta3.meta_key = '_qty' GROUP BY product_id ORDER BY product_count DESC", ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        if (!is_array($order_item_ids) || empty($order_item_ids)) {
+            return false;
         }
 
-        return is_null($limit) ? $this->gift_product_ids : array_slice($this->gift_product_ids, 0, intval($limit));
+        if (!is_null($this->gift_product_ids)) {
+            return is_null($limit)
+                ? $this->gift_product_ids
+                : array_slice($this->gift_product_ids, 0, intval($limit));
+        }
+
+        global $wpdb;
+
+        $placeholders = implode(',', array_fill(0, count($order_item_ids), '%d'));
+        $query = "SELECT 
+                IF(itemmeta2.meta_value = 0, itemmeta.meta_value, itemmeta2.meta_value) AS product_id,
+                SUM(CAST(itemmeta3.meta_value AS UNSIGNED)) AS product_count,
+                products.post_title AS product_name
+            FROM {$wpdb->prefix}woocommerce_order_items AS order_items
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS itemmeta 
+                ON order_items.order_item_id = itemmeta.order_item_id
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS itemmeta2 
+                ON order_items.order_item_id = itemmeta2.order_item_id
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta AS itemmeta3 
+                ON order_items.order_item_id = itemmeta3.order_item_id
+            LEFT JOIN {$wpdb->posts} AS products 
+                ON IF(itemmeta2.meta_value = 0, itemmeta.meta_value, itemmeta2.meta_value) = products.ID
+            WHERE itemmeta.order_item_id IN ($placeholders)
+                AND itemmeta.meta_key = '_product_id'
+                AND itemmeta2.meta_key = '_variation_id'
+                AND itemmeta3.meta_key = '_qty'
+            GROUP BY product_id
+            ORDER BY product_count DESC
+        ";
+
+        $prepared_query = $wpdb->prepare($query, ...array_map('intval', $order_item_ids)); //phpcs:ignore
+        $this->gift_product_ids = $wpdb->get_results($prepared_query, ARRAY_A); //phpcs:ignore
+
+        return is_null($limit)
+            ? $this->gift_product_ids
+            : array_slice($this->gift_product_ids, 0, intval($limit));
     }
+
 
     public function get_product_category_with_count_by_order_item_ids($item_ids, $limit = null)
     {
         if (empty($this->product_category_with_count)) {
-            $ids = (is_array($item_ids)) ? sanitize_text_field(implode(',', $item_ids)) : sanitize_text_field($item_ids);
+            $ids = (!is_array($item_ids)) ? array_map('intval', explode(',', $item_ids)) : array_map('intval', $item_ids);
             if (empty($ids)) {
                 return [];
             }
@@ -350,60 +396,161 @@ class Product
     public function get_gift_products($filters = [])
     {
         $filter_query = '';
+        $params = [];
 
         if (!empty($filters['order_item_ids']) && is_array($filters['order_item_ids'])) {
-            $order_item_ids = implode(',', array_map('intval', $filters['order_item_ids']));
-            $filter_query .= " AND itemmeta.order_item_id IN ({$order_item_ids})";
+            $placeholders = implode(',', array_fill(0, count($filters['order_item_ids']), '%d'));
+            $filter_query .= " AND itemmeta.order_item_id IN ($placeholders)";
+            $params = array_merge($params, array_map('intval', $filters['order_item_ids']));
         }
 
-        if (!empty($filters['product_ids'])) {
-            $product_ids = sanitize_text_field($filters['product_ids']);
-            $filter_query .= " AND products.ID IN ({$product_ids})";
+        if (!empty($filters['product_ids']) && is_array($filters['product_ids'])) {
+            $placeholders = implode(',', array_fill(0, count($filters['product_ids']), '%d'));
+            $filter_query .= " AND products.ID IN ($placeholders)";
+            $params = array_merge($params, array_map('intval', $filters['product_ids']));
         }
 
-        if (!empty($filters['term_ids'])) {
-            $term_ids = sanitize_text_field($filters['term_ids']);
-            $filter_query .= " AND terms.term_id IN ({$term_ids})";
+        if (!empty($filters['term_ids']) && is_array($filters['term_ids'])) {
+            $placeholders = implode(',', array_fill(0, count($filters['term_ids']), '%d'));
+            $filter_query .= " AND terms.term_id IN ($placeholders)";
+            $params = array_merge($params, array_map('intval', $filters['term_ids']));
         }
 
-        return $this->wpdb->get_results("SELECT products.ID as product_id, SUM(DISTINCT itemmeta3.meta_value) as product_count, products.post_title as product_name FROM {$this->wpdb->prefix}woocommerce_order_items as order_items LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta2 ON (order_items.order_item_id = itemmeta2.order_item_id) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta3 ON (order_items.order_item_id = itemmeta3.order_item_id) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta4 ON (order_items.order_item_id = itemmeta4.order_item_id) LEFT JOIN {$this->wpdb->posts} as products ON IF(itemmeta2.meta_value = 0, itemmeta.meta_value = products.ID,itemmeta2.meta_value = products.ID) LEFT JOIN {$this->wpdb->prefix}term_relationships as term_relation ON (products.ID = term_relation.object_id) LEFT JOIN {$this->wpdb->prefix}terms as terms ON (terms.term_id = term_relation.term_taxonomy_id) WHERE itemmeta.meta_key = '_product_id' AND itemmeta4.meta_key = '_rule_id_free_gift' AND itemmeta2.meta_key = '_variation_id' AND itemmeta3.meta_key = '_qty' {$filter_query} GROUP BY product_id ORDER BY product_count DESC", ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $sql = "SELECT 
+                products.ID AS product_id,
+                SUM(CAST(itemmeta3.meta_value AS UNSIGNED)) AS product_count,
+                products.post_title AS product_name
+            FROM {$this->wpdb->prefix}woocommerce_order_items AS order_items
+            LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta AS itemmeta 
+                ON order_items.order_item_id = itemmeta.order_item_id
+            LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta AS itemmeta2 
+                ON order_items.order_item_id = itemmeta2.order_item_id
+            LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta AS itemmeta3 
+                ON order_items.order_item_id = itemmeta3.order_item_id
+            LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta AS itemmeta4 
+                ON order_items.order_item_id = itemmeta4.order_item_id
+            LEFT JOIN {$this->wpdb->posts} AS products 
+                ON IF(itemmeta2.meta_value = 0, itemmeta.meta_value, itemmeta2.meta_value) = products.ID
+            LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relation 
+                ON products.ID = term_relation.object_id
+            LEFT JOIN {$this->wpdb->prefix}terms AS terms 
+                ON terms.term_id = term_relation.term_taxonomy_id
+            WHERE 
+                itemmeta.meta_key = '_product_id'
+                AND itemmeta4.meta_key = '_rule_id_free_gift'
+                AND itemmeta2.meta_key = '_variation_id'
+                AND itemmeta3.meta_key = '_qty'
+                AND products.post_type = 'product'
+                $filter_query
+            GROUP BY product_id
+            ORDER BY product_count DESC
+        ";
+
+        $prepared_sql = empty($params) ? $sql : $this->wpdb->prepare($sql, ...$params); //phpcs:ignore
+        return $this->wpdb->get_results($prepared_sql, ARRAY_A); //phpcs:ignore
     }
 
     public function get_gotten_gifts_by_customer($filters = [])
     {
-        $filter_query = '';
+        global $wpdb;
+
+        $filter_clauses = [];
+        $filter_params = [];
 
         if (!empty($filters['order_item_ids']) && is_array($filters['order_item_ids'])) {
-            $order_item_ids = implode(',', array_map('intval', $filters['order_item_ids']));
-            $filter_query .= " AND itemmeta.order_item_id IN ({$order_item_ids})";
+            $order_item_ids = array_map('intval', $filters['order_item_ids']);
+            if (!empty($order_item_ids)) {
+                $placeholders = implode(',', array_fill(0, count($order_item_ids), '%d'));
+                $filter_clauses[] = "itemmeta.order_item_id IN ({$placeholders})";
+                $filter_params = array_merge($filter_params, $order_item_ids);
+            }
         }
 
-        if (!empty($filters['date']) && !empty($filters['date']['from']) && !empty($filters['date']['to'])) {
+        if (!empty($filters['date']['from']) && !empty($filters['date']['to'])) {
             $from = sanitize_text_field($filters['date']['from']);
             $to = sanitize_text_field($filters['date']['to']);
-            $filter_query .= " AND orders.post_date BETWEEN '{$from}' AND '{$to}'";
+            $filter_clauses[] = "orders.post_date BETWEEN %s AND %s";
+            $filter_params[] = $from;
+            $filter_params[] = $to;
         }
 
         if (!empty($filters['product_ids'])) {
-            $product_ids = sanitize_text_field($filters['product_ids']);
-            $filter_query .= " AND products.ID IN ({$product_ids})";
+            if (is_array($filters['product_ids'])) {
+                $product_ids = array_map('intval', $filters['product_ids']);
+            } else {
+                $product_ids = array_map('intval', explode(',', $filters['product_ids']));
+            }
+            if (!empty($product_ids)) {
+                $placeholders = implode(',', array_fill(0, count($product_ids), '%d'));
+                $filter_clauses[] = "products.ID IN ({$placeholders})";
+                $filter_params = array_merge($filter_params, $product_ids);
+            }
         }
 
         if (!empty($filters['customer_ids'])) {
-            $customer_ids = sanitize_text_field($filters['customer_ids']);
-            $filter_query .= " AND users.ID IN ({$customer_ids})";
+            if (is_array($filters['customer_ids'])) {
+                $customer_ids = array_map('intval', $filters['customer_ids']);
+            } else {
+                $customer_ids = array_map('intval', explode(',', $filters['customer_ids']));
+            }
+            if (!empty($customer_ids)) {
+                $placeholders = implode(',', array_fill(0, count($customer_ids), '%d'));
+                $filter_clauses[] = "users.ID IN ({$placeholders})";
+                $filter_params = array_merge($filter_params, $customer_ids);
+            }
         }
 
         if (!empty($filters['customer_email'])) {
-            $customer_email = sanitize_text_field($filters['customer_email']);
-            $filter_query .= " AND IF(users.user_email != '', users.user_email LIKE '%{$customer_email}%', postmeta2.meta_value LIKE '%{$customer_email}%')";
+            $customer_email = '%' . $wpdb->esc_like(sanitize_text_field($filters['customer_email'])) . '%';
+            $filter_clauses[] = "(users.user_email != '' AND users.user_email LIKE %s OR postmeta2.meta_value LIKE %s)";
+            $filter_params[] = $customer_email;
+            $filter_params[] = $customer_email;
         }
 
         if (!empty($filters['rule_ids'])) {
-            $rule_ids = sanitize_text_field($filters['rule_ids']);
-            $filter_query .= " AND itemmeta.meta_value IN ({$rule_ids})";
+            if (is_array($filters['rule_ids'])) {
+                $rule_ids = array_map('intval', $filters['rule_ids']);
+            } else {
+                $rule_ids = array_map('intval', explode(',', $filters['rule_ids']));
+            }
+            if (!empty($rule_ids)) {
+                $placeholders = implode(',', array_fill(0, count($rule_ids), '%d'));
+                $filter_clauses[] = "itemmeta.meta_value IN ({$placeholders})";
+                $filter_params = array_merge($filter_params, $rule_ids);
+            }
         }
 
-        return $this->wpdb->get_results("SELECT orders.ID as order_id, orders.post_date as order_date, products.post_title as product_name, IF(users.user_email != '', users.user_email, postmeta2.meta_value) as user_email, itemmeta.order_item_id, itemmeta.meta_value as rule_id FROM {$this->wpdb->posts} as orders LEFT JOIN {$this->wpdb->prefix}postmeta as postmeta ON (postmeta.post_id = orders.ID) LEFT JOIN {$this->wpdb->prefix}postmeta as postmeta2 ON (postmeta2.post_id = orders.ID) LEFT JOIN {$this->wpdb->users} as users ON (users.ID = postmeta.meta_value) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta2 ON (order_items.order_item_id = itemmeta2.order_item_id) LEFT JOIN {$this->wpdb->prefix}woocommerce_order_itemmeta as itemmeta3 ON (order_items.order_item_id = itemmeta3.order_item_id) LEFT JOIN {$this->wpdb->posts} as products ON IF(itemmeta2.meta_value = 0, itemmeta3.meta_value = products.ID,itemmeta2.meta_value = products.ID) WHERE itemmeta.meta_key = '_rule_id_free_gift' AND postmeta.meta_key = '_customer_user' AND itemmeta3.meta_key = '_product_id' AND postmeta2.meta_key = '_billing_email' AND itemmeta2.meta_key = '_variation_id' {$filter_query}", ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $filter_query = '';
+        if (!empty($filter_clauses)) {
+            $filter_query = ' AND ' . implode(' AND ', $filter_clauses);
+        }
+
+        $sql = "SELECT
+                orders.ID as order_id,
+                orders.post_date as order_date,
+                products.post_title as product_name,
+                IF(users.user_email != '', users.user_email, postmeta2.meta_value) as user_email,
+                itemmeta.order_item_id,
+                itemmeta.meta_value as rule_id
+            FROM {$wpdb->posts} as orders
+            LEFT JOIN {$wpdb->prefix}postmeta as postmeta ON (postmeta.post_id = orders.ID)
+            LEFT JOIN {$wpdb->prefix}postmeta as postmeta2 ON (postmeta2.post_id = orders.ID)
+            LEFT JOIN {$wpdb->users} as users ON (users.ID = postmeta.meta_value)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_items as order_items ON (order_items.order_id = orders.ID)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as itemmeta ON (order_items.order_item_id = itemmeta.order_item_id)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as itemmeta2 ON (order_items.order_item_id = itemmeta2.order_item_id)
+            LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as itemmeta3 ON (order_items.order_item_id = itemmeta3.order_item_id)
+            LEFT JOIN {$wpdb->posts} as products ON IF(itemmeta2.meta_value = 0, itemmeta3.meta_value = products.ID,itemmeta2.meta_value = products.ID)
+            WHERE
+                itemmeta.meta_key = '_rule_id_free_gift'
+                AND postmeta.meta_key = '_customer_user'
+                AND itemmeta3.meta_key = '_product_id'
+                AND postmeta2.meta_key = '_billing_email'
+                AND itemmeta2.meta_key = '_variation_id'
+                {$filter_query}
+        ";
+
+        $prepared_sql = $wpdb->prepare($sql, ...$filter_params); //phpcs:ignore
+        return $wpdb->get_results($prepared_sql, ARRAY_A); //phpcs:ignore
     }
 }

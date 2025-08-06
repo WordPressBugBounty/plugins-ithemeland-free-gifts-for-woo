@@ -1,6 +1,7 @@
 <?php
 
 namespace wgbl\classes\repositories;
+defined('ABSPATH') || exit();
 
 class Flush_Message
 {

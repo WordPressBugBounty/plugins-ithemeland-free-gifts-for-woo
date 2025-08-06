@@ -2,6 +2,8 @@
 
 namespace wgbl\classes\helpers;
 
+defined('ABSPATH') || exit();
+
 class Date_Helper
 {
     public static function get_nice_date_format($date_timestamp)

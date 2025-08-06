@@ -4,6 +4,8 @@
 namespace wgbl\classes\helpers;
 
 
+defined('ABSPATH') || exit();
+
 class Array_Helper
 {
 

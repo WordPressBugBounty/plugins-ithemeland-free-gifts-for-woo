@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
+
+<?php
 //wp_enqueue_style( 'it-gift-datatables-style' );
 //wp_enqueue_style( 'it-gift-popup-style' );
 //wp_enqueue_script( 'it-gift-datatables-js' );

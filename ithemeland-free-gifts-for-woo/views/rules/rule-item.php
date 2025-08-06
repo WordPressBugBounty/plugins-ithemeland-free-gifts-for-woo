@@ -259,7 +259,7 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
                                             if (!empty($shipping_methods_options)) :
                                                 foreach ($shipping_methods_options as $zone_id => $zone) :
                                             ?>
-                                                    <optgroup label="<?php echo esc_attr($zone['title'], 'ithemeland-free-gifts-for-woo'); ?>">
+                                                    <optgroup label="<?php echo esc_attr($zone['title']); ?>">
                                                         <?php foreach ($zone['options'] as $instance_id => $method) : ?>
                                                             <option value="<?php echo esc_attr($instance_id); ?>" <?php echo !empty($rule_item['quantity']['free_shipping_methods']) && in_array($instance_id, $rule_item['quantity']['free_shipping_methods']) ? 'selected' : ''; ?>><?php echo esc_html($method['title']); ?></option>
                                                         <?php endforeach; ?>

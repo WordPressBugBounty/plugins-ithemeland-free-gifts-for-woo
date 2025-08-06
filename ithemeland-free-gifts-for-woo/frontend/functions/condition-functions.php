@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
+
+<?php
 function get_wc_product_attribute_ids( $product_id, $selected = array() ) {
 	$attribute_ids = array();
 
@@ -329,7 +333,7 @@ function is_internal_meta( $object, $key, $suppress_warning = false ) {
 
 						// Maybe add warning
 						if ( ! $suppress_warning ) {
-							error_log( 'methods must not be used to interact with WooCommerce internal meta (used key "' . $key . '").' );
+							// error_log( 'methods must not be used to interact with WooCommerce internal meta (used key "' . $key . '").' );
 						}
 
 						return true;

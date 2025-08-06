@@ -7,6 +7,8 @@ use wgbl\classes\repositories\Rule;
 use wgbl\classes\repositories\Setting;
 use wgbl\framework\onboarding\Onboarding;
 
+defined('ABSPATH') || exit();
+
 class Rules_Controller
 {
     private $page_title;
@@ -58,7 +60,7 @@ class Rules_Controller
     private function get_setting_view()
     {
         $setting_pages = $this->get_setting_pages();
-        $active_page = (!empty($_GET['sub-page'])) ? sanitize_text_field($_GET['sub-page']) : 'general'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $active_page = (!empty($_GET['sub-page'])) ? sanitize_text_field($_GET['sub-page']) : 'general'; //phpcs:ignore
         return (!empty($setting_pages[$active_page])) ? $setting_pages[$active_page] : '';
     }
 

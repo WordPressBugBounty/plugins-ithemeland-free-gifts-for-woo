@@ -2,6 +2,8 @@
 
 namespace wgbl\classes\repositories;
 
+defined('ABSPATH') || exit();
+
 class Setting
 {
     private static $instance;

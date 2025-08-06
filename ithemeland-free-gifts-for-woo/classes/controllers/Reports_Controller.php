@@ -7,6 +7,8 @@ use wgbl\classes\repositories\Rule;
 use wgbl\classes\repositories\Setting;
 use wgbl\framework\onboarding\Onboarding;
 
+defined('ABSPATH') || exit();
+
 class Reports_Controller
 {
     private $rule_repository;
@@ -31,7 +33,7 @@ class Reports_Controller
         if (!Onboarding::is_completed()) {
             return $this->activation_page();
         }
-        $method = (!empty($_GET['sub-page']) && !empty($methods[$_GET['sub-page']])) ? $methods[$_GET['sub-page']] : 'dashboard'; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $method = (!empty($_GET['sub-page']) && !empty($methods[$_GET['sub-page']])) ? $methods[$_GET['sub-page']] : 'dashboard'; //phpcs:ignore
         // if (!method_exists($this, $method)) {
         // }
         $this->{$method}();
@@ -73,7 +75,7 @@ class Reports_Controller
     private function customers()
     {
         $methods = $this->get_customer_methods();
-        $method = (empty($_GET['sub-menu']) || !isset($methods[$_GET['sub-menu']]) || !method_exists($this, $methods[$_GET['sub-menu']])) ? 'usage_customer' : $methods[$_GET['sub-menu']]; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $method = (empty($_GET['sub-menu']) || !isset($methods[$_GET['sub-menu']]) || !method_exists($this, $methods[$_GET['sub-menu']])) ? 'usage_customer' : $methods[$_GET['sub-menu']]; //phpcs:ignore
         $this->{$method}();
     }
 
@@ -105,7 +107,7 @@ class Reports_Controller
     private function products()
     {
         $methods = $this->get_product_methods();
-        $method = (empty($_GET['sub-menu']) || !isset($methods[$_GET['sub-menu']]) || !method_exists($this, $methods[$_GET['sub-menu']])) ? 'all_products' : $methods[$_GET['sub-menu']]; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $method = (empty($_GET['sub-menu']) || !isset($methods[$_GET['sub-menu']]) || !method_exists($this, $methods[$_GET['sub-menu']])) ? 'all_products' : $methods[$_GET['sub-menu']]; //phpcs:ignore
         $this->{$method}();
     }
 

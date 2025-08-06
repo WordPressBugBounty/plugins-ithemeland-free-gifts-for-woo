@@ -1,3 +1,6 @@
+<?php
+if (! defined('ABSPATH')) exit; // Exit if accessed directly
+?>
 <?php include WGBL_VIEWS_DIR . "layout/reports_header.php"; ?>
 <div class="wgbl-wrap">
     <div class="wgbl-tab-middle-content wgbl-skeleton">
@@ -47,7 +50,7 @@
                         <button type="button" class="chart2-filter-item active" value="product"><?php esc_html_e('Product', 'ithemeland-free-gifts-for-woo'); ?></button>
                         <button type="button" class="chart2-filter-item" value="category"><?php esc_html_e('Category', 'ithemeland-free-gifts-for-woo'); ?></button>
                     </div>
-                    <div id="amchart2" class="amchart"></div>
+                    <canvas id="wgbl-report-dashboard-chart2"></canvas>
                 </div>
             </div>
             <div class="wgbl-col-8">
@@ -59,7 +62,7 @@
                         <button type="button" class="chart1-filter-item active" value="month"><?php esc_html_e('Month', 'ithemeland-free-gifts-for-woo'); ?></button>
                         <button type="button" class="chart1-filter-item" value="year"><?php esc_html_e('Year', 'ithemeland-free-gifts-for-woo'); ?></button>
                     </div>
-                    <div id="amchart1" class="amchart"></div>
+                    <canvas id="wgbl-report-dashboard-chart1"></canvas>
                 </div>
             </div>
         </div>

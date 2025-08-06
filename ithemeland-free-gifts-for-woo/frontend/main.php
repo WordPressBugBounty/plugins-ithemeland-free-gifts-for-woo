@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 define('plugin_dir_url_wc_advanced_gift', plugin_dir_url(__FILE__));
 define('plugin_dir_path_wc_adv_gift', plugin_dir_path(__FILE__));
 

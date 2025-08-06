@@ -2,6 +2,8 @@
 
 namespace wgbl\classes\helpers;
 
+defined('ABSPATH') || exit();
+
 class Security_Helper
 {
     public static function allowed_html_tags()

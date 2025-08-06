@@ -9,6 +9,8 @@ use wgbl\classes\repositories\Order;
 use wgbl\classes\repositories\Product;
 use wgbl\classes\repositories\Rule;
 
+defined('ABSPATH') || exit();
+
 class Dashboard_Handler implements Handler_Interface
 {
     private static $instance;
@@ -18,6 +20,7 @@ class Dashboard_Handler implements Handler_Interface
     private $order_repository;
     private $orders_used_gift;
     private $data;
+    private $rule_ids;
     private $all_rules;
     private $rules_name;
     private $rules_count;
@@ -76,7 +79,7 @@ class Dashboard_Handler implements Handler_Interface
             $this->rules_count = array_count_values($this->rule_ids);
         }
 
-        return [
+        $report = [
             'total_gift_count' => $this->get_total_gift_count(),
             'total_customers' => $this->get_total_customers(),
             'number_of_used_rule' => $this->get_number_of_used_rule(),
@@ -93,6 +96,8 @@ class Dashboard_Handler implements Handler_Interface
             'recent_customers_get_gift' => $this->get_recent_customers_get_gift(),
             'used_gifts' => $this->get_used_gifts(),
         ];
+
+        return $report;
     }
 
     private function sanitize_dates()
@@ -114,7 +119,7 @@ class Dashboard_Handler implements Handler_Interface
 
     private function get_number_of_used_rule()
     {
-        return !empty($this->rule_ids && is_array($this->rule_ids)) ? count(array_unique($this->rule_ids)) : 0;
+        return !empty($this->rule_ids) && is_array($this->rule_ids) ? count(array_unique($this->rule_ids)) : 0;
     }
 
     private function get_number_of_orders()
@@ -142,10 +147,8 @@ class Dashboard_Handler implements Handler_Interface
         if (!empty($top_products) && is_array($top_products)) {
             foreach ($top_products as $product) {
                 if (!empty($product['product_count'])) {
-                    $output['product'][] = [
-                        'name' => (isset($product['product_name'])) ? sanitize_text_field($product['product_name']) : '',
-                        'count' => sanitize_text_field($product['product_count']),
-                    ];
+                    $output['product']['labels'][] = (isset($product['product_name'])) ? sanitize_text_field($product['product_name']) : '';
+                    $output['product']['values'][] = sanitize_text_field($product['product_count']);
                 }
             }
         }
@@ -155,10 +158,8 @@ class Dashboard_Handler implements Handler_Interface
         if (!empty($categories)) {
             foreach ($categories as $category) {
                 if (!empty($category['object']) && !empty($category['count']) && $category['object'] instanceof \WP_Term) {
-                    $output['category'][] = [
-                        'name' => (mb_strlen($category['object']->name) > 13) ? mb_substr($category['object']->name, 0, 12) . ' ...' : sanitize_text_field($category['object']->name),
-                        'count' => intval($category['count']),
-                    ];
+                    $output['category']['labels'][] = (mb_strlen($category['object']->name) > 13) ? mb_substr($category['object']->name, 0, 12) . ' ...' : sanitize_text_field($category['object']->name);
+                    $output['category']['values'][] = intval($category['count']);
                 }
             }
         }

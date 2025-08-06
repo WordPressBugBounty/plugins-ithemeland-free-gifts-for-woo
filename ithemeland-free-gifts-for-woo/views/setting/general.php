@@ -1,3 +1,6 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
 <div class="wgbl-wrap">
     <div class="wgbl-tab-middle-content">
         <?php

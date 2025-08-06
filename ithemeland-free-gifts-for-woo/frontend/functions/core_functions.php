@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+?>
+
+<?php
 function itg_check_quantity_gift_in_session()
 {
     $count_gift         = 0;

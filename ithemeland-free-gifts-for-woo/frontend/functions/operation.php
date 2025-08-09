@@ -1,8 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-?>
 
-<?php
+
 function check_basic_operations( $option_key, $value, $condition_value ) {
 
 	// Check if value is set

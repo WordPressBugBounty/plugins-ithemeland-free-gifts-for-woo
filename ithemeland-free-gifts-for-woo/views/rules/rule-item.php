@@ -1,7 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
 ?>
-
 <?php
 $rule_id = (isset($rule_id)) ? $rule_id : 0;
 $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : 'simple';

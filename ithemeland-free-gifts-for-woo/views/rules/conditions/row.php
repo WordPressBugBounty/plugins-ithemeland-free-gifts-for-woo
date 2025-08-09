@@ -1,8 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
-?>
 
-<?php
 
 if (!empty($condition_item['type'])) :
 ?>

@@ -1,7 +1,6 @@
 <?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
 ?>
-
 <?php if (isset($rule_id)) : ?>
     <div class="wgbl-rule-quantities-bulk-quantity-repeatable-item">
         <div class="wgbl-col-1-5" style="padding: 0; margin: 2px 0 0 0;">

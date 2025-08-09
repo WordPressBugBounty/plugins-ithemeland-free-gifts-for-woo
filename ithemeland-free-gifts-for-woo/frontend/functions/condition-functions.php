@@ -1,8 +1,7 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-?>
 
-<?php
+
 function get_wc_product_attribute_ids( $product_id, $selected = array() ) {
 	$attribute_ids = array();
 

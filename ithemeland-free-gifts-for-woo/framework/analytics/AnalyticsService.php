@@ -1,6 +1,6 @@
 <?php
 
-namespace wgbl\framework\analytics;
+namespace wgb\framework\analytics;
 
 defined('ABSPATH') || exit();
 

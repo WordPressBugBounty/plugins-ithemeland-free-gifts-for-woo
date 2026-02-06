@@ -1,6 +1,6 @@
 <?php
 
-namespace wgbl\framework\analytics;
+namespace wgb\framework\analytics;
 
 defined('ABSPATH') || exit();
 
@@ -24,9 +24,9 @@ class AnalyticsStats
     private function get_default_stats()
     {
         return [
-            'plugin' => 'wgbl',
+            'plugin' => 'wgb',
             'type' => 'lite',
-            'site_id' => md5(get_site_url() . 'wgbl'),
+            'site_id' => md5(get_site_url() . 'wgb'),
             'plugin_version' => WGBL_VERSION,
             'analytics_items' => [],
             'domain' => get_site_url(),
@@ -62,7 +62,7 @@ class AnalyticsStats
             'product_count' => $this->get_product_count(),
             'settings' => $this->get_plugin_settings(),
             'server_info' => [
-                'server_software' => isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) : '',
+                'server_software' => sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) ?? '', //phpcs:ignore
                 'php_memory_limit' => ini_get('memory_limit')
             ]
         ];
@@ -150,7 +150,7 @@ class AnalyticsStats
     {
 
         return [
-            'some_setting' => get_option('wgbl_some_setting', 'default')
+            'some_setting' => get_option('wgb_some_setting', 'default')
         ];
     }
 }

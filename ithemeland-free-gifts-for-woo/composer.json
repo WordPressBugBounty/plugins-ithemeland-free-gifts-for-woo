@@ -1,5 +1,5 @@
 {
-    "name": "ithemeland/ithemeland-free-gifts-for-woocommerce-lite",
+    "name": "ithemeland/ithemeland-free-gifts-for-woo",
     "authors": [
         {
             "name": "iThemeland",
@@ -7,11 +7,15 @@
         }
     ],
     "require": {},
+    "version": "1.0.0",
     "autoload": {
         "psr-4": {
-            "wgbl\\classes\\": "classes/",
-            "wgbl\\framework\\": "framework/"
+            "wgb\\classes\\": "classes/",
+            "wgb\\blocks\\": "blocks/",
+            "wgb\\framework\\": "framework/",
+            "wgb\\frontend\\": "frontend/"
+            
         }
     },
-    "description": "iThemeland Free Gift Lite"
+    "description": "iThemeland Free Gifts For Woo Lite"
 }

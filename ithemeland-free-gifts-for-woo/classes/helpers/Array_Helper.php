@@ -1,10 +1,8 @@
 <?php
 
+namespace wgb\classes\helpers;
 
-namespace wgbl\classes\helpers;
-
-
-defined('ABSPATH') || exit();
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
 class Array_Helper
 {

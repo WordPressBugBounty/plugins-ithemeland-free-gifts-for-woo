@@ -1,6 +1,8 @@
 <?php
 
-namespace wgbl\classes\services\render;
+namespace wgb\classes\services\render;
+
+use wgb\classes\repositories\Product;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
@@ -81,21 +83,22 @@ class Product_Buy_Render
 
     private function product_render()
     {
-        $html = '<div class="wgbl-w30p">
-            <div class="wgbl-form-group">
-            <select class="wgbl-rule-product-buy-method-option" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
+        $html = '<div class="wgb-w30p">
+            <div class="wgb-form-group">
+            <select class="wgb-rule-product-buy-method-option" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
             <option value="in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
             <option value="not_in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
             </select>
             </div>
             </div>
-            <div class="wgbl-w70p">
-            <div class="wgbl-form-group">
-            <select class="wgbl-select2-products wgbl-select2-option-values" data-option-name="products" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][products][]" data-type="select2" multiple required ' . $this->field_status . '>';
+            <div class="wgb-w70p">
+            <div class="wgb-form-group">
+            <select class="wgb-select2-products wgb-select2-option-values" data-option-name="products" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][products][]" data-type="select2" multiple required ' . $this->field_status . '>';
         if (!empty($this->product_buy_item['products']) && is_array($this->product_buy_item['products'])) {
             foreach ($this->product_buy_item['products'] as $product_id) {
-                if (!empty($this->option_values['products'][$product_id])) {
-                    $html .= '<option value="' . sanitize_text_field($product_id) . '" selected>' . sanitize_text_field($this->option_values['products'][$product_id]) . '</option>';
+                $product_title = Product::get_product_label_for_rule_fields(intval($product_id));
+                if (!empty($product_title)) {
+                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($product_title) . '</option>';
                 }
             }
         }
@@ -108,21 +111,22 @@ class Product_Buy_Render
 
     private function product_variation_render()
     {
-        $html = '<div class="wgbl-w30p">
-            <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+            <div class="wgb-form-group">
             <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
             <option value="in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
             <option value="not_in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
             </select>
             </div>
             </div>
-            <div class="wgbl-w70p">
-            <div class="wgbl-form-group">
-            <select class="wgbl-select2-variations wgbl-select2-option-values" data-option-name="variations" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][variations][]" data-type="select2" multiple required ' . $this->field_status . '>';
+            <div class="wgb-w70p">
+            <div class="wgb-form-group">
+            <select class="wgb-select2-variations wgb-select2-option-values" data-option-name="variations" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][variations][]" data-type="select2" multiple required ' . $this->field_status . '>';
         if (!empty($this->product_buy_item['variations']) && is_array($this->product_buy_item['variations'])) {
             foreach ($this->product_buy_item['variations'] as $variation_id) {
-                if (!empty($this->option_values['variations'][$variation_id])) {
-                    $html .= '<option value="' . sanitize_text_field($variation_id) . '" selected>' . sanitize_text_field($this->option_values['variations'][$variation_id]) . '</option>';
+                $variation_title = Product::get_product_label_for_rule_fields(intval($variation_id));
+                if (!empty($variation_title)) {
+                    $html .= '<option value="' . esc_attr($variation_id) . '" selected>' . esc_html($variation_title) . '</option>';
                 }
             }
         }
@@ -135,21 +139,21 @@ class Product_Buy_Render
 
     private function product_category_render()
     {
-        $html = '<div class="wgbl-w30p">
-            <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+            <div class="wgb-form-group">
             <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
             <option value="in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
             <option value="not_in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
             </select>
             </div>
             </div>
-            <div class="wgbl-w70p">
-            <div class="wgbl-form-group">
-            <select class="wgbl-select2-categories wgbl-select2-option-values" data-option-name="categories" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][categories][]" data-type="select2" multiple required ' . $this->field_status . '>';
+            <div class="wgb-w70p">
+            <div class="wgb-form-group">
+            <select class="wgb-select2-categories wgb-select2-option-values" data-option-name="categories" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][categories][]" data-type="select2" multiple required ' . $this->field_status . '>';
         if (!empty($this->product_buy_item['categories']) && is_array($this->product_buy_item['categories'])) {
             foreach ($this->product_buy_item['categories'] as $category_id) {
                 if (!empty($this->option_values['categories'][$category_id])) {
-                    $html .= '<option value="' . sanitize_text_field($category_id) . '" selected>' . sanitize_text_field($this->option_values['categories'][$category_id]) . '</option>';
+                    $html .= '<option value="' . esc_attr($category_id) . '" selected>' . esc_html($this->option_values['categories'][$category_id]) . '</option>';
                 }
             }
         }
@@ -161,8 +165,8 @@ class Product_Buy_Render
 
     private function product_attribute_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
                 <option value="at_least_one" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -171,13 +175,13 @@ class Product_Buy_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select class="wgbl-select2-attributes wgbl-select2-option-values" data-option-name="attributes" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][attributes][]" data-type="select2" multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select class="wgb-select2-attributes wgb-select2-option-values" data-option-name="attributes" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][attributes][]" data-type="select2" multiple required ' . $this->field_status . '>';
         if (!empty($this->product_buy_item['attributes']) && is_array($this->product_buy_item['attributes'])) {
             foreach ($this->product_buy_item['attributes'] as $attribute_id) {
                 if (!empty($this->option_values['attributes'][$attribute_id])) {
-                    $html .= '<option value="' . sanitize_text_field($attribute_id) . '" selected>' . sanitize_text_field($this->option_values['attributes'][$attribute_id]) . '</option>';
+                    $html .= '<option value="' . esc_attr($attribute_id) . '" selected>' . esc_html($this->option_values['attributes'][$attribute_id]) . '</option>';
                 }
             }
         }
@@ -189,8 +193,8 @@ class Product_Buy_Render
 
     private function product_tag_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
                 <option value="at_least_one" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -199,13 +203,13 @@ class Product_Buy_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select class="wgbl-select2-tags wgbl-select2-option-values" data-option-name="tags" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][tags][]" data-type="select2" multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select class="wgb-select2-tags wgb-select2-option-values" data-option-name="tags" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][tags][]" data-type="select2" multiple required ' . $this->field_status . '>';
         if (!empty($this->product_buy_item['tags']) && is_array($this->product_buy_item['tags'])) {
             foreach ($this->product_buy_item['tags'] as $tag_id) {
                 if (!empty($this->option_values['tags'][$tag_id])) {
-                    $html .= '<option value="' . sanitize_text_field($tag_id) . '" selected>' . sanitize_text_field($this->option_values['tags'][$tag_id]) . '</option>';
+                    $html .= '<option value="' . esc_attr($tag_id) . '" selected>' . esc_html($this->option_values['tags'][$tag_id]) . '</option>';
                 }
             }
         }
@@ -217,8 +221,8 @@ class Product_Buy_Render
 
     private function product_regular_price_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
                 <option value="at_least" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -227,9 +231,9 @@ class Product_Buy_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <input name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][value]" type="number" min="0" placeholder="0.00" value="' . ((isset($this->product_buy_item['value'])) ? sanitize_text_field($this->product_buy_item['value']) : 0) . '" required ' . $this->field_status . '>
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <input name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][value]" type="number" min="0" placeholder="0.00" value="' . ((isset($this->product_buy_item['value'])) ? esc_attr($this->product_buy_item['value']) : 0) . '" required ' . $this->field_status . '>
                 </div>
                 </div>';
         return $html;
@@ -237,8 +241,8 @@ class Product_Buy_Render
 
     private function product_is_on_sale_render()
     {
-        $html = '<div class="wgbl-w70p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w70p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][value]" required ' . $this->field_status . '>
                 <option value="yes" ' . ((isset($this->product_buy_item['value']) && $this->product_buy_item['value'] == 'yes') ? 'selected' : '') . '>Yes</option>
                 <option value="no" ' . ((isset($this->product_buy_item['value']) && $this->product_buy_item['value'] == 'no') ? 'selected' : '') . '>No</option>
@@ -250,8 +254,8 @@ class Product_Buy_Render
 
     private function product_stock_quantity_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
                 <option value="at_least" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -260,9 +264,9 @@ class Product_Buy_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <input name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][value]" type="number" min="0" placeholder="0" value="' . ((isset($this->product_buy_item['value'])) ? sanitize_text_field($this->product_buy_item['value']) : 0) . '" required ' . $this->field_status . '>
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <input name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][value]" type="number" min="0" placeholder="0" value="' . ((isset($this->product_buy_item['value'])) ? esc_attr($this->product_buy_item['value']) : 0) . '" required ' . $this->field_status . '>
                 </div>
                 </div>';
         return $html;
@@ -270,21 +274,21 @@ class Product_Buy_Render
 
     private function product_shipping_classes_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]">
                 <option value="in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
                 <option value="not_in_list" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select class="wgbl-select2-shipping_classes wgbl-select2-option-values" data-option-name="shipping_classes" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][shipping_classes][]" data-type="select2" multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select class="wgb-select2-shipping_classes wgb-select2-option-values" data-option-name="shipping_classes" name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][shipping_classes][]" data-type="select2" multiple required ' . $this->field_status . '>';
         if (!empty($this->product_buy_item['shipping_classes']) && is_array($this->product_buy_item['shipping_classes'])) {
             foreach ($this->product_buy_item['shipping_classes'] as $shipping_class_id) {
                 if (!empty($this->option_values['shipping_classes'][$shipping_class_id])) {
-                    $html .= '<option value="' . sanitize_text_field($shipping_class_id) . '" selected>' . sanitize_text_field($this->option_values['shipping_classes'][$shipping_class_id]) . '</option>';
+                    $html .= '<option value="' . esc_attr($shipping_class_id) . '" selected>' . esc_html($this->option_values['shipping_classes'][$shipping_class_id]) . '</option>';
                 }
             }
         }
@@ -296,14 +300,14 @@ class Product_Buy_Render
 
     private function product_meta_field_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <input name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][product_meta_field]" type="text" placeholder="meta field key" required ' . $this->field_status . ' value="' . ((!empty($this->product_buy_item['product_meta_field'])) ? sanitize_text_field($this->product_buy_item['product_meta_field']) : '') . '">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <input name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][product_meta_field]" type="text" placeholder="meta field key" required ' . $this->field_status . ' value="' . ((!empty($this->product_buy_item['product_meta_field'])) ? esc_attr($this->product_buy_item['product_meta_field']) : '') . '">
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]" class="wgbl-product-buy-product-meta-field-type">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][product_buy][' . $this->product_buy_id .  '][method_option]" class="wgb-product-buy-product-meta-field-type">
                 <option value="is_empty" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'is_empty') ? 'selected' : '') . '>is empty</option>
                 <option value="is_not_empty" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'is_not_empty') ? 'selected' : '') . '>is not empty</option>
                 <option value="contains" ' . ((!empty($this->product_buy_item['method_option']) && $this->product_buy_item['method_option'] == 'contains') ? 'selected' : '') . '>contains</option>
@@ -321,9 +325,9 @@ class Product_Buy_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <div class="wgbl-product-buy-extra-fields-col-4">';
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <div class="wgb-product-buy-extra-fields-col-4">';
         $html .= $this->get_product_meta_field();
         $html .= '</div>
                 </div>
@@ -349,7 +353,7 @@ class Product_Buy_Render
             case 'less_or_equal_to':
             case 'more_than':
             case 'more_or_equal':
-                $output = '<input type="text" name="rule[' . $this->rule_id .  '][product_buy][' . $this->product_buy_id . '][value]" placeholder="Value ..." required ' . $this->field_status . ' value="' . ((isset($this->product_buy_item['value'])) ? sanitize_text_field($this->product_buy_item['value']) : '') . '">';
+                $output = '<input type="text" name="rule[' . $this->rule_id .  '][product_buy][' . $this->product_buy_id . '][value]" placeholder="Value ..." required ' . $this->field_status . ' value="' . ((isset($this->product_buy_item['value'])) ? esc_attr($this->product_buy_item['value']) : '') . '">';
                 break;
             default:
                 $output = '';

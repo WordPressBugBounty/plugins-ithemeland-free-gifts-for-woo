@@ -1,10 +1,10 @@
 <?php
 
-namespace wgbl\classes\bootstrap;
+namespace wgb\classes\bootstrap;
 
-use wgbl\classes\repositories\Product;
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
-defined('ABSPATH') || exit();
+use wgb\classes\repositories\Product;
 
 class WGBL_Custom_Queries
 {
@@ -16,79 +16,53 @@ class WGBL_Custom_Queries
     public function general_column_filter($where, $wp_query)
     {
         global $wpdb;
-
-        if ($search_term = $wp_query->get('wgbl_general_column_filter')) {
+        if ($search_term = $wp_query->get('wgb_general_column_filter')) {
             if (is_array($search_term) && count($search_term) > 0) {
                 foreach ($search_term as $item) {
-                    $field   = sanitize_key($item['field']);
-                    $value   = $item['value'];
-                    $operator = $item['operator'];
-
-                    $clause = '';
-                    $params = [];
-
-                    switch ($operator) {
+                    $field = esc_sql($item['field']);
+                    $value = trim(esc_sql($item['value']));
+                    switch ($item['operator']) {
                         case 'like':
-                            $clause = "posts.{$field} LIKE %s";
-                            $params[] = '%' . $value . '%';
+                            $custom_where = "(posts.{$field} LIKE '%{$value}%')";
                             break;
                         case 'exact':
-                            $clause = "posts.{$field} = %s";
-                            $params[] = $value;
+                            $custom_where = "(posts.{$field} = '{$value}')";
                             break;
                         case 'not':
-                            $clause = "posts.{$field} != %s";
-                            $params[] = $value;
+                            $custom_where = "(posts.{$field} != '{$value}')";
                             break;
                         case 'begin':
-                            $clause = "posts.{$field} LIKE %s";
-                            $params[] = $value . '%';
+                            $custom_where = "(posts.{$field} LIKE '{$value}%')";
                             break;
                         case 'end':
-                            $clause = "posts.{$field} LIKE %s";
-                            $params[] = '%' . $value;
+                            $custom_where = "(posts.{$field} LIKE '%{$value}')";
                             break;
                         case 'in':
-                            $placeholders = implode(',', array_fill(0, count((array)$value), '%s'));
-                            $clause = "posts.{$field} IN ($placeholders)";
-                            $params = (array)$value;
+                            $custom_where = "(posts.{$field} IN ({$value}))";
                             break;
                         case 'not_in':
-                            $placeholders = implode(',', array_fill(0, count((array)$value), '%s'));
-                            $clause = "posts.{$field} NOT IN ($placeholders)";
-                            $params = (array)$value;
+                            $custom_where = "(posts.{$field} NOT IN ({$value}))";
                             break;
                         case 'between':
-                            $clause = "posts.{$field} BETWEEN %s AND %s";
-                            $params[] = $value[0];
-                            $params[] = $value[1];
+                            $value = (is_numeric($value[1])) ? "{$value[0]} AND {$value[1]}" : "'{$value[0]}' AND '{$value[1]}'";
+                            $custom_where = "(posts.{$field} BETWEEN {$value})";
                             break;
                         case '>':
-                            $clause = "posts.{$field} > %s";
-                            $params[] = $value;
+                            $custom_where = "(posts.{$field} > {$value})";
                             break;
                         case '<':
-                            $clause = "posts.{$field} < %s";
-                            $params[] = $value;
+                            $custom_where = "(posts.{$field} < {$value})";
                             break;
                         case '>_with_quotation':
-                            $clause = "posts.{$field} > %s";
-                            $params[] = $value;
+                            $custom_where = "(posts.{$field} > '{$value}')";
                             break;
                         case '<_with_quotation':
-                            $clause = "posts.{$field} < %s";
-                            $params[] = $value;
+                            $custom_where = "(posts.{$field} < '{$value}')";
                             break;
-                        default:
-                            continue 2; // skip unknown operator
                     }
 
                     $product_repository = Product::get_instance();
-                    $ids = $product_repository->get_ids_by_custom_query('', [
-                        'clause' => $clause,
-                        'params' => $params,
-                    ]);
-
+                    $ids = $product_repository->get_ids_by_custom_query('', $custom_where);
                     $ids = (!empty($ids)) ? $ids : '0';
                     $where .= " AND ({$wpdb->posts}.ID IN ({$ids}))";
                 }

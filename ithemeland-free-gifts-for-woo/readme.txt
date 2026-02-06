@@ -1,10 +1,10 @@
-=== Free Gifts for WooCommerce ===
+=== GIFTiT - Free Gifts for WooCommerce ===
 Contributors: ithemelandco
 Donate link: https://ithemelandco.com/
 Tags: woocommerce gift, boost sale, free gift, buy one get one , Gift Product Woocommerce
 Requires at least: 4.6.1
-Tested up to: 6.8
-Stable tag: 2.8.1
+Tested up to: 6.9
+Stable tag: 3.3.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -124,29 +124,6 @@ Quantity based on Each individual Product
 <p>free gifts for Woocommerce plugin is a professional and well-designed extension for offering promotional gifts based on the marketing strategies of your eCommerce stores.</p>
 Check demo version: <a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">Pro Version</a>
 
-
-<h3>Please Follow us on Codecanyon</h3>
-We are known as Featured Author on <a href="codecanyon.net/">Codecanyon</a>. You can check the <a href="https://codecanyon.net/user/ithemelandco/portfolio">ithemelandco porfoli</a> on Codecanyon.
-There are some other plugins that are released by ithemelandco:
-
-<h4>&#9989;&nbsp;<a href="https://codecanyon.net/item/woocommerce-bulk-product-editing/26882462">WooCommerce Bulk Product Editing</a></h4>
-<p>WooCommerce Bulk Product Editing helps to do the bulk editing task easier with a lot of bulk editing options and support for any product related properties.</p>
-
-<h4>&#9989;&nbsp;<a href="https://codecanyon.net/item/woocommerce-product-table/25871270">WooCommerce Product Table</a></h4>
-<p>WooCommerce Product Table plugin is a useful extension for ecommerce and online store websites designed by Wordpress.</p>
-
-<h4>&#9989;&nbsp;<a href="https://codecanyon.net/item/wordpress-bulk-posts-custom-posts-editing/30745060">Wordpress Bulk Posts & Custom Posts Editing</a></h4>
-<p>WordPress Bulk Posts Editing is a professional WordPress plugin for managing and bulk editing WordPress posts, pages and custom post type’s data in a more robust and flexible way.</p>
-
-<h4>&#9989;&nbsp;<a href="https://codecanyon.net/item/woocommerce-bulk-coupons-editing/30447858">WooCommerce Bulk Coupons Editing</a></h4>
-<p>WooCommerce Bulk Coupons Editing plugin is a useful extension for managing and bulk edit WooCommerce coupons in a robust and flexible way.</p>
-
-<h4>&#9989;&nbsp;<a href="https://codecanyon.net/item/woocommerce-bulk-orders-editing/30136192">WooCommerce Bulk Orders Editing</a></h4>
-<p>By WooCommerce Bulk Orders Editing plugin you can professionally manage the data of your woocommerce e-shop made with Wordpress.</p>
-
-<h4>&#9989;&nbsp;<a href="https://codecanyon.net/item/news-ticker-for-elementor/25773124">News Ticker For Elementor</a></h4>
-<p>Display posts and custom posts as Marquee, slide and fade effect in 12 unique layouts.</p>
-
 == Installation ==
 
 This section describes how to install the plugin and get it working.
@@ -261,6 +238,34 @@ You can easily translate the plugin into the desired languages by using translat
 12. free gifts for woocommerce datatable layout
 
 == Changelog ==
+= 3.3 =
+* Fixed : Issue in save setting 
+* Fixed : Issue "Strike and Display the price"
+Tested up to: WP 6.9.x
+Tested up to: WC 10.3.x
+
+= 3.2 =
+* Fixed : compatible with pro version
+* Fixed : set default settings 
+* Fixed : compatible wit gutenberg block woocommerce
+
+= 3.1 =
+* Fixed : warning issue Critical Error
+
+
+= 3.0 =
+* Added: Comparison Operator operand
+* Added: Add Ajax Manual Gift Products Add To Cart
+* Added: Shortcodes 
+* Added: Gift Title Length
+* Added: Show Gift Type Lable
+* Added: Display price for gift
+* Added: Enable Quantity For Gift
+* Added: Show Available gift Quantity
+* Fixed : Important Security issues
+Tested up to: WP 6.8.x
+Tested up to: WC 10.2.x
+
 = 2.8.1 =
 * Fixed : Remove leading empty spaces to prevent header errors
 
@@ -295,7 +300,6 @@ Tested up to: WC 9.6.x
 Added: Tracking usage in lite
 Added: Framework for pro version
 
-== Changelog ==
 = 2.3.9 =
 Tested up to: WP 6.7.x
 Tested up to: WC 9.6.x

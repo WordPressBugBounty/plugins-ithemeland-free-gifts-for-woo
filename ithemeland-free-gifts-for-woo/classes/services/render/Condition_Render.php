@@ -1,6 +1,8 @@
 <?php
 
-namespace wgbl\classes\services\render;
+namespace wgb\classes\services\render;
+
+use wgb\classes\repositories\Product;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
@@ -102,7 +104,7 @@ class Condition_Render
             'cart_item_subtotal_tags' => 'cart_item_subtotal_tags_render',
             'cart_item_subtotal_shipping_classes' => 'cart_item_subtotal_shipping_classes_render',
             'checkout_payment_methods' => 'checkout_payment_methods_render',
-			'shipping_country' => 'shipping_country_render',
+            'shipping_country' => 'shipping_country_render',
             'customer' => 'customer_render',
             'user_role' => 'user_role_render',
             'user_capability' => 'user_capability_render',
@@ -131,13 +133,15 @@ class Condition_Render
             'value_purchased_tags' => 'quantity_purchased_tags_render',
             'quantity_purchased_all_rules' => 'spent_total_render',
             'quantity_purchased_this_rule' => 'spent_total_render',
+            'cart_items_brands' => 'cart_items_brands_render',
+            'product_brand' => 'product_brand_render',
         ];
     }
 
     private function date_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="from" ' . (($this->condition_item['method_option'] == 'from') ? 'selected' : '') . '>From</option>
                 <option value="to" ' . (($this->condition_item['method_option'] == 'to') ? 'selected' : '') . '>To</option>
@@ -145,9 +149,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" type="text" class="wgbl-datepicker" value="' . $this->value . '" placeholder="Select ..." required ' . $this->field_status . ' autocomplete="off">
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" type="text" class="wgb-datepicker" value="' . $this->value . '" placeholder="Select ..." required ' . $this->field_status . ' autocomplete="off">
                 </div>
                 </div>';
         return $html;
@@ -155,17 +159,17 @@ class Condition_Render
 
     private function time_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="from" ' . (($this->condition_item['method_option'] == 'from') ? 'selected' : '') . '>From</option>
                 <option value="to" ' . (($this->condition_item['method_option'] == 'to') ? 'selected' : '') . '>To</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" type="text" class="wgbl-timepicker" value="' . $this->value . '" placeholder="Select ..." required ' . $this->field_status . ' autocomplete="off">
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" type="text" class="wgb-timepicker" value="' . $this->value . '" placeholder="Select ..." required ' . $this->field_status . ' autocomplete="off">
                 </div>
                 </div>';
         return $html;
@@ -173,17 +177,17 @@ class Condition_Render
 
     private function date_time_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="from" ' . (($this->condition_item['method_option'] == 'from') ? 'selected' : '') . '>From</option>
                 <option value="to" ' . (($this->condition_item['method_option'] == 'to') ? 'selected' : '') . '>To</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" type="text" class="wgbl-datetimepicker" value="' . $this->value . '" placeholder="Select ..." required ' . $this->field_status . ' autocomplete="off">
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" type="text" class="wgb-datetimepicker" value="' . $this->value . '" placeholder="Select ..." required ' . $this->field_status . ' autocomplete="off">
                 </div>
                 </div>';
         return $html;
@@ -191,17 +195,17 @@ class Condition_Render
 
     private function days_of_week_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="in_list" ' . (($this->condition_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
                 <option value="not_in_list" ' . (($this->condition_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value][]" class="wgbl-select2" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value][]" class="wgb-select2" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>
                 <option value="0" ' . ((is_array($this->value) && in_array('0', $this->value)) ? 'selected' : '') . '>Sunday</option>
                 <option value="1" ' . ((is_array($this->value) && in_array('1', $this->value)) ? 'selected' : '') . '>Monday</option>
                 <option value="2" ' . ((is_array($this->value) && in_array('2', $this->value)) ? 'selected' : '') . '>Tuesday</option>
@@ -217,8 +221,8 @@ class Condition_Render
 
     private function cart_subtotal_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -227,8 +231,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
                 <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" type="number" min="0" placeholder="0.00" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -237,8 +241,8 @@ class Condition_Render
 
     private function cart_total_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -247,8 +251,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
                 <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" type="number" min="0" placeholder="0.00" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -257,9 +261,9 @@ class Condition_Render
 
     private function coupons_applied_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]" class="wgbl-condition-coupons-applied-type">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]" class="wgb-condition-coupons-applied-type">
                 <option value="at_least_one_any" ' . (($this->condition_item['method_option'] == 'at_least_one_any') ? 'selected' : '') . '>at least one of any</option>
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -269,9 +273,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <div class="wgbl-condition-extra-fields-col-4">';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <div class="wgb-condition-extra-fields-col-4">';
         $html .= $this->get_coupons_extra_fields();
         $html .= '</div>
                 </div>
@@ -281,8 +285,8 @@ class Condition_Render
 
     private function cart_items_products_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -291,13 +295,14 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgbl-select2-products wgbl-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgb-select2-products wgb-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['products']) && is_array($this->condition_item['products'])) {
             foreach ($this->condition_item['products'] as $product_id) {
-                if (!empty($this->option_values['products'][$product_id])) {
-                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($this->option_values['products'][$product_id]) . '</option>';
+                $product_title = Product::get_product_label_for_rule_fields(intval($product_id));
+                if (!empty($product_title)) {
+                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($product_title) . '</option>';
                 }
             }
         }
@@ -309,8 +314,8 @@ class Condition_Render
 
     private function cart_items_variations_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -319,9 +324,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgbl-select2-variations wgbl-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgb-select2-variations wgb-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['variations']) && is_array($this->condition_item['variations'])) {
             foreach ($this->condition_item['variations'] as $variation_id) {
                 if (!empty($this->option_values['variations'][$variation_id])) {
@@ -337,8 +342,8 @@ class Condition_Render
 
     private function cart_items_categories_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -347,9 +352,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgbl-select2-categories wgbl-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgb-select2-categories wgb-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['categories']) && is_array($this->condition_item['categories'])) {
             foreach ($this->condition_item['categories'] as $category_id) {
                 if (!empty($this->option_values['categories'][$category_id])) {
@@ -365,8 +370,8 @@ class Condition_Render
 
     private function cart_items_attributes_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -375,9 +380,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgbl-select2-attributes wgbl-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgb-select2-attributes wgb-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['attributes']) && is_array($this->condition_item['attributes'])) {
             foreach ($this->condition_item['attributes'] as $attribute_id) {
                 if (!empty($this->option_values['attributes'][$attribute_id])) {
@@ -393,8 +398,8 @@ class Condition_Render
 
     private function cart_items_tags_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -403,9 +408,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgbl-select2-tags wgbl-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgb-select2-tags wgb-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['tags']) && is_array($this->condition_item['tags'])) {
             foreach ($this->condition_item['tags'] as $tag_id) {
                 if (!empty($this->option_values['tags'][$tag_id])) {
@@ -421,8 +426,8 @@ class Condition_Render
 
     private function cart_items_shipping_classes_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -431,9 +436,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_classes][]" class="wgbl-select2-shipping_classes wgbl-select2-option-values" data-option-name="shipping_classes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_classes][]" class="wgb-select2-shipping_classes wgb-select2-option-values" data-option-name="shipping_classes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['shipping_classes']) && is_array($this->condition_item['shipping_classes'])) {
             foreach ($this->condition_item['shipping_classes'] as $shipping_class_id) {
                 if (!empty($this->option_values['shipping_classes'][$shipping_class_id])) {
@@ -449,21 +454,22 @@ class Condition_Render
 
     private function cart_item_quantity_products_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgbl-select2-products wgbl-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgb-select2-products wgb-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['products']) && is_array($this->condition_item['products'])) {
             foreach ($this->condition_item['products'] as $product_id) {
-                if (!empty($this->option_values['products'][$product_id])) {
-                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($this->option_values['products'][$product_id]) . '</option>';
+                $product_title = Product::get_product_label_for_rule_fields(intval($product_id));
+                if (!empty($product_title)) {
+                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($product_title) . '</option>';
                 }
             }
         }
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -472,8 +478,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -482,9 +488,9 @@ class Condition_Render
 
     private function cart_item_quantity_variations_render()
     {
-        $html = '<div class="wgbl-w32p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgbl-select2-variations wgbl-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgb-select2-variations wgb-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['variations']) && is_array($this->condition_item['variations'])) {
             foreach ($this->condition_item['variations'] as $variation_id) {
                 if (!empty($this->option_values['variations'][$variation_id])) {
@@ -495,8 +501,8 @@ class Condition_Render
         $html .= '</select>
         </div>
         </div>
-        <div class="wgbl-w32p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w32p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
         <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -505,8 +511,8 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w32p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w32p">
+        <div class="wgb-form-group">
         <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
         </div>
         </div>';
@@ -515,9 +521,9 @@ class Condition_Render
 
     private function cart_item_quantity_categories_render()
     {
-        $html = '<div class="wgbl-w32p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgbl-select2-categories wgbl-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgb-select2-categories wgb-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['categories']) && is_array($this->condition_item['categories'])) {
             foreach ($this->condition_item['categories'] as $category_id) {
                 if (!empty($this->option_values['categories'][$category_id])) {
@@ -528,8 +534,8 @@ class Condition_Render
         $html .= '</select>
         </div>
         </div>
-        <div class="wgbl-w32p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w32p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
         <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -538,8 +544,8 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w32p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w32p">
+        <div class="wgb-form-group">
         <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
         </div>
         </div>';
@@ -548,9 +554,9 @@ class Condition_Render
 
     private function cart_item_quantity_attributes_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgbl-select2-attributes wgbl-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgb-select2-attributes wgb-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['attributes']) && is_array($this->condition_item['attributes'])) {
             foreach ($this->condition_item['attributes'] as $attribute_id) {
                 if (!empty($this->option_values['attributes'][$attribute_id])) {
@@ -561,8 +567,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -571,8 +577,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -581,9 +587,9 @@ class Condition_Render
 
     private function cart_item_quantity_tags_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgbl-select2-tags wgbl-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgb-select2-tags wgb-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['tags']) && is_array($this->condition_item['tags'])) {
             foreach ($this->condition_item['tags'] as $tag_id) {
                 if (!empty($this->option_values['tags'][$tag_id])) {
@@ -594,8 +600,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -604,8 +610,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -614,9 +620,9 @@ class Condition_Render
 
     private function cart_item_quantity_shipping_classes_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_classes][]" class="wgbl-select2-shipping_classes wgbl-select2-option-values" data-option-name="shipping_classes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_classes][]" class="wgb-select2-shipping_classes wgb-select2-option-values" data-option-name="shipping_classes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['shipping_classes']) && is_array($this->condition_item['shipping_classes'])) {
             foreach ($this->condition_item['shipping_classes'] as $shipping_class_id) {
                 if (!empty($this->option_values['shipping_classes'][$shipping_class_id])) {
@@ -627,8 +633,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -637,8 +643,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -647,21 +653,22 @@ class Condition_Render
 
     private function cart_item_subtotal_products_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgbl-select2-products wgbl-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgb-select2-products wgb-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['products']) && is_array($this->condition_item['products'])) {
             foreach ($this->condition_item['products'] as $product_id) {
-                if (!empty($this->option_values['products'][$product_id])) {
-                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($this->option_values['products'][$product_id]) . '</option>';
+                $product_title = Product::get_product_label_for_rule_fields(intval($product_id));
+                if (!empty($product_title)) {
+                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($product_title) . '</option>';
                 }
             }
         }
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -670,8 +677,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -680,9 +687,9 @@ class Condition_Render
 
     private function cart_item_subtotal_variations_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgbl-select2-variations wgbl-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgb-select2-variations wgb-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['variations']) && is_array($this->condition_item['variations'])) {
             foreach ($this->condition_item['variations'] as $variation_id) {
                 if (!empty($this->option_values['variations'][$variation_id])) {
@@ -693,8 +700,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -703,8 +710,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -713,9 +720,9 @@ class Condition_Render
 
     private function cart_item_subtotal_categories_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgbl-select2-categories wgbl-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgb-select2-categories wgb-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['categories']) && is_array($this->condition_item['categories'])) {
             foreach ($this->condition_item['categories'] as $category_id) {
                 if (!empty($this->option_values['categories'][$category_id])) {
@@ -726,8 +733,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -736,8 +743,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -746,9 +753,9 @@ class Condition_Render
 
     private function cart_item_subtotal_attributes_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgbl-select2-attributes wgbl-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgb-select2-attributes wgb-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['attributes']) && is_array($this->condition_item['attributes'])) {
             foreach ($this->condition_item['attributes'] as $attribute_id) {
                 if (!empty($this->option_values['attributes'][$attribute_id])) {
@@ -759,8 +766,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -769,8 +776,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -779,9 +786,9 @@ class Condition_Render
 
     private function cart_item_subtotal_tags_render()
     {
-        $html = '<div class="wgbl-w32p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgbl-select2-tags wgbl-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgb-select2-tags wgb-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['tags']) && is_array($this->condition_item['tags'])) {
             foreach ($this->condition_item['tags'] as $tag_id) {
                 if (!empty($this->option_values['tags'][$tag_id])) {
@@ -792,8 +799,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -802,8 +809,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w32p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w32p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -812,9 +819,9 @@ class Condition_Render
 
     private function cart_item_subtotal_shipping_classes_render()
     {
-        $html = '<div class="wgbl-w32p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_classes][]" class="wgbl-select2-shipping_classes wgbl-select2-option-values" data-option-name="shipping_classes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w32p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_classes][]" class="wgb-select2-shipping_classes wgb-select2-option-values" data-option-name="shipping_classes" data-type="select2" data-placeholder="Select values ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['shipping_classes']) && is_array($this->condition_item['shipping_classes'])) {
             foreach ($this->condition_item['shipping_classes'] as $shipping_class_id) {
                 if (!empty($this->option_values['shipping_classes'][$shipping_class_id])) {
@@ -825,8 +832,8 @@ class Condition_Render
         $html .= '</select>
         </div>
         </div>
-        <div class="wgbl-w32p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w32p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
         <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -835,8 +842,8 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w32p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w32p">
+        <div class="wgb-form-group">
         <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
         </div>
         </div>';
@@ -845,17 +852,17 @@ class Condition_Render
 
     private function checkout_payment_methods_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="in_list" ' . (($this->condition_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
                 <option value="not_in_list" ' . (($this->condition_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][payment_methods][]" class="wgbl-select2-payment-methods wgbl-select2-option-values" data-option-name="payment_methods" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][payment_methods][]" class="wgb-select2-payment-methods wgb-select2-option-values" data-option-name="payment_methods" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['payment_methods']) && is_array($this->condition_item['payment_methods'])) {
             foreach ($this->condition_item['payment_methods'] as $payment_id) {
                 if (!empty($this->option_values['payment_methods'][$payment_id])) {
@@ -867,21 +874,21 @@ class Condition_Render
                 </div>
                 </div>';
         return $html;
-    }    
-	
-	private function shipping_country_render()
+    }
+
+    private function shipping_country_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="in_list" ' . (($this->condition_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
                 <option value="not_in_list" ' . (($this->condition_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_country][]" class="wgbl-select2-shipping-country wgbl-select2-option-values" data-option-name="shipping_country" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][shipping_country][]" class="wgb-select2-shipping-country wgb-select2-option-values" data-option-name="shipping_country" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['shipping_country']) && is_array($this->condition_item['shipping_country'])) {
             foreach ($this->condition_item['shipping_country'] as $code) {
                 if (!empty($this->option_values['shipping_country'][$code])) {
@@ -897,17 +904,17 @@ class Condition_Render
 
     private function customer_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="in_list" ' . (($this->condition_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
                 <option value="not_in_list" ' . (($this->condition_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][customers][]" class="wgbl-select2-customers wgbl-select2-option-values" data-option-name="customers" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][customers][]" class="wgb-select2-customers wgb-select2-option-values" data-option-name="customers" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['customers']) && is_array($this->condition_item['customers'])) {
             foreach ($this->condition_item['customers'] as $customer_id) {
                 if (!empty($this->option_values['customers'][$customer_id])) {
@@ -923,17 +930,17 @@ class Condition_Render
 
     private function user_role_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="in_list" ' . (($this->condition_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
                 <option value="not_in_list" ' . (($this->condition_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][user_roles][]" class="wgbl-select2-user-roles" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][user_roles][]" class="wgb-select2-user-roles" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['user_roles']) && is_array($this->condition_item['user_roles'])) {
             foreach ($this->condition_item['user_roles'] as $user_role_id) {
                 if (!empty($this->option_values['user_roles'][$user_role_id])) {
@@ -949,17 +956,17 @@ class Condition_Render
 
     private function user_capability_render()
     {
-        $html = '<div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="in_list" ' . (($this->condition_item['method_option'] == 'in_list') ? 'selected' : '') . '>in list</option>
         <option value="not_in_list" ' . (($this->condition_item['method_option'] == 'not_in_list') ? 'selected' : '') . '>not in list</option>
         </select>
         </div>
         </div>
-        <div class="wgbl-w70p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][user_capabilities][]" class="wgbl-select2-user-capabilities" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        <div class="wgb-w70p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][user_capabilities][]" class="wgb-select2-user-capabilities" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['user_capabilities']) && is_array($this->condition_item['user_capabilities'])) {
             foreach ($this->condition_item['user_capabilities'] as $user_capability_id) {
                 if (!empty($this->option_values['user_capabilities'][$user_capability_id])) {
@@ -975,14 +982,14 @@ class Condition_Render
 
     private function user_meta_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <input name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][meta_field_key]" value="' . ((isset($this->condition_item['meta_field_key'])) ? esc_attr($this->condition_item['meta_field_key']) : '') . '" type="text" placeholder="meta field key" required ' . $this->field_status . '>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]" class="wgbl-condition-user-meta-field-type">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]" class="wgb-condition-user-meta-field-type">
                 <option value="is_empty" ' . (($this->condition_item['method_option'] == 'is_empty') ? 'selected' : '') . '>is empty</option>
                 <option value="is_not_empty" ' . (($this->condition_item['method_option'] == 'is_not_empty') ? 'selected' : '') . '>is not empty</option>
                 <option value="contains" ' . (($this->condition_item['method_option'] == 'contains') ? 'selected' : '') . '>contains</option>
@@ -1000,9 +1007,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <div class="wgbl-condition-extra-fields-col-4">';
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <div class="wgb-condition-extra-fields-col-4">';
         $html .= $this->get_user_meta_field_extra_fields();
         $html .= '</div>
                 </div>
@@ -1012,8 +1019,8 @@ class Condition_Render
 
     private function is_logged_in_render()
     {
-        $html = '<div class="wgbl-w100p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w100p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" required ' . $this->field_status . '>
                 <option value="yes" ' . (($this->value == 'yes') ? 'selected' : '') . '>Yes</option>
                 <option value="no" ' . (($this->value == 'no') ? 'selected' : '') . '>No</option>
@@ -1025,15 +1032,15 @@ class Condition_Render
 
     private function spent_total_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][time]" required ' . $this->field_status . '>';
         $html .= $this->get_all_times(!empty($this->condition_item['time']) ? $this->condition_item['time'] : '');
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1042,8 +1049,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0.00" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -1052,8 +1059,8 @@ class Condition_Render
 
     private function spent_last_order_render()
     {
-        $html = '<div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
         <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1062,8 +1069,8 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w70p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w70p">
+        <div class="wgb-form-group">
         <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0.00" required ' . $this->field_status . '>
         </div>
         </div>';
@@ -1072,16 +1079,16 @@ class Condition_Render
 
     private function last_order_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="later" ' . (($this->condition_item['method_option'] == 'later') ? 'selected' : '') . '>within past</option>
                 <option value="earlier" ' . (($this->condition_item['method_option'] == 'earlier') ? 'selected' : '') . '>earlier than</option>
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][time]" required ' . $this->field_status . '>';
         $html .= $this->get_all_times(!empty($this->condition_item['time']) ? $this->condition_item['time'] : '');
         $html .= '</select>
@@ -1092,8 +1099,8 @@ class Condition_Render
 
     private function customer_review_count_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1102,8 +1109,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w70p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w70p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -1112,15 +1119,15 @@ class Condition_Render
 
     private function purchased_products_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][time]" required ' . $this->field_status . '>';
         $html .= $this->get_all_times(!empty($this->condition_item['time']) ? $this->condition_item['time'] : '');
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -1129,13 +1136,14 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgbl-select2-products wgbl-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgb-select2-products wgb-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['products']) && is_array($this->condition_item['products'])) {
             foreach ($this->condition_item['products'] as $product_id) {
-                if (!empty($this->option_values['products'][$product_id])) {
-                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($this->option_values['products'][$product_id]) . '</option>';
+                $product_title = Product::get_product_label_for_rule_fields(intval($product_id));
+                if (!empty($product_title)) {
+                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($product_title) . '</option>';
                 }
             }
         }
@@ -1147,15 +1155,15 @@ class Condition_Render
 
     private function purchased_variations_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][time]" required ' . $this->field_status . '>';
         $html .= $this->get_all_times(!empty($this->condition_item['time']) ? $this->condition_item['time'] : '');
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -1164,9 +1172,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgbl-select2-variations wgbl-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgb-select2-variations wgb-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['variations']) && is_array($this->condition_item['variations'])) {
             foreach ($this->condition_item['variations'] as $variation_id) {
                 if (!empty($this->option_values['variations'][$variation_id])) {
@@ -1182,15 +1190,15 @@ class Condition_Render
 
     private function purchased_categories_render()
     {
-        $html = '<div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][time]" required ' . $this->field_status . '>';
         $html .= $this->get_all_times(!empty($this->condition_item['time']) ? $this->condition_item['time'] : '');
         $html .= '</select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
         <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -1199,9 +1207,9 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgbl-select2-categories wgbl-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgb-select2-categories wgb-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['categories']) && is_array($this->condition_item['categories'])) {
             foreach ($this->condition_item['categories'] as $category_id) {
                 if (!empty($this->option_values['categories'][$category_id])) {
@@ -1217,15 +1225,15 @@ class Condition_Render
 
     private function purchased_attributes_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][time]" required ' . $this->field_status . '>';
         $html .= $this->get_all_times(!empty($this->condition_item['time']) ? $this->condition_item['time'] : '');
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
                 <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -1234,9 +1242,9 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgbl-select2-attributes wgbl-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgb-select2-attributes wgb-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['attributes']) && is_array($this->condition_item['attributes'])) {
             foreach ($this->condition_item['attributes'] as $attribute_id) {
                 if (!empty($this->option_values['attributes'][$attribute_id])) {
@@ -1252,15 +1260,15 @@ class Condition_Render
 
     private function purchased_tags_render()
     {
-        $html = '<div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        $html = '<div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][time]" required ' . $this->field_status . '>';
         $html .= $this->get_all_times(!empty($this->condition_item['time']) ? $this->condition_item['time'] : '');
         $html .= '</select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
         <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
@@ -1269,9 +1277,9 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgbl-select2-tags wgbl-select2-option-values" data-type="select2" data-option-name="tags" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgb-select2-tags wgb-select2-option-values" data-type="select2" data-option-name="tags" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['tags']) && is_array($this->condition_item['tags'])) {
             foreach ($this->condition_item['tags'] as $tag_id) {
                 if (!empty($this->option_values['tags'][$tag_id])) {
@@ -1287,21 +1295,22 @@ class Condition_Render
 
     private function quantity_purchased_products_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgbl-select2-products wgbl-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][products][]" class="wgb-select2-products wgb-select2-option-values" data-option-name="products" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['products']) && is_array($this->condition_item['products'])) {
             foreach ($this->condition_item['products'] as $product_id) {
-                if (!empty($this->option_values['products'][$product_id])) {
-                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($this->option_values['products'][$product_id]) . '</option>';
+                $product_title = Product::get_product_label_for_rule_fields(intval($product_id));
+                if (!empty($product_title)) {
+                    $html .= '<option value="' . esc_attr($product_id) . '" selected>' . esc_html($product_title) . '</option>';
                 }
             }
         }
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1310,8 +1319,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -1320,9 +1329,9 @@ class Condition_Render
 
     private function quantity_purchased_variations_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgbl-select2-variations wgbl-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][variations][]" class="wgb-select2-variations wgb-select2-option-values" data-option-name="variations" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['variations']) && is_array($this->condition_item['variations'])) {
             foreach ($this->condition_item['variations'] as $variation_id) {
                 if (!empty($this->option_values['variations'][$variation_id])) {
@@ -1333,8 +1342,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1343,8 +1352,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -1353,9 +1362,9 @@ class Condition_Render
 
     private function quantity_purchased_categories_render()
     {
-        $html = '<div class="wgbl-w30p">
-                <div class="wgbl-form-group">
-                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgbl-select2-categories wgbl-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w30p">
+                <div class="wgb-form-group">
+                <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][categories][]" class="wgb-select2-categories wgb-select2-option-values" data-option-name="categories" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['categories']) && is_array($this->condition_item['categories'])) {
             foreach ($this->condition_item['categories'] as $category_id) {
                 if (!empty($this->option_values['categories'][$category_id])) {
@@ -1366,8 +1375,8 @@ class Condition_Render
         $html .= '</select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
                 <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
                 <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1376,8 +1385,8 @@ class Condition_Render
                 </select>
                 </div>
                 </div>
-                <div class="wgbl-w30p">
-                <div class="wgbl-form-group">
+                <div class="wgb-w30p">
+                <div class="wgb-form-group">
                 <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
                 </div>
                 </div>';
@@ -1386,9 +1395,9 @@ class Condition_Render
 
     private function quantity_purchased_attributes_render()
     {
-        $html = '<div class="wgbl-w30p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgbl-select2-attributes wgbl-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w30p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][attributes][]" class="wgb-select2-attributes wgb-select2-option-values" data-option-name="attributes" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['attributes']) && is_array($this->condition_item['attributes'])) {
             foreach ($this->condition_item['attributes'] as $attribute_id) {
                 if (!empty($this->option_values['attributes'][$attribute_id])) {
@@ -1399,8 +1408,8 @@ class Condition_Render
         $html .= '</select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
         <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1409,8 +1418,8 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
         <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
         </div>
         </div>';
@@ -1419,9 +1428,9 @@ class Condition_Render
 
     private function quantity_purchased_tags_render()
     {
-        $html = '<div class="wgbl-w30p">
-        <div class="wgbl-form-group">
-        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgbl-select2-tags wgbl-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
+        $html = '<div class="wgb-w30p">
+        <div class="wgb-form-group">
+        <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][tags][]" class="wgb-select2-tags wgb-select2-option-values" data-option-name="tags" data-type="select2" data-placeholder="Select ..." multiple required ' . $this->field_status . '>';
         if (!empty($this->condition_item['tags']) && is_array($this->condition_item['tags'])) {
             foreach ($this->condition_item['tags'] as $tag_id) {
                 if (!empty($this->option_values['tags'][$tag_id])) {
@@ -1432,8 +1441,8 @@ class Condition_Render
         $html .= '</select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
         <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
         <option value="at_least" ' . (($this->condition_item['method_option'] == 'at_least') ? 'selected' : '') . '>at least</option>
         <option value="more_than" ' . (($this->condition_item['method_option'] == 'more_than') ? 'selected' : '') . '>more than</option>
@@ -1442,8 +1451,8 @@ class Condition_Render
         </select>
         </div>
         </div>
-        <div class="wgbl-w30p">
-        <div class="wgbl-form-group">
+        <div class="wgb-w30p">
+        <div class="wgb-form-group">
         <input type="number" min="0" name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][value]" value="' . $this->value . '" placeholder="0" required ' . $this->field_status . '>
         </div>
         </div>';
@@ -1461,7 +1470,7 @@ class Condition_Render
             case 'all':
             case 'only':
             case 'none':
-                $html = '<select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][coupons][]" class="wgbl-select2-coupons wgbl-select2-option-values" data-option-name="coupons" data-type="select2" data-placeholder="Select ..." required ' . $this->field_status . ' multiple>';
+                $html = '<select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][coupons][]" class="wgb-select2-coupons wgb-select2-option-values" data-option-name="coupons" data-type="select2" data-placeholder="Select ..." required ' . $this->field_status . ' multiple>';
                 if (!empty($this->condition_item['coupons']) && is_array($this->condition_item['coupons'])) {
                     foreach ($this->condition_item['coupons'] as $coupon_id) {
                         if (!empty($this->option_values['coupons'][$coupon_id])) {
@@ -1556,6 +1565,62 @@ class Condition_Render
                 $html = '';
         }
 
+        return $html;
+    }
+
+    private function cart_items_brands_render()
+    {
+        $html = '<div class="wgb-w30p">
+            <div class="wgb-form-group">
+            <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
+                <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
+                <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
+                <option value="only" ' . (($this->condition_item['method_option'] == 'only') ? 'selected' : '') . '>only selected</option>
+                <option value="none" ' . (($this->condition_item['method_option'] == 'none') ? 'selected' : '') . '>none of selected</option>
+            </select>
+            </div>
+        </div>
+        <div class="wgb-w70p">
+            <div class="wgb-form-group">
+            <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][brands][]" class="wgb-select2-brands wgb-select2-option-values" data-option-name="brands" data-type="select2" data-placeholder="Select brands ..." multiple required ' . $this->field_status . '>';
+        if (!empty($this->condition_item['brands']) && is_array($this->condition_item['brands'])) {
+            foreach ($this->condition_item['brands'] as $brand_id) {
+                if (!empty($this->option_values['brands'][$brand_id])) {
+                    $html .= '<option value="' . esc_attr($brand_id) . '" selected>' . esc_html($this->option_values['brands'][$brand_id]) . '</option>';
+                }
+            }
+        }
+        $html .= '</select>
+            </div>
+        </div>';
+        return $html;
+    }
+
+    private function product_brand_render()
+    {
+        $html = '<div class="wgb-w30p">
+            <div class="wgb-form-group">
+            <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][method_option]">
+                <option value="at_least_one" ' . (($this->condition_item['method_option'] == 'at_least_one') ? 'selected' : '') . '>at least one of selected</option>
+                <option value="all" ' . (($this->condition_item['method_option'] == 'all') ? 'selected' : '') . '>all of selected</option>
+                <option value="only" ' . (($this->condition_item['method_option'] == 'only') ? 'selected' : '') . '>only selected</option>
+                <option value="none" ' . (($this->condition_item['method_option'] == 'none') ? 'selected' : '') . '>none of selected</option>
+            </select>
+            </div>
+        </div>
+        <div class="wgb-w70p">
+            <div class="wgb-form-group">
+            <select name="rule[' . $this->rule_id . '][condition][' . $this->condition_id . '][brands][]" class="wgb-select2-brands wgb-select2-option-values" data-option-name="brands" data-type="select2" data-placeholder="Select brands ..." multiple required ' . $this->field_status . '>';
+        if (!empty($this->condition_item['brands']) && is_array($this->condition_item['brands'])) {
+            foreach ($this->condition_item['brands'] as $brand_id) {
+                if (!empty($this->option_values['brands'][$brand_id])) {
+                    $html .= '<option value="' . esc_attr($brand_id) . '" selected>' . esc_html($this->option_values['brands'][$brand_id]) . '</option>';
+                }
+            }
+        }
+        $html .= '</select>
+            </div>
+        </div>';
         return $html;
     }
 }

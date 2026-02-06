@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Exit if accessed directly
  */
@@ -7,253 +8,288 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class iThemeland_front_order extends check_rule_condition
+use wgb\classes\helpers\Notice;
+use wgb\frontend\classes\services\apply_rule\CheckRuleCondition;
+
+class iThemeland_front_order
 {
     private $gift_item_key;
     private $settings;
+    private $check_rule_condition;
+
+
     public function __construct()
     {
         $this->gift_item_key = array();
-
         $this->settings = itg_get_settings();
+        $this->check_rule_condition = new CheckRuleCondition($this->getCheckRuleConditionData());
 
-        add_action('wp_enqueue_scripts', array($this, "woo_advanced_gift_js_css"));
-
-        add_action('woocommerce_cart_loaded_from_session', array($this, 'check_session_gift'));
-
-        //For display in Checkout
-        add_action('woocommerce_review_order_after_cart_contents', array($this, 'review_order_after_cart_contents_adv_function'));
+        //add_action('wp_head', array($this, 'check_session_gift'));
+        //add_action('woocommerce_cart_loaded_from_session', array($this, 'check_session_gift'));
+        add_action('woocommerce_after_calculate_totals', array($this, 'check_session_gift_woocommerce_after_calculate_totals'));
 
         add_action('wp', array($this, 'pw_add_free_gifts'));
-        add_action('wp', [$this, 'pw_remove_gift']);
 
         add_action('wp_ajax_handel_pw_gift_show_variation', [$this, 'pw_gift_show_variation_function']);
         add_action('wp_ajax_nopriv_handel_pw_gift_show_variation', [$this, 'pw_gift_show_variation_function']);
 
-        add_action('wp_ajax_handel_display_gifts_in_popup', [$this, 'display_gifts_coupon_popup']);
-        add_action('wp_ajax_nopriv_handel_display_gifts_in_popup', [$this, 'display_gifts_coupon_popup']);
+        //Check Free Shipping
+        add_filter('woocommerce_package_rates', [$this, 'filter_shipping_methods'], 100, 2);
+
+        //Show popup in Checkout
+        add_action('wp_ajax_handel_pw_gift_show_popup_checkout', [$this, 'pw_gift_show_popup_checkout_function']);
+        add_action('wp_ajax_nopriv_handel_pw_gift_show_popup_checkout', [$this, 'pw_gift_show_popup_checkout_function']);
 
         //Ajax Manual Gift Products Add To Cart
         add_action('wp_ajax_ajax_add_free_gifts', [$this, 'itg_ajax_add_free_gifts']);
         add_action('wp_ajax_nopriv_ajax_add_free_gifts', [$this, 'itg_ajax_add_free_gifts']);
 
+        //Ajax Manual Gift Products Add To Cart
+        add_action('wp_ajax_itg_reloaditempopup', [$this, 'reload_item_popup']);
+        add_action('wp_ajax_nopriv_itg_reloaditempopup', [$this, 'reload_item_popup']);
 
-        add_action('woocommerce_new_order', array($this, 'add_gift_to_order_adv'), 99, 1);
+        // Test AJAX function for debugging
+        add_action('wp_ajax_itg_test_ajax', [$this, 'test_ajax_function']);
+        add_action('wp_ajax_nopriv_itg_test_ajax', [$this, 'test_ajax_function']);
 
-        add_action('woocommerce_checkout_order_processed', array($this, 'it_woocommerce_checkout_order_processed'), 10, 3);
+        //add_action('woocommerce_new_order', array($this, 'add_gift_to_order_adv'), 99, 1);
+
+        //If Change Change Payment Method Show Popup
+        add_action('wp_ajax_wgb_check_rule_after_update_checkout', [$this, 'check_rule_after_update_checkout']);
+        add_action('wp_ajax_nopriv_wgb_check_rule_after_checkout', [$this, 'check_rule_after_update_checkout']);
     }
 
-    public function woo_advanced_gift_js_css()
+    private function getCheckRuleConditionData(): array
     {
-        $cart_page_id = wc_get_page_id('cart');
-        $cart_page_id = get_permalink($cart_page_id);
-        if (substr($cart_page_id, -1) == "/") {
-            $cart_page_id = substr($cart_page_id, 0, -1);
-        }
-        //if ( is_page( 'cart' ) || is_cart() || is_checkout() || is_page( 'checkout' ) ) {
-        //{
-        //Carousel
-
-        if ($this->settings['layout'] == 'carousel') {
-            wp_register_style('it-gift-owl-carousel-style', plugin_dir_url_wc_advanced_gift . 'assets/css/owl-carousel/owl.carousel.min.css', [], WGBL_VERSION);
-            wp_register_script('owl-carousel', plugin_dir_url_wc_advanced_gift . 'assets/js/owl-carousel/owl.carousel.min.js', [], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-
-            wp_enqueue_script('it-owl-carousel', plugin_dir_url_wc_advanced_gift . 'assets/js/owl-carousel/owl-carousel-enhanced.js', array('jquery', 'owl-carousel'), WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_localize_script('it-owl-carousel', 'it_gift_carousel_ajax', array(
-                'loop' => $this->settings['view_gift_in_cart']['carousel']['loop'],
-                'dots' => $this->settings['view_gift_in_cart']['carousel']['dots'],
-                'nav' => $this->settings['view_gift_in_cart']['carousel']['nav'],
-                'speed' => $this->settings['view_gift_in_cart']['carousel']['speed'],
-                'mobile' => $this->settings['view_gift_in_cart']['carousel']['mobile'],
-                'tablet' => $this->settings['view_gift_in_cart']['carousel']['tablet'],
-                'desktop' => $this->settings['view_gift_in_cart']['carousel']['desktop'],
-            ));
-        }
-        //DropDown
-        elseif ($this->settings['layout'] == 'dropdown') {
-            wp_register_style('it-gift-dropdown-css', plugin_dir_url_wc_advanced_gift . 'assets/css/dropdown/dropdown.css', [], WGBL_VERSION);
-            wp_register_script('it-gift-dropdown-js', plugin_dir_url_wc_advanced_gift . 'assets/js/dropdown/dropdown.js', [], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-        }
-        //DataTase
-        elseif ($this->settings['layout'] == 'datatable') {
-            wp_register_style('it-gift-datatables-style', plugin_dir_url_wc_advanced_gift . 'assets/css/datatables/jquery.dataTables.min.css', [], WGBL_VERSION);
-            wp_register_script('it-gift-datatables-js', plugin_dir_url_wc_advanced_gift . 'assets/js/datatables/jquery.dataTables.min.js', array('jquery'), WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-        }
-        $permalink = get_permalink();
-        $add_to_cart_link = esc_url(add_query_arg(array('pw_add_gift' => '%s',), $permalink));
-        $itg_localization_select_your_gift = get_option('itg_localization_select_your_gift', 'Select Your Gift');
-        wp_register_script('pw-gift-add-jquery-adv', plugin_dir_url_wc_advanced_gift . 'assets/js/custom-jquery-gift.js', array('jquery'), '1.0.3'); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-        wp_localize_script('pw-gift-add-jquery-adv', 'pw_wc_gift_adv_ajax', array(
-            'ajaxurl'                       => admin_url('admin-ajax.php'),
-            'add_to_cart_link'              => $add_to_cart_link,
-            'security'                      => wp_create_nonce('jkhKJSdd4576d234Z'),
-            'action_show_variation'         => 'handel_pw_gift_show_variation',
-            'action_display_gifts_in_popup' => 'handel_display_gifts_in_popup',
-            'cart_page_id'                  => $cart_page_id,
-            'select_your_gift'                  => $itg_localization_select_your_gift,
-        ));
-        //wp_enqueue_script( 'pw-gift-add-jquery-adv' );
-
-        //Css
-        wp_enqueue_style('it-gift-modal-style', plugin_dir_url_wc_advanced_gift . 'assets/css/modal/modal.css', [], WGBL_VERSION);
-
-        //wp_register_style( 'it-gift-popup-style', plugin_dir_url_wc_advanced_gift . 'assets/css/popup/popup.css' );
-
-        //Grid
-        wp_enqueue_style('it-gift-style', plugin_dir_url_wc_advanced_gift . 'assets/css/style/style.css', [], '1.0.2');
-        wp_enqueue_style('it-gift-popup', plugin_dir_url_wc_advanced_gift . 'assets/css/popup/popup.css', [], '1.0.2');
-
-        wp_register_script('it-gift-grid-jquery', plugin_dir_url_wc_advanced_gift . 'assets/js/grid/grid.js', [], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-
-        //Scrollbar
-        wp_enqueue_script('pw-gift-scrollbar-js', plugin_dir_url_wc_advanced_gift . 'assets/js/scrollbar/jquery.scrollbar.min.js', [], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-        //}
+        return [
+            'cart_contents'           => itg_get_cart_contents(),
+            'gift_rule_exclude'       => [],
+            'product_qty_in_cart'     => 0,
+            'show_gift_item_for_cart' => [],
+            'gift_item_variable'      => [],
+        ];
     }
 
-    public function check_session_gift()
+    public function check_session_gift_woocommerce_after_calculate_totals($cart = null)
+    //public function check_session_gift($cart = null)
     {
         global $woocommerce;
-        $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-        if (!($this->gift_item_key = $this->pw_get_gift_for_cart_checkout())) {
-            if (is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0) {
-                wc_add_notice(get_option('itg_localization_free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
+
+        // Return if cart object is not initialized.
+        if (!is_object(WC()->cart)) {
+            return;
+        }
+
+        // Return if cart is empty.
+        if (WC()->cart->get_cart_contents_count() == 0) {
+            return;
+        }
+        if (!$this->check_rule_condition->pw_get_gift_for_cart_checkout()) {
+            $products_removed = false;
+            foreach (WC()->cart->get_cart() as $key => $value) {
+                if (!isset($value['it_free_gift'])) {
+                    continue;
+                }
+                WC()->cart->remove_cart_item($key);
+                $products_removed = true;
             }
 
-            WC()->session->set('gift_group_order_data', '');
-            return '';
+            if ($products_removed) {
+                if (WC()->cart->get_cart_contents_count() > 0) {
+                    Notice::add(get_option('itg_localization_free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
+                }
+            }
+            itg_unset_removed_automatic_free_gift_products_from_session();
+            return;
         }
-        //Get session for check again
-        $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
+
         $show_notice = false;
-        //Fetch settings
         if (!is_array($this->settings) || count($this->settings) <= 0) {
             $this->settings = itg_get_settings();
         }
 
-
-        $this->product_qty_in_cart  = itg_get_cart_item_stock_quantities();
-
-
-        /**  Check Quantity  **/
-        if (is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0) {
-            $product_qty_in_cart_gift = itg_get_cart_item_quantities_gift_stock(); //can't public
-            foreach ($retrieved_group_input_value as $index => $set) {
-                $product_get        = wc_get_product($set['id_product']);
-                $get_stock_quantity = $product_get->get_stock_quantity();
-                if ($product_get->is_in_stock() && $get_stock_quantity >= 1) {
-                    $x                           = 0;
-                    $required_stock_in_cart_gift = isset($product_qty_in_cart_gift[$set['id_product']]) ? $product_qty_in_cart_gift[$set['id_product']] : 0;
-                    $required_stock_in_cart      = isset($this->product_qty_in_cart[$product_get->get_stock_managed_by_id()]) ? $this->product_qty_in_cart[$product_get->get_stock_managed_by_id()] : 0;
-                    $x                           = $get_stock_quantity - $required_stock_in_cart;
-                    if ($x < $required_stock_in_cart_gift) {
-                        if ($x <= 0) {
-                            unset($retrieved_group_input_value[$index]);
-                            $show_notice = true;
-                        } else {
-                            $retrieved_group_input_value[$index]['q'] = $x;
-                        }
-                    }
-                }
+        /** Check session if time rule changed and remove automatically session **/
+        $session_gift_products = itg_get_removed_automatic_free_gift_products_from_session();
+        if (itg_check_is_array($session_gift_products) || isset($session_gift_products['time'])) {
+            if ($this->check_rule_condition->getGiftItemVariable()['rule_time'] != $session_gift_products['time']) {
+                itg_unset_removed_automatic_free_gift_products_from_session();
             }
         }
-        /**  End Check Quantity  **/
-        WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
-        $count_info = itg_check_quantity_gift_in_session();
-        if (
-            is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0 &&
-            $retrieved_group_input_value != ''
-        ) {
 
-            foreach ($retrieved_group_input_value as $gift => $value) {
-                if (!isset($this->gift_item_variable['all_gifts'][$value['id']])) {
-                    unset($retrieved_group_input_value[$gift]);
-                    $show_notice = true;
-                    continue;
-                }
+        $count_info = itg_check_quantity_gift_in_session(WC()->cart->get_cart());
+        foreach (WC()->cart->get_cart() as $key => $value) {
+            if (!isset($value['it_free_gift'])) {
+                continue;
+            }
 
-                $uid = $this->gift_item_variable['all_gifts'][$gift]['uid'];
-                //For Check if rule is changed and gift was added to cart (so gift from rule must remove from cart)
-                if ($retrieved_group_input_value[$gift]['time_add'] != $this->gift_item_variable['rule_time']) {
-                    unset($retrieved_group_input_value[$gift]);
-                    $show_notice = true;
-                    continue;
-                }
+            if (!isset($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']])) {
+                WC()->cart->remove_cart_item($key);
+                $show_notice = true;
+                continue;
+            }
 
-                if (!array_key_exists($gift, $this->gift_item_variable['all_gifts'])) {
-                    unset($retrieved_group_input_value[$gift]);
-                    $show_notice = true;
-                    continue;
-                }
+            $uid = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['uid'];
 
-                //Number Allow For Simple Method
-                $pw_number_gift_allowed = $this->gift_item_variable[$uid]['pw_number_gift_allowed'];
+            if ($value['it_free_gift']['time_add'] != $this->check_rule_condition->getGiftItemVariable()['rule_time']) {
+                WC()->cart->remove_cart_item($key);
+                itg_unset_removed_automatic_free_gift_products_from_session();
+                $show_notice = true;
+                continue;
+            }
 
-                for ($i = 1; $i < $count_info['count_gift']; $i++) {
-                    if (
-                        isset($count_info['count_rule_gift'][$value['uid']]['q']) && $count_info['count_rule_gift'][$value['uid']]['q'] >
-                        $pw_number_gift_allowed && !in_array(
-                            $this->gift_item_variable[$uid]['method'],
-                            array(
-                                'buy_x_get_x_repeat'
-                            ),
-                            true
-                        )
-                    ) {
-                        if ($retrieved_group_input_value[$gift]['q'] <= 1) {
-                            unset($retrieved_group_input_value[$gift]);
-                            $show_notice = true;
+            if (!array_key_exists($value['it_free_gift']['rule_gift_key'], $this->check_rule_condition->getGiftItemVariable()['all_gifts'])) {
+                WC()->cart->remove_cart_item($key);
+                $show_notice = true;
+                continue;
+            }
+
+            //Number Allow For Simple Method
+            $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()[$uid]['pw_number_gift_allowed'];
+
+            //Number Allow For Other Method
+            if (in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array(
+                'buy_x_get_x_repeat'
+            ), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] == 'ind') {
+
+                $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['q'];
+            }
+
+            //For Quantity is update
+            $quantity_gift = $value['quantity'];
+            if (
+                isset($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'])
+                &&
+                (!in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'), true) || $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] != 'ind')
+            )
+            //if(isset($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']))
+            {
+                for ($i = 0; $i < $value['quantity']; $i++) {
+                    if ($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'] > $pw_number_gift_allowed) {
+                        if ($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'] <= 1) {
+                            WC()->cart->remove_cart_item($key);
+                            $count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']--;
+
+                            continue 2;
                         } else {
-                            $retrieved_group_input_value[$gift]['q']--;
+                            $quantity_gift = $quantity_gift - 1;
+                            WC()->cart->set_quantity($key, $quantity_gift);
+
+                            $count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']--;
                         }
-                        $count_info['count_rule_gift'][$value['uid']]['q']--;
-                    }
-                }
-
-                //For Quantity is update
-                if (array_key_exists(
-                    $value['uid'],
-                    $count_info['count_rule_gift']
-                ) && $retrieved_group_input_value != '' && count($retrieved_group_input_value) > 0 && $value['q'] > $pw_number_gift_allowed) {
-                    //if Quantity gift is <= 1  from Quantity less , else  kol less ko
-                    if (isset($retrieved_group_input_value[$gift]['q']) && $retrieved_group_input_value[$gift]['q'] < 1) {
-                        unset($retrieved_group_input_value[$gift]);
-                        $show_notice = true;
                     } else {
-                        $retrieved_group_input_value[$gift]['q'] = $pw_number_gift_allowed;
+                        //break;
                     }
-                    $count_info['count_rule_gift'][$value['uid']]['q']--;
-                }
-
-                //check if any confuse and if item session wasn't in apply gift
-                if (!array_key_exists(
-                    $gift,
-                    $this->gift_item_variable['all_gifts']
-                ) || count($this->gift_item_variable['all_gifts'][$gift]) <= 0) {
-                    $show_notice = true;
-                    unset($retrieved_group_input_value[$gift]);
-                    continue;
                 }
             }
-            WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
+            //For Quantity is update buy x get x ind
+            if (array_key_exists(
+                $value['it_free_gift']['rule_id'],
+                $count_info['count_rule_gift']
+            ) && $value['quantity'] > $pw_number_gift_allowed  && in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] == 'ind') {
+                //if Quantity gift is <= 1  from Quantity less , else  kola less
+                if ($value['quantity'] <= 1) {
+                    WC()->cart->remove_cart_item($key);
+                } else {
+                    WC()->cart->set_quantity($key, $pw_number_gift_allowed);
+                }
+            }
+            //check if any confuse and if item session wasn't in apply gift
+            if (!array_key_exists(
+                $value['it_free_gift']['rule_gift_key'],
+                $this->check_rule_condition->getGiftItemVariable()['all_gifts']
+            ) || count($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]) <= 0) {
+                $show_notice = true;
+                WC()->cart->remove_cart_item($key);
+                continue;
+            }
         }
 
         if ($show_notice) {
-            wc_add_notice(get_option('itg_localization_free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
+            Notice::add(get_option('itg_localization_free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
         }
 
-        add_action('woocommerce_cart_contents', [$this, 'display_gifts_added_in_cart'], 1);
+        if (isset($this->check_rule_condition->getShowGiftItemForCart()['gifts'])) {
+            if ($this->settings['position'] == 'bottom_cart') {
+                add_action('woocommerce_after_cart_table', [$this, 'display_gifts_bottom_cart']);
+            }
+            if ($this->settings['position'] == 'above_cart') {
+                add_action('woocommerce_before_cart_table', [$this, 'display_gifts_bottom_cart']);
+            } elseif ($this->settings['position'] == 'beside_coupon') {
+                add_action('woocommerce_cart_coupon', [$this, 'display_gifts_in_Coupon_dropdown']);
+            }
 
-        if ($this->settings['position'] == 'bottom_cart') {
-            add_action('woocommerce_after_cart_table', [$this, 'display_gifts_bottom_cart']);
-        } elseif ($this->settings['position'] == 'beside_coupon') {
-            add_action('woocommerce_cart_coupon', [$this, 'display_gifts_in_Coupon_dropdown']);
-        } elseif ($this->settings['position'] == 'popup') {
-            add_action('wp_head', array($this, 'display_gifts_in_popup'));
+            //Show Popup
+            add_action('wp_footer', array($this, 'layout_popup'));
         }
+    }
+
+    public function apply_on_cart_item($cart_object)
+    {
+        // Return if cart object is not initialized.
+        if (!is_object($cart_object)) {
+            return;
+        }
+        if (is_admin() && !defined('DOING_AJAX')) return;
+
+        if (did_action('woocommerce_before_calculate_totals') >= 2) return;
+        $min = PHP_FLOAT_MAX;
+
+        // LOOP THROUGH THE CART TO FIND THE CHEAPEST ITEM
+        foreach ($cart_object->cart_contents as $key => $value) {
+            if (isset($value['it_free_gift'])) {
+                continue;
+            }
+            $item_price = $value['data']->get_price();
+            //$item_price = $subtotal_price / $value['quantity'];
+            //$price = $value['data']->price; // Product original price
+            if ($item_price <= $min) {
+                $min = $item_price;
+                $cheapest_item_key = $key;
+                $item_quantity = $value['quantity'];
+            }
+        }
+
+        $number_get_gift = 1;
+        $price_gift = 0;
+        $p1 = $min * ($item_quantity - $number_get_gift);
+        $p2 = $number_get_gift * $price_gift;
+        $sum = $p1 + $p2;
+        $psum = $sum / $item_quantity;
+
+        foreach ($cart_object->get_cart() as $cart_item_key => $cart_item) {
+            if ($cheapest_item_key == $cart_item_key) {
+                $cart_item['data']->set_price($psum);
+                $cart_item['data']->set_sale_price($psum);
+            }
+        }
+    }
+
+    public function layout_popup()
+    {
+        if (!wgb_is_cart_page() && !wgb_is_checkout_page()) {
+            return;
+        }
+
+        switch ($this->settings['layout_popup']) {
+            case 'carousel':
+                $layout = plugin_dir_path_wc_adv_gift . 'views/modal/carousel-layout.php';
+                break;
+            case 'list':
+                $layout = plugin_dir_path_wc_adv_gift . 'views/modal/list-layout.php';
+                break;
+            default:
+                $layout = plugin_dir_path_wc_adv_gift . 'views/modal/carousel-layout.php';
+        }
+
+        include $layout;
     }
 
     public function display_gifts_bottom_cart()
     {
+        global $woocommerce;
+
+        $is_child = false;
+
         switch ($this->settings['layout']) {
             case 'datatable':
                 wp_enqueue_style('it-gift-datatables-style');
@@ -275,381 +311,111 @@ class iThemeland_front_order extends check_rule_condition
                 $template = 'carousel-layout.php';
                 break;
         }
-        $is_child = false;
+
         if ($this->settings['child'] == 'true') {
             $is_child = true;
         }
 
         $atts_rule = [
-            'gift_rule_exclude'   => $this->gift_rule_exclude,
-            'quantity_products_in_cart' => $this->product_qty_in_cart,
-            'gifts_items_cart'        => $this->show_gift_item_for_cart,
-            'all_gift_items'          => $this->gift_item_variable,
+            'gift_rule_exclude'   => $this->check_rule_condition->getGiftRuleExclude(),
+            'quantity_products_in_cart' => $this->check_rule_condition->getProductQtyInCart(),
+            'gifts_items_cart'        => $this->check_rule_condition->getShowGiftItemForCart(),
+            'all_gift_items'          => $this->check_rule_condition->getGiftItemVariable(),
             'settings'  => $this->settings,
             'multi_level' => false,
             'is_child'  => $is_child,
         ];
 
+
         $atts = itg_get_gift_products_data_multilevel($atts_rule);
+        //echo '<pre>';print_r($atts_rule);die;
+
+        $atts = apply_filters('itgift_args_data_gift', $atts);
+
+
         if (count($atts['items']) <= 0) {
             return;
         }
 
-        //Css Style
-        wp_enqueue_style('it-gift-style');
-        //Add Gift jQuery
-        wp_enqueue_script('pw-gift-add-jquery-adv');
+        if ($this->settings['show_description'] == 'true') {
+            $description = '';
+            foreach ($this->check_rule_condition->getShowGiftItemForCart()['rule_details'] as $rule_item_key => $rule) {
+                if (strlen($this->check_rule_condition->getShowGiftItemForCart()['rule_details'][$rule_item_key]['description']) > 0) {
+                    $description .= '<div>' . $this->check_rule_condition->getShowGiftItemForCart()['rule_details'][$rule_item_key]['description'] . '</div>';
+                }
+            }
+            $atts['rule_description'] = $description;
+        }
 
         itg_get_template($template, $atts);
-
-        /*
-        global $woocommerce;
-        $url  = '';
-        $file = 'parent';
-        if ($this->settings['child'] == 'true') {
-            $file = 'child';
-        }
-		$url = plugin_dir_path_wc_adv_gift . 'views/dropdown/simple.php';
-        if ($this->settings['layout'] == 'carousel') {
-            $url = plugin_dir_path_wc_adv_gift . 'views/carousel/' . $file . '.php';
-        } elseif ($this->settings['layout'] == 'grid') {
-            $url = plugin_dir_path_wc_adv_gift . 'views/grid/' . $file . '.php';
-        } elseif ($this->settings['layout'] == 'datatable') {
-            $url = plugin_dir_path_wc_adv_gift . 'views/datatable/' . $file . '.php';
-        }
-        require $url;
-		*/
     }
 
-    public function display_gifts_in_popup()
+    public function filter_shipping_methods($rates, $package)
     {
+        $this->check_rule_condition->pw_get_gift_for_cart_checkout();
+        $free_shipping_exists = $this->check_rule_condition->free_shipping_exists();
 
-        if (!is_cart() && !is_checkout()) {
+        if (!itg_check_is_array($free_shipping_exists)) {
+            return $rates;
+        }
+
+        $unique_array = array_values(array_unique(array_merge(...array_values($free_shipping_exists))));
+
+        foreach ($rates as $key => $rate) {
+            $instance_id = itg_get_rate_instance_id($rate);
+            if (itg_shipping_method_selected($instance_id, $unique_array)) {
+                $rate->set_cost(0);
+            }
+        }
+        return $rates;
+    }
+
+    public function display_gifts_click_notice_checkout_popup()
+    {
+        if (!wgb_is_checkout_page()) {
             return;
         }
-        require plugin_dir_path_wc_adv_gift . 'views/modal/autoload-popup.php';
+
+        $gift_available = itg_check_gift_available($this->check_rule_condition->getShowGiftItemForCart(), $this->check_rule_condition->getGiftItemVariable(), $this->check_rule_condition->getGiftRuleExclude());
+        if (!is_array($gift_available['av_gifts']) || count($gift_available['av_gifts']) <= 0) {
+            return;
+        }
+
+        $notice = '<span class="itg-checkout-notice"></span>' . get_option('itg_localization_notice_checkout_message');
+
+        $popup_link = sprintf('<a class="btn-select-gift-popup-button" href="">%s</a>', get_option('itg_localization_notice_checkout_message_link_here'));
+        $notice        = str_replace('[popup_link]', $popup_link, $notice);
+
+        $cart_page_url = sprintf('<a href="%s">%s</a>', wc_get_cart_url(), get_option('itg_localization_notice_checkout_message_link_here'));
+        $notice        = str_replace('[cart_link]', $cart_page_url, $notice);
+        //echo $notice;
+        Notice::add($notice, 'notice');
     }
+
 
     public function display_gifts_in_Coupon_dropdown()
     {
-        if ($this->settings['layout'] == "dropdown") {
-            require plugin_dir_path_wc_adv_gift . 'views/dropdown/simple.php';
-        } else {
-            wp_enqueue_style('it-gift-datatables-style');
-            wp_enqueue_script('it-gift-datatables-js');
+        $atts = [
+            'gift_rule_exclude'   => $this->check_rule_condition->getGiftRuleExclude(),
+            'quantity_products_in_cart' => $this->check_rule_condition->getProductQtyInCart(),
+            'gifts_items_cart'        => $this->check_rule_condition->getShowGiftItemForCart(),
+            'all_gift_items'          => $this->check_rule_condition->getGiftItemVariable(),
+            'settings'  => $this->settings,
+            'multi_level' => false,
+            'is_child'  => true,
+        ];
 
-            // wp_enqueue_style('it-gift-style');
-            wp_enqueue_script('pw-gift-add-jquery-adv');
 
-            echo '<button type="button" class="button btn_select_gift_in_coupon">' . esc_html__('Select Gift', 'ithemeland-free-gifts-for-woo') . '</button>';
-        }
-    }
-
-    public function display_gifts_added_in_cart()
-    {
-
-        global $woocommerce, $product;
-        $cart_page_id = get_permalink(wc_get_page_id('cart'));
-		global $wp;
-		$cart_page_id = home_url( $wp->request );			
-        if (substr($cart_page_id, -1) == "/") {
-            $cart_page_id = substr($cart_page_id, 0, -1);
-        }
-        if (strpos($cart_page_id, '?') !== false) {
-            $cart_page_id = $cart_page_id . '&';
-        } else {
-            $cart_page_id = $cart_page_id . '?';
-        }
-	
-        $txt_free = get_option('itg_localization_txt_free', 'Free');
-        $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-        if ($retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0) {
-            foreach ($retrieved_group_input_value as $key => $index) {
-                $gift_index = "";
-                $img_html = '';
-                $product = wc_get_product($index['id_product']);
-                if (!($product instanceof \WC_Product)) {
-                    return false;
-                }
-
-                $img_url = (!empty($product->get_image_id())) ? wp_get_attachment_image_src($product->get_image_id(), [50, 50]) : wc_placeholder_img_src([50, 50]);
-                $img_url = (is_array($img_url) && !empty($img_url[0])) ? $img_url[0] : $img_url;
-                $gift_count = !empty($index['q']) ? intval($index['q']) : 1;
-                $title = $product->get_title();
-
-                $price = $txt_free;
-                $price_total = $txt_free;
-                if ($this->settings['display_price'] == 'yes') {
-                    $price = $product->get_price_html();
-                    $price_total = $product->get_price();
-                    if (!$product->get_price()) {
-                        $price_total = 0;
-                    }
-                    if (is_numeric($price_total)) {
-                        $price_total = $price_total * $gift_count;
-                    }
-                    $price_total = wc_price($price_total);
-                    $price = '<del>' . $price . '</del> ' . $txt_free;
-                    $price_total = '<del>' . $price_total . '</del> ' . $txt_free;
-                }
-                if ($product->post_type == 'product_variation') {
-                    $title = $product->get_name();
-                }
-                $title_gift = apply_filters('woocommerce_checkout_product_title', $title, $product);
-
-                $img_html   = itg_render_product_image($product, false);
-
-                $values = array(
-                    'cart_page_id' => $cart_page_id,
-                    'id_gift' => $index['id'],
-                    'id_product' => $index['id_product'],
-                    'img' => $img_html,
-                    'title_gift' => $title_gift,
-                    'price' => $price,
-                    'price_total' => $price_total,
-                    'gift_count' => $gift_count,
-                );
-
-                $html =
-                    '<tr class="woocommerce-cart-form__cart-item cart_item">
-						<td class="product-remove">
-							<a class="remove gift-close-link" href="' . esc_url($cart_page_id) . 'it_gift_remove=' . esc_attr($index['id']) . '&_wpnonce=' . wp_create_nonce('wgbl_post_nonce').'">×</a>
-						</td>
-						<td class="product-thumbnail">' . wp_kses_post($img_html) . '</td>
-						<td class="product-name" data-title="' . esc_attr($title_gift) . '"><a href="' .
-                    wp_kses_post(get_permalink($index['id_product'])) . '">' . wp_kses_post($title_gift) . '</a></td>
-						<td class="product-price" data-title="' . esc_html__("Price", 'ithemeland-free-gifts-for-woo') . '">' . wp_kses_post($price) . '</td>
-						<td class="product-quantity" data-title="' . esc_html__("Quantity", 'ithemeland-free-gifts-for-woo') . '">' . esc_html($gift_count) . '</td>
-						<td class="product-subtotal" data-title="' . esc_html__("Total", 'ithemeland-free-gifts-for-woo') . '">' . wp_kses_post($price_total) . '</td>
-					</tr>';
-
-                echo wp_kses_post(apply_filters('itgl_gifts_cart_content', $html, $values));
-            }
-        }
-    }
-
-    public function review_order_after_cart_contents_adv_function()
-    {
-        global $woocommerce;
-        if (!($this->gift_item_key = $this->pw_get_gift_for_cart_checkout())) {
-            return '';
-        }
-        if (!is_array($this->gift_item_key) || count($this->gift_item_key) <= 0) {
-            return;
-        }
-
-        $txt_free = get_option('itg_localization_txt_free', 'Free');
-        $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-        if ($retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0) {
-            foreach ($retrieved_group_input_value as $key => $index) {
-                $img_html = '';
-                $product = wc_get_product($index['id_product']);
-                if (!($product instanceof \WC_Product)) {
-                    return false;
-                }
-
-                $img_url = (!empty($product->get_image_id())) ? wp_get_attachment_image_src($product->get_image_id(), [50, 50]) : wc_placeholder_img_src([50, 50]);
-                $img_url = (is_array($img_url) && !empty($img_url[0])) ? $img_url[0] : $img_url;
-                $title = $product->get_title();
-                if ($product->post_type == 'product_variation') {
-                    $title = $product->get_name();
-                }
-                $price_p = $txt_free;
-                $count   = isset($retrieved_group_input_value[$key]['q']) ? $retrieved_group_input_value[$key]['q'] : 1;
-                echo '<tr>
-                          <td class="product-name">' .
-                    wp_kses_post(apply_filters('woocommerce_checkout_product_title', $title, $product)) . ' ' .
-                    '<strong class="product-quantity">' . esc_html($count) . '</strong>' .
-                    '</td>
-                          <td class="product-total" style="color: #00aa00;">' . wp_kses_post($price_p) . '</td>
-                      </tr>';
-            }
-        }
-    }
-
-    public function add_gift_to_order_adv($order_id)
-    {
-        global $woocommerce;
-        if (!($this->gift_item_key = $this->pw_get_gift_for_cart_checkout())) {
-            if (!empty(WC()->session) && method_exists(WC()->session, 'set')) {
-                WC()->session->set('gift_group_order_data', '');
-            }
-
-            return '';
-        }
-        global $wpdb;
-        if (is_array($this->gift_item_variable['all_gifts']) && count($this->gift_item_variable['all_gifts']) > 0) {
-            $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-            if ($retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0) {
-                //For Limit
-                $set_rule_limit = '';
-
-                //End for limit
-                $order                = new WC_Order($order_id);
-                $note                 = 'The Gifts for order Added: ';
-                $set_gift             = false;
-                $user_id              = $order->get_customer_id('view');
-                //$pw_gift_rule_counter = get_user_meta($user_id, 'pw_gift_rule_counter', true);
-                foreach ($retrieved_group_input_value as $key => $index) {
-
-                    $product_id = "";
-                    $product_id = $index['id_product'];
-                    $uid        = $index['uid'];
-                    $_product   = wc_get_product($product_id);
-
-                    $item                 = array();
-                    $item['variation_id'] = $this->get_variation_id($_product);
-                    @$item['variation_data'] = $item['variation_id'] ? $this->get_variation_attributes($_product) : '';
-
-                    $title = $_product->get_title();
-                    if ($_product->post_type == 'product_variation') {
-                        $product_id = wp_get_post_parent_id($product_id);
-                        $title      = $_product->get_name();
-                    }
-
-                    if ($_product->is_in_stock()) {
-                        $item_id = wc_add_order_item($order_id, array(
-                            'order_item_name' =>
-                            $title,
-                            'order_item_type' => 'line_item'
-                        ));
-                        if ($item_id) {
-                            $note .= $_product->get_title() . '(' . $_product->get_sku() . ') , ';
-                            wc_add_order_item_meta($item_id, '_qty', $retrieved_group_input_value[$key]['q']);
-                            wc_add_order_item_meta($item_id, '_tax_class', $_product->get_tax_class());
-                            wc_add_order_item_meta($item_id, '_product_id', $product_id);
-                            wc_add_order_item_meta($item_id, '_variation_id', $this->get_variation_id($_product));
-                            wc_add_order_item_meta($item_id, '_line_subtotal', wc_format_decimal(0, 4));
-                            wc_add_order_item_meta($item_id, '_line_total', wc_format_decimal(0, 4));
-                            wc_add_order_item_meta($item_id, '_line_tax', wc_format_decimal(0, 4));
-                            wc_add_order_item_meta($item_id, '_line_subtotal_tax', wc_format_decimal(0, 4));
-                            wc_add_order_item_meta($item_id, '_free_gift', 'yes');
-                            wc_add_order_item_meta($item_id, '_rule_id_free_gift', $uid);
-                            $set_gift = true;
-                            if (@$item['variation_data'] && is_array($item['variation_data'])) {
-                                foreach ($item['variation_data'] as $key => $value) {
-                                    wc_add_order_item_meta(
-                                        $item_id,
-                                        esc_attr(str_replace('attribute_', '', $key)),
-                                        $value
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-
-                //update_user_meta($user_id, 'pw_gift_rule_counter', $pw_gift_rule_counter);
-
-                WC()->session->set('gift_group_order_data', '');
-                if ($set_gift) {
-                    $order->add_order_note($note);
-                    update_post_meta($order_id, 'gift_set', 'yes');
-                    update_post_meta($order_id, 'gift_array', $retrieved_group_input_value);
-
-                    // Set id in the order.
-                    // Improvement for HPOS compatibility.
-                    $order->add_meta_data('gift_set', 'yes');
-                    $order->add_meta_data('gift_array', $retrieved_group_input_value);
-                    $order->save();
-                }
-            }
-        }
-    }
-
-    public function it_woocommerce_checkout_order_processed($order_id, $post, $order)
-    {
-        $giftcoupon = get_post_meta($order_id, "gift_set", true);
-        if ($giftcoupon != 'yes') {
-            return;
-        }
-        $order = wc_get_order($order_id);
-        $flag  = false;
-        foreach ($order->get_items() as $item_id => $item) {
-            $free_gift = wc_get_order_item_meta($item_id, '_free_gift');
-            if ($free_gift == 'yes') {
-                $flag = true;
-                break;
-            }
-        }
-        if ($flag) {
-            return;
-        }
-        $set_gift   = false;
-        $note       = 'The Gifts for order Added After Change Status: ';
-        $gift_array = get_post_meta($order_id, "gift_array", true);
-        foreach ($gift_array as $key => $index) {
-            $product_id = "";
-
-            $product_id = $index['id_product'];
-            $rule_id    = $index['rule_id'];
-            $_product   = wc_get_product($product_id);
-
-            $title = $_product->get_title();
-            if ($_product->post_type == 'product_variation') {
-                $product_id = wp_get_post_parent_id($product_id);
-                $title      = $_product->get_name();
-            }
-
-            $item                 = array();
-            $item['variation_id'] = $this->get_variation_id($_product);
-            @$item['variation_data'] = $item['variation_id'] ? $this->get_variation_attributes($_product) : '';
-
-            if ($_product->is_in_stock()) {
-                $item_id = wc_add_order_item($order_id, array(
-                    'order_item_name' =>
-                    $title,
-                    'order_item_type' => 'line_item'
-                ));
-                if ($item_id) {
-                    $note .= $_product->get_title() . '(' . $_product->get_sku() . ') , ';
-                    wc_add_order_item_meta($item_id, '_qty', $gift_array[$key]['q']);
-                    wc_add_order_item_meta($item_id, '_tax_class', $_product->get_tax_class());
-                    wc_add_order_item_meta($item_id, '_product_id', $product_id);
-                    wc_add_order_item_meta($item_id, '_variation_id', $this->get_variation_id($_product));
-                    wc_add_order_item_meta($item_id, '_line_subtotal', wc_format_decimal(0, 4));
-                    wc_add_order_item_meta($item_id, '_line_total', wc_format_decimal(0, 4));
-                    wc_add_order_item_meta($item_id, '_line_tax', wc_format_decimal(0, 4));
-                    wc_add_order_item_meta($item_id, '_line_subtotal_tax', wc_format_decimal(0, 4));
-                    wc_add_order_item_meta($item_id, '_free_gift', 'yes');
-                    wc_add_order_item_meta($item_id, '_rule_id_free_gift', $rule_id);
-                    $set_gift = true;
-                    if (@$item['variation_data'] && is_array($item['variation_data'])) {
-                        foreach ($item['variation_data'] as $key => $value) {
-                            wc_add_order_item_meta($item_id, esc_attr(str_replace('attribute_', '', $key)), $value);
-                        }
-                    }
-                }
-            }
-        }
-        if ($set_gift) {
-            $order->add_order_note($note);
-        }
-    }
-
-    protected function get_variation_id($_product)
-    {
-        if (version_compare(WC()->version, "2.7.0") >= 0) {
-            return $_product->get_id();
-        } else {
-            return $_product->variation_id;
-        }
-    }
-
-    protected function get_variation_attributes($_product)
-    {
-        if (version_compare(WC()->version, "2.7.0") >= 0) {
-            return wc_get_product_variation_attributes($_product->get_id());
-        } else {
-            return $_product->get_variation_attributes();
-        }
+        $atts = itg_get_gift_products_data_multilevel($atts);
+        itg_get_template('dropdown-layout.php', $atts);
     }
 
     public function pw_add_free_gifts()
     {
-        if (!isset($_REQUEST['pw_add_gift'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if (!isset($_REQUEST['pw_add_gift'])) { //phpcs:ignore
             return;
         }
+
         // Return if cart object is not initialized.
         if (!is_object(WC()->cart)) {
             return;
@@ -659,129 +425,395 @@ class iThemeland_front_order extends check_rule_condition
         if (WC()->cart->get_cart_contents_count() == 0) {
             return;
         }
-
-        if (!($this->gift_item_key = $this->pw_get_gift_for_cart_checkout())) {
+        if (!($this->gift_item_key = $this->check_rule_condition->pw_get_gift_for_cart_checkout())) {
             return;
         }
+        $gift = sanitize_text_field(wp_unslash($_REQUEST['pw_add_gift'])); //phpcs:ignore
 
-        $gift      = sanitize_text_field(wp_unslash($_REQUEST['pw_add_gift'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if (!array_key_exists($gift, $this->gift_item_variable['all_gifts'])) {
+        if (!isset($_REQUEST['qty']) || !is_numeric($_REQUEST['qty'])) { //phpcs:ignore
+            $qty = 1;
+        } else
+            $qty = sanitize_text_field(wp_unslash($_REQUEST['qty']));  //phpcs:ignore
+
+
+        if (!array_key_exists($gift, $this->check_rule_condition->getGiftItemVariable()['all_gifts'])) {
             wp_safe_redirect(get_permalink());
             exit();
         }
+        //$retrieved_group_input_value = WC()->session->get('gift_group_order_data');
+        //$count_info                 = itg_check_quantity_gift_in_session($retrieved_group_input_value);
 
-        $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-        $count_info                 = itg_check_quantity_gift_in_session();
+        $retrieved_group_input_value = WC()->cart->get_cart();
 
+        $count_info = itg_check_quantity_gift_in_session($retrieved_group_input_value);
 
+        $uid        = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['uid'];
+        $id_product = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['id_product'];
 
-        $uid        = $this->gift_item_variable['all_gifts'][$gift]['uid'];
-        $id_product = $this->gift_item_variable['all_gifts'][$gift]['id_product'];
 
         //Number Allow For Simple Method
-        $pw_number_gift_allowed = $this->gift_item_variable[$uid]['pw_number_gift_allowed'];
+        $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()[$uid]['pw_number_gift_allowed'];
+        //Number Allow For Other Method
+        if (in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array(
+            'buy_x_get_x_repeat'
+        ), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['base_q'] == 'ind') {
+            $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['q'];
+        }
 
-        //Check all gift Rule added Qty
-        $product_get = wc_get_product($id_product);
 
-        if (array_key_exists($uid, $count_info['count_rule_gift']) && $count_info['count_rule_gift'][$uid]['q'] >= $pw_number_gift_allowed && !in_array($this->gift_item_variable[$uid]['method'], array('buy_x_get_x_repeat'), true)) {
-            wp_safe_redirect(get_permalink());
-            exit();
-        } elseif (in_array(
-            $gift,
-            $count_info['gifts_set']
-        ) && $this->gift_item_variable[$uid]['can_several_gift'] == 'no') {
-            wp_safe_redirect(get_permalink());
-            exit();
-        } elseif (
-            $retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0 &&
-            $retrieved_group_input_value[$gift]['q'] >=
-            $pw_number_gift_allowed
+        if (
+            !in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'))
+            ||
+            $this->check_rule_condition->getGiftItemVariable()[$uid]['based_on'] != 'ind'
         ) {
+            if (
+                array_key_exists($uid, $count_info['count_rule_gift'])
+                &&
+                $qty > ($pw_number_gift_allowed - $count_info['count_rule_gift'][$uid]['q'])
+            ) {
+                //die;
+                wp_safe_redirect(get_permalink());
+                exit();
+            }
+        }
+
+
+        if (isset($count_info['count_rule_product'][$gift]) && $count_info['count_rule_product'][$gift]['q'] >= $pw_number_gift_allowed) {
             wp_safe_redirect(get_permalink());
             exit();
         }
 
-        /**  Check Quantity  **/
-        $flag_stock         = 0;
-        $get_stock_quantity = $product_get->get_stock_quantity();
-        if (!$product_get->is_in_stock() && $get_stock_quantity <= 0) {
-            $flag_stock = 1;
-        } elseif ($product_get->is_in_stock() && $get_stock_quantity >= 1) {
-            $get_cart_item_stock_quantities      = itg_get_cart_item_stock_quantities();
-            $get_cart_item_quantities_gift_stock = itg_get_cart_item_quantities_gift_stock();
-            $required_stock_in_cart              = isset($get_cart_item_stock_quantities[$product_get->get_stock_managed_by_id()]) ? $get_cart_item_stock_quantities[$product_get->get_stock_managed_by_id()] : 0;
-            $required_stock_in_cart_gift         = isset($get_cart_item_quantities_gift_stock[$id_product]) ? $get_cart_item_quantities_gift_stock[$id_product] : 0;
-            if (($get_stock_quantity - $required_stock_in_cart) - $required_stock_in_cart_gift <= 0) {
-                $flag_stock = 1;
-            }
-        }
-        if ($flag_stock == 1) {
+        if (in_array($gift, $count_info['gifts_set']) && $this->check_rule_condition->getGiftItemVariable()[$uid]['can_several_gift'] == 'no') {
             wp_safe_redirect(get_permalink());
             exit();
         }
-        /**  End Check Quantity  **/
 
-        if ($count_info['count_gift'] > 0) {
-            if (array_key_exists($uid, $count_info['count_rule_gift']) && isset($retrieved_group_input_value[$gift]['q'])) {
-                $retrieved_group_input_value[$gift] = array(
-                    'id'         => $gift,
-                    'q'          =>
-                    $retrieved_group_input_value[$gift]['q'] + 1,
-                    'uid'        => $uid,
-                    'id_product' => $id_product,
-                    'time_add'   =>
-                    $this->gift_item_variable['rule_time']
-                );
-                WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
-            } else {
-                $retrieved_group_input_value[$gift] = array(
-                    'id'         => $gift,
-                    'q'          => 1,
-                    'uid'        => $uid,
-                    'id_product' => $id_product,
-                    'time_add'   => $this->gift_item_variable['rule_time']
-                );
-                WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
-            }
-        } else {
-            $retrieved_group_input_value          = array();
-            $retrieved_group_input_value[$gift] = array(
-                'id'         => $gift,
-                'q'          => 1,
-                'uid'        => $uid,
-                'id_product' => $id_product,
-                'time_add'
-                => $this->gift_item_variable['rule_time']
-            );
-            WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
+        //Check Qty For Add bu user
+        if ($qty > $pw_number_gift_allowed) {
+            $qty = $pw_number_gift_allowed;
         }
-        wc_add_notice('Gift product added successfully', 'ithemeland-free-gifts-for-woo');
-        wp_safe_redirect(get_permalink());
+
+        $count_selected = 0;
+        if (isset($count_info['count_rule_product'][$gift])) {
+            $count_selected = $count_info['count_rule_product'][$gift]['q'];
+        }
+        $result = $pw_number_gift_allowed - $count_selected;
+
+        if ($qty > $result) {
+            $qty = $result;
+        }
+
+        if ($qty > 1 && $this->check_rule_condition->getGiftItemVariable()[$uid]['can_several_gift'] == 'no') {
+            $qty = 1;
+        }
+
+        $product = wc_get_product($id_product);
+        $pr_price = $product->get_price();
+        if (in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('simplea'), true)) {
+            if ($pr_price == '') {
+                $pr_price = 0;
+            }
+            if ($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['value'] < ($count_info['subtotal_price'] + $pr_price)) {
+                wp_safe_redirect(get_permalink());
+                exit();
+            }
+        }
+
+        // Return if product id is not proper product.
+        if (!$product) {
+            return;
+        }
+        $_price_for_gift = 0;
+        $_price_for_gift = get_post_meta($id_product, '_price_for_gift', true);
+        $_price_for_gift = str_replace(",", ".", $_price_for_gift);
+        if ($_price_for_gift == '') {
+            $_price_for_gift = 0;
+        }
+
+        // Add to Gift product in cart
+        $cart_item_data = array(
+            'it_free_gift' => array(
+                'method'       => $this->check_rule_condition->getGiftItemVariable()[$uid]['method'],
+                'type'            => 'manual',
+                'rule_id'    => $uid,
+                'rule_gift_key'    => $gift,
+                'product_id' => $id_product,
+                'price'      => $_price_for_gift,
+                'base_price'      => $pr_price,
+                'time_add'   => $this->check_rule_condition->getGiftItemVariable()['rule_time']
+            ),
+        );
+
+        $cart_item_data = apply_filters('itgift_array_addtocart', $cart_item_data);
+
+        WC()->cart->add_to_cart($id_product, $qty, 0, array(), $cart_item_data);
+
+        Notice::add(get_option('itg_localization_free_gift_added', 'Gift product added successfully'), 'success');
+
+        wp_safe_redirect(apply_filters('itgift_redirect_link', get_permalink()));
+
+        //wp_safe_redirect(get_permalink());
         exit();
     }
 
-    public function display_gifts_coupon_popup()
+
+    public function itg_ajax_add_free_gifts()
     {
-        $nonce = isset($_REQUEST['security']) ? sanitize_text_field(wp_unslash($_REQUEST['security'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if (!wp_verify_nonce($nonce, 'jkhKJSdd4576d234Z')) {
-            wp_die('Forbidden!!!');
+        // Add error logging for debugging
+
+        // Check nonce with better error handling
+        if (!isset($_REQUEST['itg_security']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['itg_security'])), 'jkhKJSdd4576d234Z')) {
+            wp_send_json_error(array('error' => 'Security check failed'));
+            return;
         }
-        global $woocommerce;
 
-        wp_enqueue_style('it-gift-datatables-style');
-        wp_enqueue_script('it-gift-datatables-js');
+        try {
+            if (!isset($_POST) && !isset($_REQUEST)) {
+                throw new exception(__('Cannot process action1', 'ithemeland-free-gifts-for-woo'));
+            }
 
-        wp_enqueue_script('pw-gift-add-jquery-adv');
+            $gift_product_id = (isset($_REQUEST['gift_product_id'])) ? sanitize_text_field(wp_unslash($_REQUEST['gift_product_id'])) : 0;
+            if (empty($gift_product_id)) {
+                throw new exception(__('Cannot process action2', 'ithemeland-free-gifts-for-woo'));
+            }
+            // Return if cart object is not initialized.
+            if (!is_object(WC()->cart)) {
+                throw new exception(__('Cannot process action3', 'ithemeland-free-gifts-for-woo'));
+            }
+            // return if cart is empty
+            if (WC()->cart->get_cart_contents_count() == 0) {
+                throw new exception(__('Cannot process action4', 'ithemeland-free-gifts-for-woo'));
+            }
 
-        wc_get_template('btn-popup.php', array(
-            'products_ids'        => $this->show_gift_item_for_cart,
-            'gift_item_variable'  => $this->gift_item_variable,
-            'gift_rule_exclude'   => $this->gift_rule_exclude,
-            'product_qty_in_cart' => $this->product_qty_in_cart,
-            'settings'            => $this->settings,
-        ), '', plugin_dir_path_wc_adv_gift . 'views/modal/');
+            if (!($this->gift_item_key = $this->check_rule_condition->pw_get_gift_for_cart_checkout())) {
+                throw new exception(__('Cannot process action5', 'ithemeland-free-gifts-for-woo'));
+            }
 
+            if (!isset($_POST['add_qty']) || !is_numeric($_POST['add_qty'])) {
+                $qty = 1;
+            } else {
+                $qty = (isset($_REQUEST['add_qty'])) ? sanitize_text_field(wp_unslash($_REQUEST['add_qty'])) : 0; //
+            }
+
+
+            //wp_send_json_success(array( 'reload' => $this->check_rule_condition->getGiftItemVariable(),'gift_product_id' => $gift_product_id ));			
+
+            if (!array_key_exists($gift_product_id, $this->check_rule_condition->getGiftItemVariable()['all_gifts'])) {
+                throw new exception(__('Cannot process action6', 'ithemeland-free-gifts-for-woo'));
+            }
+
+            $retrieved_group_input_value = WC()->cart->get_cart();
+            $count_info = itg_check_quantity_gift_in_session($retrieved_group_input_value);
+            $uid        = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift_product_id]['uid'];
+            $id_product = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift_product_id]['id_product'];
+            //Number Allow For Simple Method
+            $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()[$uid]['pw_number_gift_allowed'];
+            //Number Allow For Other Method
+            if (in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array(
+                'buy_x_get_x_repeat'
+            ), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift_product_id]['base_q'] == 'ind') {
+                $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift_product_id]['q'];
+            }
+
+            if (
+                !in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'))
+                ||
+                $this->check_rule_condition->getGiftItemVariable()[$uid]['based_on'] != 'ind'
+            ) {
+                if (
+                    array_key_exists($uid, $count_info['count_rule_gift'])
+                    &&
+                    $qty > ($pw_number_gift_allowed - $count_info['count_rule_gift'][$uid]['q'])
+                ) {
+                    throw new exception(__('Cannot process action7', 'ithemeland-free-gifts-for-woo'));
+                }
+            }
+
+            if (isset($count_info['count_rule_product'][$gift_product_id]) && $count_info['count_rule_product'][$gift_product_id]['q'] >= $pw_number_gift_allowed) {
+                throw new exception(__('Cannot process action8', 'ithemeland-free-gifts-for-woo'));
+            }
+
+            if (in_array($gift_product_id, $count_info['gifts_set']) && $this->check_rule_condition->getGiftItemVariable()[$uid]['can_several_gift'] == 'no') {
+                throw new exception(__('Cannot process action9', 'ithemeland-free-gifts-for-woo'));
+            }
+            //Check Qty For Add bu user
+            if ($qty > $pw_number_gift_allowed) {
+                $qty = $pw_number_gift_allowed;
+            }
+
+            $count_selected = 0;
+            if (isset($count_info['count_rule_product'][$gift_product_id])) {
+                $count_selected = $count_info['count_rule_product'][$gift_product_id]['q'];
+            }
+            $result = $pw_number_gift_allowed - $count_selected;
+
+            if ($qty > $result) {
+                $qty = $result;
+            }
+
+            if ($qty > 1 && $this->check_rule_condition->getGiftItemVariable()[$uid]['can_several_gift'] == 'no') {
+                $qty = 1;
+            }
+
+            $product = wc_get_product($id_product);
+            $pr_price = $product->get_price();
+            // Return if product id is not proper product.
+            if (!$product) {
+                return;
+            }
+            $_price_for_gift = 0;
+            $_price_for_gift = get_post_meta($id_product, '_price_for_gift', true);
+            $_price_for_gift = str_replace(",", ".", $_price_for_gift);
+            if ($_price_for_gift == '') {
+                $_price_for_gift = 0;
+            }
+
+            // Add to Gift product in cart
+            $cart_item_data = array(
+                'it_free_gift' => array(
+                    'method'       => $this->check_rule_condition->getGiftItemVariable()[$uid]['method'],
+                    'type'            => 'manual',
+                    'rule_id'    => $uid,
+                    'rule_gift_key'    => $gift_product_id,
+                    'product_id' => $id_product,
+                    'price'      => $_price_for_gift,
+                    'base_price'      => $pr_price,
+                    'time_add'   => $this->check_rule_condition->getGiftItemVariable()['rule_time']
+                ),
+            );
+            $cart_item_data = apply_filters('itgift_array_addtocart', $cart_item_data);
+
+            // Add to cart with error handling
+            $cart_item_key = WC()->cart->add_to_cart($id_product, $qty, 0, array(), $cart_item_data);
+
+            if (!$cart_item_key) {
+                throw new exception(__('Failed to add gift to cart', 'ithemeland-free-gifts-for-woo'));
+            }
+
+            // Create notice
+            ob_start();
+            Notice::print(get_option('itg_localization_free_gift_added', 'Gift product added successfully'), 'success');
+            $notice = ob_get_clean();
+
+            // Send success response
+            $response = array(
+                'ok' => 1,
+                'qty_add' => $result,
+                'notice' => $notice,
+                'cart_item_key' => $cart_item_key
+            );
+
+            wp_send_json_success($response);
+        } catch (Exception $ex) {
+            wp_send_json_error(array('error' => $ex->getMessage()));
+        }
+    }
+
+    public function pw_gift_show_popup_checkout_function()
+    {
+        if (!isset($_REQUEST['security']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['security'])), 'jkhKJSdd4576d234Z')) {
+            wp_send_json_error(array('error' => 'Nance'));
+        }
+
+        // global $woocommerce;
+        if (!($this->gift_item_key = $this->check_rule_condition->pw_get_gift_for_cart_checkout())) {
+            wp_send_json_error(array('error' => 'item is not available'));
+        }
+        $settings = $this->settings;
+        $atts_rule = [
+            'gift_rule_exclude' => $this->check_rule_condition->getGiftRuleExclude(),
+            'quantity_products_in_cart' => $this->check_rule_condition->getProductQtyInCart(),
+            'gifts_items_cart' => $this->check_rule_condition->getShowGiftItemForCart(),
+            'all_gift_items' => $this->check_rule_condition->getGiftItemVariable(),
+            'settings'  => $settings,
+            'multi_level' => false,
+            'is_child'  => true,
+        ];
+
+        $atts = itg_get_gift_products_data_multilevel($atts_rule);
+
+        if (count($atts['items']) <= 0) {
+            wp_send_json_error(array('error' => 'item is not available'));
+        }
+        $items = $atts['items'];
+        $layout = wgb_get_active_layout_popup_items($this->settings['layout_popup']);
+
+        ob_start();
+        require $layout;
+        $html = ob_get_clean();
+        wp_send_json_success(array(
+            'ok' => 1,
+            'layout' => $settings['layout_popup'],
+            'result' => $html
+        ));
+        wp_die();
+    }
+
+    public function reload_item_popup()
+    {
+        check_ajax_referer('jkhKJSdd4576d234Z', 'itg_security');
+        //try {
+        if (!($this->gift_item_key = $this->check_rule_condition->pw_get_gift_for_cart_checkout())) {
+            wp_send_json_error(array('error' => $ex->getMessage()));
+        }
+        $settings = $this->settings;
+        $atts_rule = [
+            'gift_rule_exclude'         => $this->check_rule_condition->getGiftRuleExclude(),
+            'quantity_products_in_cart' => $this->check_rule_condition->getProductQtyInCart(),
+            'gifts_items_cart'          => $this->check_rule_condition->getShowGiftItemForCart(),
+            'all_gift_items'            => $this->check_rule_condition->getGiftItemVariable(),
+            'settings'                  => $settings,
+            'multi_level'               => false,
+            'is_child'                  => true,
+        ];
+
+        $atts = itg_get_gift_products_data_multilevel($atts_rule);
+
+        $items = $atts['items'];
+        $flag = true;
+        $html = 'unselectable';
+        foreach ($items as $key => $gift_product) {
+            if (!$gift_product['hide_add_to_cart']) {
+                $flag = true;
+                break;
+            }
+            $flag = false;
+        }
+
+        if ($flag) {
+            $layout = wgb_get_active_layout_popup_items($this->settings['layout_popup']);
+            ob_start();
+            require $layout;
+            $html = ob_get_clean();
+        }
+        wp_send_json_success(array('result' => $html, 'layout' => $this->settings['layout_popup']));
+        //wp_send_json_error(array( 'result' =>'unselectable' ));
+        //wp_send_json_success(array( 'ok' => 1,'result' =>$html ));
+
+        /*
+			if(count($atts['items']) <= 0)
+			{
+				throw new exception(__('Cannot process action2', 'ithemeland-free-gifts-for-woo'));
+			}
+			
+
+			
+			$template = 'carousel-layout.php';
+			itg_get_template($template, $atts , 'modal/');
+		} catch (Exception $ex) {
+			wp_send_json_error(array( 'error' => $ex->getMessage() ));
+		}				
+		//require  plugin_dir_path_wc_adv_gift . 'views/modal/notice-checkout/carousel_notice.php';
+//echo '<pre>';print_r($atts_rule);die;		
+	//	require  plugin_dir_path_wc_adv_gift . 'views/modal/notice-checkout/carousel_notice.php';		
+					
+		//wp_send_json_error(array( 'error' => 'item isnt available' ));		
+      //  $nonce = $_REQUEST['itg_security'];
+      //  if (!wp_verify_nonce($nonce, 'jkhKJSdd4576d234Z')) {
+       //     wp_send_json_error(array( 'error' => 'Nance' ));
+       // }
+		
+*/
         wp_die();
     }
 
@@ -789,8 +821,7 @@ class iThemeland_front_order extends check_rule_condition
     {
         $ret = '';
 
-        $nonce = isset($_REQUEST['security']) ? sanitize_text_field(wp_unslash($_REQUEST['security'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if (!wp_verify_nonce($nonce, 'jkhKJSdd4576d234Z')) {
+        if (!isset($_REQUEST['security']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['security'])), 'jkhKJSdd4576d234Z')) {
             wp_die('Forbidden!!!');
         }
 
@@ -798,12 +829,25 @@ class iThemeland_front_order extends check_rule_condition
         if (!isset($_POST['pw_gift_variable'])) {
             wp_die();
         }
-
-        $view = 'tables.php';
+        if (!$this->check_rule_condition->pw_get_gift_for_cart_checkout()) {
+            return;
+        }
 
         wp_enqueue_script('pw-gift-add-jquery-adv');
+        //$view = 'variations.php';
+        //		switch ( $view ) {
+        //			case 'carousel':
+        //				$view = 'carousel.php';
+        //				break;
+        //			case 'grid':
+        //				$view = 'grid.php';
+        //				break;
+        //			case 'tables':
+        //				$view = 'tables.php';
+        //				break;
+        //		}
 
-        $variable  = sanitize_text_field(wp_unslash($_POST['pw_gift_variable']));
+        $variable  = (isset($_REQUEST['gift_product_id'])) ? sanitize_text_field(wp_unslash($_POST['pw_gift_variable'])) : 0;
         $p_product = wc_get_product($variable);
 
         $product_type = $p_product->get_type();
@@ -818,170 +862,46 @@ class iThemeland_front_order extends check_rule_condition
             $atts = [
                 'products_ids'        => $variation_ids,
                 'uid'                 => (isset($_POST['pw_gift_uid'])) ? sanitize_text_field(wp_unslash($_POST['pw_gift_uid'])) : '',
-                'gift_item_variable'  => $this->gift_item_variable,
-                'gift_rule_exclude'   => $this->gift_rule_exclude,
-                'product_qty_in_cart' => $this->product_qty_in_cart,
+                'gift_item_variable'  => $this->check_rule_condition->getGiftItemVariable(),
+                'gift_rule_exclude'   => $this->check_rule_condition->getGiftRuleExclude(),
+                'product_qty_in_cart' => $this->check_rule_condition->getProductQtyInCart(),
                 'settings'            => $this->settings,
                 'view'                => 'modal',
             ];
-            itg_get_template('modal/' . $view, $atts);
+
+            itg_get_template('modal/variations.php', $atts);
+
+            /* 
+		   wc_get_template($view, array(
+                'products_ids'        => $variation_ids,
+                'uid'                 => sanitize_text_field($_POST['pw_gift_uid']),
+                'gift_item_variable'  => $this->check_rule_condition->getGiftItemVariable(),
+                'gift_rule_exclude'   => $this->check_rule_condition->getGiftRuleExclude(),
+                'product_qty_in_cart' => $this->check_rule_condition->getProductQtyInCart(),
+                'settings'            => $this->settings,
+                'view'                => 'modal',
+            ), '', plugin_dir_path_wc_adv_gift . 'views/modal/');
+			*/
         }
 
         wp_die();
     }
 
-    public function pw_remove_gift($gift = null)
+    public function check_rule_after_update_checkout()
     {
+
         global $woocommerce;
-        if (!isset($_REQUEST['it_gift_remove'])) {
-            return;
+        $data = 'no';
+        if ($this->gift_item_key = $this->check_rule_condition->pw_get_gift_for_cart_checkout()) {
+
+            $data = 'yes';
         }
-		if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'wgbl_post_nonce')) { //phpcs:ignore
-            return;
-        }		
-
-
-        // Return if cart object is not initialized.
-        if (!is_object(WC()->cart)) {
-            return;
-        }
-
-        // return if cart is empty
-        if (WC()->cart->get_cart_contents_count() == 0) {
-            return;
-        }
-        //Remove Gift Cart
-        $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-        if ($retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0 && array_key_exists($_GET['it_gift_remove'], $retrieved_group_input_value)) { //phpcs:ignore
-            unset($retrieved_group_input_value[$_GET['it_gift_remove']]);
-            WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
-        }
-
-        wc_add_notice(get_option('itg_localization_free_gift_removed', 'Your Free Gift were removed'), 'notice');
-
-        wp_safe_redirect(get_permalink());
-        exit();
+        wp_send_json_success(array('gift_avilible' => $data));
     }
 
-    public function itg_ajax_add_free_gifts()
+    public function test_ajax_function()
     {
-        check_ajax_referer('jkhKJSdd4576d234Z', 'itg_security');
-        try {
-
-            if (!isset($_POST)) {
-                throw new exception(__('Cannot process action1', 'ithemeland-free-gifts-for-woo'));
-            }
-            if (empty($gift_product_id)) {
-                throw new exception(__('Cannot process action2', 'ithemeland-free-gifts-for-woo'));
-            }
-            $gift_product_id = sanitize_text_field(wp_unslash($_REQUEST['gift_product_id'])); // phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-
-            // Return if cart object is not initialized.
-            if (!is_object(WC()->cart)) {
-                throw new exception(__('Cannot process action3', 'ithemeland-free-gifts-for-woo'));
-            }
-            // return if cart is empty
-            if (WC()->cart->get_cart_contents_count() == 0) {
-                throw new exception(__('Cannot process action4', 'ithemeland-free-gifts-for-woo'));
-            }
-
-            if (!($this->gift_item_key = $this->pw_get_gift_for_cart_checkout())) {
-                throw new exception(__('Cannot process action5', 'ithemeland-free-gifts-for-woo'));
-            }
-
-            if (!isset($_POST['add_qty']) || !is_numeric($_POST['add_qty'])) {
-                $qty = 1;
-            } else {
-                $qty = sanitize_text_field(wp_unslash($_REQUEST['add_qty'])); // phpcs:ignore  WordPress.Security.ValidatedSanitizedInput.InputNotValidated
-            }
-
-            if (!array_key_exists($gift_product_id, $this->gift_item_variable['all_gifts'])) {
-                throw new exception(__('Cannot process action6', 'ithemeland-free-gifts-for-woo'));
-            }
-
-            $retrieved_group_input_value = WC()->session->get('gift_group_order_data');
-            $count_info                 = itg_check_quantity_gift_in_session();
-            $uid        = $this->gift_item_variable['all_gifts'][$gift_product_id]['uid'];
-            $id_product = $this->gift_item_variable['all_gifts'][$gift_product_id]['id_product'];
-
-            //Number Allow For Simple Method
-            $pw_number_gift_allowed = $this->gift_item_variable[$uid]['pw_number_gift_allowed'];
-
-            if (array_key_exists($uid, $count_info['count_rule_gift']) && $count_info['count_rule_gift'][$uid]['q'] >= $pw_number_gift_allowed && !in_array($this->gift_item_variable[$uid]['method'], array('buy_x_get_x_repeat'), true)) {
-                throw new exception(__('Cannot process action7', 'ithemeland-free-gifts-for-woo'));
-            } elseif (in_array(
-                $gift_product_id,
-                $count_info['gifts_set']
-            ) && $this->gift_item_variable[$uid]['can_several_gift'] == 'no') {
-                throw new exception(__('Cannot process action8', 'ithemeland-free-gifts-for-woo'));
-            } elseif (
-                $retrieved_group_input_value != '' && is_array($retrieved_group_input_value) && count($retrieved_group_input_value) > 0 &&
-                $retrieved_group_input_value[$gift_product_id]['q'] >=
-                $pw_number_gift_allowed
-            ) {
-                throw new exception(__('Cannot process action9', 'ithemeland-free-gifts-for-woo'));
-            }
-
-            //Check all gift Rule added Qty
-            $product_get = wc_get_product($id_product);
-            /**  Check Quantity  **/
-            $flag_stock         = 0;
-            $get_stock_quantity = $product_get->get_stock_quantity();
-            if (!$product_get->is_in_stock() && $get_stock_quantity <= 0) {
-                $flag_stock = 1;
-            } elseif ($product_get->is_in_stock() && $get_stock_quantity >= 1) {
-                $get_cart_item_stock_quantities      = itg_get_cart_item_stock_quantities();
-                $get_cart_item_quantities_gift_stock = itg_get_cart_item_quantities_gift_stock();
-                $required_stock_in_cart              = isset($get_cart_item_stock_quantities[$product_get->get_stock_managed_by_id()]) ? $get_cart_item_stock_quantities[$product_get->get_stock_managed_by_id()] : 0;
-                $required_stock_in_cart_gift         = isset($get_cart_item_quantities_gift_stock[$id_product]) ? $get_cart_item_quantities_gift_stock[$id_product] : 0;
-                if (($get_stock_quantity - $required_stock_in_cart) - $required_stock_in_cart_gift <= 0) {
-                    $flag_stock = 1;
-                }
-            }
-            if ($flag_stock == 1) {
-                throw new exception(__('Cannot process action10', 'ithemeland-free-gifts-for-woo'));
-            }
-            /**  End Check Quantity  **/
-
-            if ($count_info['count_gift'] > 0) {
-                if (array_key_exists($uid, $count_info['count_rule_gift']) && isset($retrieved_group_input_value[$gift_product_id]['q'])) {
-                    $retrieved_group_input_value[$gift_product_id] = array(
-                        'id'         => $gift_product_id,
-                        'q'          =>
-                        $retrieved_group_input_value[$gift_product_id]['q'] + 1,
-                        'uid'        => $uid,
-                        'id_product' => $id_product,
-                        'time_add'   =>
-                        $this->gift_item_variable['rule_time']
-                    );
-                    WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
-                } else {
-                    $retrieved_group_input_value[$gift_product_id] = array(
-                        'id'         => $gift_product_id,
-                        'q'          => 1,
-                        'uid'        => $uid,
-                        'id_product' => $id_product,
-                        'time_add'   => $this->gift_item_variable['rule_time']
-                    );
-                    WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
-                }
-            } else {
-                $retrieved_group_input_value          = array();
-                $retrieved_group_input_value[$gift_product_id] = array(
-                    'id'         => $gift_product_id,
-                    'q'          => 1,
-                    'uid'        => $uid,
-                    'id_product' => $id_product,
-                    'time_add'
-                    => $this->gift_item_variable['rule_time']
-                );
-                WC()->session->set('gift_group_order_data', $retrieved_group_input_value);
-            }
-            wc_add_notice('Gift product added successfully', 'ithemeland-free-gifts-for-woo');
-            wp_send_json_success(array('ok' => 1, 'qty_add' => $qty));
-        } catch (Exception $ex) {
-            wp_send_json_error(array('error' => $ex->getMessage()));
-        }
+        wp_send_json_success(array('message' => 'AJAX test successful!'));
     }
 }
 

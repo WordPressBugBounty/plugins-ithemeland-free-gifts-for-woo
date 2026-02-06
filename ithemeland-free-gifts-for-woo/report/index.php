@@ -1,5 +1,7 @@
 <?php
 
+defined('ABSPATH') || exit(); // Exit if accessed directly
+
 class WC_Customer_History
 {
     public function __construct()
@@ -15,7 +17,7 @@ class WC_Customer_History
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
 
-        $result = $wpdb->query("CREATE TABLE IF NOT EXISTS {$wpdb->prefix}gift_track_report (
+        $create = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}gift_track_report (
                         id              BIGINT(20) NOT NULL AUTO_INCREMENT,
                         product_id      BIGINT(20),
                         rule_id         BIGINT(20),
@@ -23,7 +25,7 @@ class WC_Customer_History
                         order_id         BIGINT(20),
                         reg_date        TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
                         PRIMARY KEY     (id)
-                    ) $charset_collate"); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-
+                    ) $charset_collate";
+        $result = $wpdb->query($create); //phpcs:ignore
     }
 }

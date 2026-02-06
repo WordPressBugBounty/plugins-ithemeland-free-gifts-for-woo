@@ -1,3 +1,13 @@
+.amchart {
+    width: 100% !important;
+    height: 400px !important;
+    float: left;
+}
+
+#amchart2 g[role="region"]>g {
+    transform: translate(-15px, 0);
+}
+
 .dataTables_length,
 .dataTables_filter,
 .dataTables_info,
@@ -60,34 +70,34 @@
     margin: 0 0 0 8px;
 }
 
-.wgbl-widget-box table {
+.wgb-widget-box table {
     font-size: 10pt;
 }
 
-.wgbl-default-table {
+.wgb-default-table {
     width: 100%;
     border: 1px #f6f6f6 solid
 }
 
-.wgbl-default-table thead {
+.wgb-default-table thead {
     background-color: #f6f6f6;
 }
 
-.wgbl-default-table th,
-.wgbl-default-table td {
+.wgb-default-table th,
+.wgb-default-table td {
     padding: 10px;
     border-bottom: 1px #f6f6f6 solid;
 }
 
-.wgbl-main-date-filter {
+.wgb-main-date-filter {
     float: right;
-    height: 47px;
-    margin: 0 45px 0 0 !important;
+    height: 46px;
+    margin: 0 25px 0 0 !important;
 }
 
-.wgbl-main-date-filter label {
+.wgb-main-date-filter label {
     float: right;
-    margin: 5px 0 0 0;
+    margin: 6px 0 0 0;
     height: 32px !important;
     width: 200px;
     border: 1px #b4b4b4 solid;
@@ -97,13 +107,13 @@
     -webkit-border-radius: 4px;
 }
 
-.wgbl-main-date-filter label i {
+.wgb-main-date-filter label i {
     font-size: 20px;
     display: inline-table;
     margin: 3px 0 0 10px;
 }
 
-.wgbl-main-date-filter label input {
+.wgb-main-date-filter label input {
     float: right;
     width: 160px;
     height: 32px !important;
@@ -116,35 +126,35 @@
     padding-left: 0;
 }
 
-.wgbl-main-date-filter label input:focus,
-.wgbl-main-date-filter label input:active {
+.wgb-main-date-filter label input:focus,
+.wgb-main-date-filter label input:active {
     border: 0 !important;
     box-shadow: none !important;
 }
 
-.wgbl-reports-filter-section label {
+.wgb-reports-filter-section label {
     width: 100%;
     float: left;
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-.wgbl-reports-filter-section input[type="text"],
-.wgbl-reports-filter-section input[type="number"],
-.wgbl-reports-filter-section select {
+.wgb-reports-filter-section input[type="text"],
+.wgb-reports-filter-section input[type="number"],
+.wgb-reports-filter-section select {
     width: 100%;
     float: left;
     height: 34px !important;
 }
 
-.wgbl-reports-filter-section input[type="text"],
-.wgbl-reports-filter-section input[type="number"],
-.wgbl-reports-filter-section select,
+.wgb-reports-filter-section input[type="text"],
+.wgb-reports-filter-section input[type="number"],
+.wgb-reports-filter-section select,
 .select2-container--default .select2-selection--multiple {
     border-color: #6b6b6b !important;
 }
 
-.wgbl-reports-filter-section .wgbl-reports-filter-button {
+.wgb-reports-filter-section .wgb-reports-filter-button {
     margin-right: 0 !important;
 }
 
@@ -157,7 +167,7 @@ table.table-bordered.dataTable th {
     border-bottom-width: 0;
 }
 
-.wgbl-chart-filter-buttons {
+.wgb-chart-filter-buttons {
     width: 100%;
     float: left;
     padding: 10px 20px;
@@ -168,13 +178,13 @@ table.table-bordered.dataTable th {
     border-bottom: 1px #e3e3e3 solid;
 }
 
-.wgbl-chart-filter-buttons strong {
+.wgb-chart-filter-buttons strong {
     float: left;
     margin-right: 10px;
     line-height: 28px;
 }
 
-.wgbl-chart-filter-buttons button {
+.wgb-chart-filter-buttons button {
     height: 30px;
     border: 1px #e3e3e3 solid;
     color: #3e3e3e;
@@ -189,25 +199,25 @@ table.table-bordered.dataTable th {
     cursor: pointer;
 }
 
-.wgbl-chart-filter-buttons button.active {
+.wgb-chart-filter-buttons button.active {
     color: #fff;
     background-color: #603ecd;
     border-color: #603ecd;
 }
 
-.wgbl-chart-filter-buttons button:hover {
+.wgb-chart-filter-buttons button:hover {
     background-color: #e3e3e3;
 }
 
-.wgbl-chart-filter-buttons button.active:hover {
+.wgb-chart-filter-buttons button.active:hover {
     background-color: #603ecd;
 }
 
-.wgbl-mini-data-grid-box {
+.wgb-mini-data-grid-box {
     min-height: 333px;
 }
 
-.wgbl-order-status {
+.wgb-order-status {
     height: 34px;
     padding: 0 15px;
     font-size: 13px;
@@ -217,29 +227,29 @@ table.table-bordered.dataTable th {
     line-height: 34px;
 }
 
-.wgbl-order-status.wc-failed {
+.wgb-order-status.wc-failed {
     background-color: #eba3a3;
     color: #761919;
 }
 
-.wgbl-order-status.wc-on-hold {
+.wgb-order-status.wc-on-hold {
     background-color: #f8dda7;
     color: #94660c;
 }
 
-.wgbl-order-status.wc-completed {
+.wgb-order-status.wc-completed {
     background-color: #c8d7e1;
     color: #2e4453;
 }
 
-.wgbl-order-status.wc-processing {
+.wgb-order-status.wc-processing {
     background-color: #c6e1c6;
     color: #5b841b;
 }
 
-.wgbl-order-status.wc-cancelled,
-.wgbl-order-status.wc-pending,
-.wgbl-order-status.wc-refunded {
+.wgb-order-status.wc-cancelled,
+.wgb-order-status.wc-pending,
+.wgb-order-status.wc-refunded {
     background-color: #e5e5e5;
     color: #777777;
 }
@@ -266,7 +276,7 @@ table.table-bordered.dataTable th {
     height: 33px !important;
 }
 
-td .wgbl-reports-view-button {
+td .wgb-reports-view-button {
     display: inline-table;
     height: 34px;
     padding: 0 25px;
@@ -284,7 +294,7 @@ td .wgbl-reports-view-button {
     -webkit-box-sizing: border-box;
 }
 
-td .wgbl-reports-view-button:hover {
+td .wgb-reports-view-button:hover {
     background-color: #603ecd;
     border-color: #603ecd;
     color: #ffffff;
@@ -348,7 +358,7 @@ td .wgbl-reports-view-button:hover {
     display: inline-table;
 }
 
-.wgbl-reports-page-title {
+.wgb-reports-page-title {
     font-size: 14pt;
     color: #3e3e3e;
 }
@@ -369,4 +379,15 @@ td .wgbl-reports-view-button:hover {
     .dataTables_paginate {
         width: 100%;
     }
+}
+
+.wgb-reports-sub-tabs {
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+    background-color: #f6f6f6;
+    padding: 7px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }

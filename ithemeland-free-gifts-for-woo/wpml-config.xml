@@ -6,10 +6,12 @@
         <key name="itg_localization_free"/>
         <key name="itg_localization_add_gift"/>
         <key name="itg_localization_select_gift"/>
-        <key name="itg_localization_select_your_gift"/>
         <key name="itg_localization_notice_checkout_message_link_here"/>
         <key name="itg_localization_notice_checkout_message"/>
         <key name="itg_localization_gift_require_checkout"/>
-        <key name="itg_localization_free_gift_removed"/>
+        <key name="itg_localization_gift_cart_type_label"/>
+        <key name="itg_localization_gift_cart_label"/>
+        <key name="itg_localization_free_gift_empty_message"/>
+        <key name="itg_localization_no_thanks"/>
     </admin-texts>
 </wpml-config>

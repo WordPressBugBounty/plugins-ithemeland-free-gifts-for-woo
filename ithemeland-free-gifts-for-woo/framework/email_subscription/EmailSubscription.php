@@ -1,8 +1,8 @@
 <?php
 
-namespace wgbl\framework\email_subscription;
+namespace wgb\framework\email_subscription;
 
-use wgbl\framework\active_plugins\ActivePlugins;
+use wgb\framework\active_plugins\ActivePlugins;
 
 defined('ABSPATH') || exit();
 
@@ -54,11 +54,11 @@ class EmailSubscription
 
     public static function is_sent()
     {
-        return get_option('ithemeland_wgbl_email_subscription_sent', 'no') == 'yes';
+        return get_option('ithemeland_wgb_email_subscription_sent', 'no') == 'yes';
     }
 
     private static function sent()
     {
-        return update_option('ithemeland_wgbl_email_subscription_sent', 'yes');
+        return update_option('ithemeland_wgb_email_subscription_sent', 'yes');
     }
 }

@@ -2,8 +2,8 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
 
-use wgbl\classes\helpers\Sanitizer;
-use wgbl\classes\services\render\Condition_Render;
+use wgb\classes\helpers\Sanitizer;
+use wgb\classes\services\render\Condition_Render;
 
 $html = '';
 if (!empty($condition_item) && !empty($condition_item['type']) && isset($condition_id) && isset($rule_id)) {
@@ -18,4 +18,4 @@ if (!empty($condition_item) && !empty($condition_item['type']) && isset($conditi
     $html = $condition_render_service->extra_fields_render();
 }
 
-echo wp_kses($html, Sanitizer::allowed_html_tags());
+echo wp_kses($html, Sanitizer::allowed_html());

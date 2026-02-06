@@ -1,7 +1,8 @@
 <?php
 
-namespace wgbl\classes\repositories;
-defined('ABSPATH') || exit();
+namespace wgb\classes\repositories;
+
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
 class Flush_Message
 {
@@ -9,7 +10,7 @@ class Flush_Message
 
     public function __construct()
     {
-        $this->flush_message_option_name = "wgbl_flush_message";
+        $this->flush_message_option_name = "wgb_flush_message";
     }
 
     public function set(array $data)

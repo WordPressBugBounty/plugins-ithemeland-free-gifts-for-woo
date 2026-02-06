@@ -1,10 +1,10 @@
 <?php
 
-namespace wgbl\classes\repositories;
+namespace wgb\classes\repositories;
 
-use wgbl\classes\helpers\Array_Helper;
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
-defined('ABSPATH') || exit();
+use wgb\classes\helpers\Array_Helper;
 
 class User
 {

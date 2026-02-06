@@ -6,6 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'wgbl\\framework\\' => array($baseDir . '/framework'),
-    'wgbl\\classes\\' => array($baseDir . '/classes'),
+    'wgb\\frontend\\' => array($baseDir . '/frontend'),
+    'wgb\\framework\\' => array($baseDir . '/framework'),
+    'wgb\\classes\\' => array($baseDir . '/classes'),
+    'wgb\\blocks\\' => array($baseDir . '/blocks'),
 );

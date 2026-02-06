@@ -1,0 +1,64 @@
+.wgb-discount-bar {
+    padding: 12px 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.wgb-discount-bar-content {
+    font-size: 14px;
+    line-height: 1.4;
+    font-weight: 500;
+    position: relative;
+    z-index: 1;
+}
+
+.wgb-discount-bar-content p {
+    margin: 0;
+}
+
+/* Animation for the discount bar */
+@keyframes wgb-discount-bar-slide-in {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.wgb-discount-bar {
+    animation: wgb-discount-bar-slide-in 0.3s ease-out;
+}
+
+/* Specific styles for different positions */
+.woocommerce-product-meta .wgb-discount-bar {
+    margin: 5px 0;
+    font-size: 13px;
+}
+
+.woocommerce-product-meta .wgb-discount-bar-content {
+    font-size: 13px;
+}
+
+.woocommerce-before-add-to-cart-form .wgb-discount-bar,
+.woocommerce-after-add-to-cart-form .wgb-discount-bar {
+    margin: 15px 0;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    .wgb-discount-bar {
+        padding: 10px;
+        margin: 8px 0;
+    }
+
+    .wgb-discount-bar-content {
+        font-size: 13px;
+    }
+} 

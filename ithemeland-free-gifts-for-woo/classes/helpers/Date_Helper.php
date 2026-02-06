@@ -1,8 +1,8 @@
 <?php
 
-namespace wgbl\classes\helpers;
+namespace wgb\classes\helpers;
 
-defined('ABSPATH') || exit();
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
 class Date_Helper
 {

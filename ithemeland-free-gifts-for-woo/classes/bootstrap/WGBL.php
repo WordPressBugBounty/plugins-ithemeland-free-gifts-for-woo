@@ -1,24 +1,27 @@
 <?php
 
-namespace wgbl\classes\bootstrap;
+namespace wgb\classes\bootstrap;
 
-use wgbl\classes\controllers\Rules_Controller;
-use wgbl\classes\controllers\Reports_Controller;
-use wgbl\classes\controllers\WGBL_Ajax;
-use wgbl\classes\controllers\WGBL_Post;
-use wgbl\classes\repositories\Order;
-use wgbl\classes\repositories\Rule;
-use wgbl\classes\repositories\Setting;
-use wgbl\classes\services\render\Condition_Render;
-use wgbl\classes\services\render\Product_Buy_Render;
-use wgbl\framework\analytics\AnalyticsTracker;
-use wgbl\framework\onboarding\Onboarding;
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
-defined('ABSPATH') || exit();
+use wgb\frontend\blocks\WGBL_Blocks;
+use wgb\classes\api\Api_Handler;
+use wgb\classes\controllers\Rules_Controller;
+use wgb\classes\controllers\WGBL_Ajax;
+use wgb\classes\controllers\WGBL_Post;
+use wgb\classes\languages\WGBL_Language;
+use wgb\classes\repositories\Order;
+use wgb\classes\repositories\Rule;
+use wgb\classes\repositories\Setting;
+use wgb\classes\services\render\Condition_Render;
+use wgb\classes\services\render\Product_Buy_Render;
+use wgb\framework\analytics\AnalyticsTracker;
+use wgb\framework\onboarding\Onboarding;
 
 class WGBL
 {
     private static $instance;
+    private static $is_initable;
 
     public static function init()
     {
@@ -32,7 +35,7 @@ class WGBL
         if (!current_user_can('manage_woocommerce')) {
             return;
         }
-        add_action('admin_menu', [$this, 'add_menu']);
+
         add_action('admin_enqueue_scripts', [$this, 'load_assets']);
 
         add_filter('safe_style_css', function ($styles) {
@@ -40,9 +43,15 @@ class WGBL
             return $styles;
         });
 
-        AnalyticsTracker::register();
-        Onboarding::register();
-        WGBL_Top_Banners::register();
+        WGBL_Blocks::init();
+
+        if (is_admin()) {
+            add_action('admin_menu', [$this, 'add_menu']);
+            AnalyticsTracker::register();
+            Onboarding::register();
+        }
+
+        Api_Handler::init();
         WGBL_Ajax::register_callback();
         WGBL_Post::register_callback();
         (new WGBL_Custom_Queries())->init();
@@ -53,17 +62,33 @@ class WGBL
         }
     }
 
-    public static function wgbl_woocommerce_required()
+    public static function woocommerce_required()
     {
-        include WGBL_VIEWS_DIR . 'alerts/wgbl_woocommerce_required.php';
+        include WGBL_VIEWS_DIR . 'alerts/woocommerce_required.php';
     }
 
-    public static function wgbl_wp_init()
+    public function add_menu()
     {
-        // set plugin version
-        $version = get_option('wgbl_version');
+        add_menu_page(esc_html__('GIFTiT', 'ithemeland-free-gifts-for-woo'), esc_html__('GIFTiT', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgb', [new Rules_Controller, 'index'], WGBL_IMAGES_URL . 'giftit-icon-wh20.svg', 59);
+        add_submenu_page('wgb', esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgb');
+    }
+
+    public static function wgb_wp_init()
+    {
+        if (!self::is_initable()) {
+            return false;
+        }
+
+        $version = get_option('wgbl-version');
         if (empty($version) || $version != WGBL_VERSION) {
-            update_option('wgbl_version', WGBL_VERSION);
+
+            $rule_repository = Rule::get_instance();
+            $rule_repository->maybe_sync();
+
+            $setting_repository = Setting::get_instance();
+            $setting_repository->maybe_sync();
+
+            update_option('wgbl-version', WGBL_VERSION);
         }
 
         if (function_exists('determine_locale')) {
@@ -87,131 +112,191 @@ class WGBL
         // load_plugin_textdomain('ithemeland-free-gifts-for-woo', false, WGBL_LANGUAGES_DIR);
     }
 
-    public function add_menu()
+    private function main_load_assets()
     {
-        add_menu_page(esc_html__('Woo Free Gift', 'ithemeland-free-gifts-for-woo'), esc_html__('Woo Free Gift', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgbl', [new Rules_Controller, 'index'], WGBL_IMAGES_URL . 'wgbl_icon.svg', 2);
-        add_submenu_page('wgbl', esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgbl');
-        add_submenu_page('wgbl', esc_html__('Reports', 'ithemeland-free-gifts-for-woo'), esc_html__('Reports', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgbl-reports', [new Reports_Controller, 'index']);
+        if (!empty($_GET['page']) && $_GET['page'] == 'wgb') { //phpcs:ignore
+            $rule_repository = Rule::get_instance();
+            // Styles
+            wp_enqueue_style('wgb-reset', WGBL_CSS_URL . 'common/reset.css', [], WGBL_VERSION);
+            wp_enqueue_style('wgb-LineIcons', WGBL_CSS_URL . 'common/LineIcons.min.css', [], WGBL_VERSION);
+            wp_enqueue_style('wgb-select2', WGBL_CSS_URL . 'common/select2.min.css', [], WGBL_VERSION);
+            wp_enqueue_style('wgb-tipsy', WGBL_CSS_URL . 'common/jquery.tipsy.css', [], WGBL_VERSION);
+            wp_enqueue_style('wgb-sweetalert', WGBL_CSS_URL . 'common/sweetalert.css', [], WGBL_VERSION);
+            wp_enqueue_style('wgb-datetimepicker', WGBL_CSS_URL . 'common/jquery.datetimepicker.css', [], WGBL_VERSION);
+            wp_enqueue_style('wgb-main', WGBL_CSS_URL . 'common/style.css', [], WGBL_VERSION);
+
+            // Scripts
+            wp_enqueue_script('wgb-functions', WGBL_JS_URL . 'common/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+            wp_enqueue_script('wgb-tipsy', WGBL_JS_URL . 'common/jquery.tipsy.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+            wp_enqueue_script('wgb-datetimepicker', WGBL_JS_URL . 'common/jquery.datetimepicker.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+            wp_enqueue_script('wgb-select2', WGBL_JS_URL . 'common/select2.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+            wp_enqueue_script('wgb-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+            wp_enqueue_script('wgb-main', WGBL_JS_URL . 'common/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+            wp_localize_script('wgb-main', 'WGBL_DATA', [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'ajax_nonce' => wp_create_nonce('wgb_ajax_nonce'),
+                'ruleMethods' => $rule_repository->get_rule_methods(),
+                'translate' => [
+                    'quantities_and_settings' => esc_html__('Quantities & Settings', 'ithemeland-free-gifts-for-woo'),
+                    'select_shipping' => esc_html__('Select shipping', 'ithemeland-free-gifts-for-woo'),
+                ],
+                'loadingImage' => '<span class="wgb-button-loading"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34px" height="34px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><rect x="17.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="18;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="64;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate></rect><rect x="42.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate></rect><rect x="67.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate></rect></svg></span>',
+            ]);
+
+            // load assets for rules | settings 
+            if (empty($_GET['tab']) || (!empty($_GET['tab']) && in_array($_GET['tab'], ['rules', 'settings', 'shortcodes']))) { //phpcs:ignore
+                // Styles
+                wp_enqueue_style('wgb-rules-main', WGBL_CSS_URL . 'rules/style.css', [], WGBL_VERSION);
+
+                // Scripts
+                wp_enqueue_script('wgb-rules-form-conditions', WGBL_JS_URL . 'rules/form_data/common/conditions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-rules-form-get', WGBL_JS_URL . 'rules/form_data/common/get.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-rules-form-products_buy', WGBL_JS_URL . 'rules/form_data/common/products_buy.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-rules-form-quantities', WGBL_JS_URL . 'rules/form_data/common/quantities.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-rules-form-methods', WGBL_JS_URL . 'rules/form_data/methods.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-rules-functions', WGBL_JS_URL . 'rules/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-rules-main', WGBL_JS_URL . 'rules/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_localize_script('wgb-rules-main', 'WGBL_RULES_DATA', $this->get_rules_js_data());
+                wp_enqueue_script('jquery-ui-sortable');
+            }
+
+            // load assets for reports
+            if (!empty($_GET['tab']) && $_GET['tab'] == 'reports') { //phpcs:ignore
+                // Styles
+                wp_enqueue_style('wgb-reports-bootstrap', WGBL_CSS_URL . 'common/bootstrap.dataTables.css', [], WGBL_VERSION);
+                wp_enqueue_style('wgb-reports-datatable', WGBL_CSS_URL . 'common/dataTables.bootstrap4.min.css', [], WGBL_VERSION);
+                wp_enqueue_style('wgb-reports-daterangepicker', WGBL_CSS_URL . 'common/daterangepicker.css', [], WGBL_VERSION);
+                wp_enqueue_style('wgb-reports-main', WGBL_CSS_URL . 'reports/style.css', [], WGBL_VERSION);
+
+                // Scripts
+                wp_enqueue_script('moment');
+                wp_enqueue_script('wgb-chartjs', WGBL_JS_URL . 'common/chartjs/chart.umd.min.js', [], WGBL_VERSION, true);
+                wp_enqueue_script('wgb-chartjs-adapter-date-fns', WGBL_JS_URL . 'common/chartjs/chartjs-adapter-date-fns.js', ['wgb-chartjs'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-datatable', WGBL_JS_URL . 'common/jquery.dataTables.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-datatable-buttons', WGBL_JS_URL . 'common/dataTables.buttons.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-pdfmake', WGBL_JS_URL . 'common/pdfmake.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-jszip', WGBL_JS_URL . 'common/jszip.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-vfs-fonts', WGBL_JS_URL . 'common/vfs_fonts.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-buttons-html5', WGBL_JS_URL . 'common/buttons.html5.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-buttons-print', WGBL_JS_URL . 'common/buttons.print.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-buttons-flash', WGBL_JS_URL . 'common/buttons.flash.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-daterangepicker', WGBL_JS_URL . 'common/daterangepicker.min.js', ['jquery', 'moment'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-functions', WGBL_JS_URL . 'reports/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-reports-main', WGBL_JS_URL . 'reports/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+
+                wp_localize_script('wgb-reports-main', 'WGBL_REPORTS_DATA', $this->get_reports_js_data());
+            }
+
+            // load assets for addons
+            if (!empty($_GET['page']) && $_GET['page'] == 'wgb-addons') { //phpcs:ignore
+                wp_enqueue_style('wgb-reset', WGBL_CSS_URL . 'common/reset.css', [], WGBL_VERSION);
+                wp_enqueue_style('wgb-LineIcons', WGBL_CSS_URL . 'common/LineIcons.min.css', [], WGBL_VERSION);
+                wp_enqueue_style('wgb-tipsy', WGBL_CSS_URL . 'common/jquery.tipsy.css', [], WGBL_VERSION);
+                wp_enqueue_style('wgb-sweetalert', WGBL_CSS_URL . 'common/sweetalert.css', [], WGBL_VERSION);
+                wp_enqueue_style('wgb-addons', WGBL_CSS_URL . 'addons/style.css', [], WGBL_VERSION);
+
+                // Scripts
+                wp_enqueue_script('wgb-functions', WGBL_JS_URL . 'common/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-tipsy', WGBL_JS_URL . 'common/jquery.tipsy.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-main', WGBL_JS_URL . 'common/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_localize_script('wgb-main', 'WGBL_DATA', [
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'wp_nonce' => wp_create_nonce(),
+                    'loadingImage' => '<span class="wgb-button-loading"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34px" height="34px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><rect x="17.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="18;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="64;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate></rect><rect x="42.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate></rect><rect x="67.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate></rect></svg></span>',
+                ]);
+            }
+
+            wp_enqueue_style('wgb-responsive', WGBL_CSS_URL . 'common/responsive.css', [], WGBL_VERSION);
+        }
     }
 
     public function load_assets($page)
     {
-        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) { //phpcs:ignore
-
+        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgb', 'wgb-reports'])) { //phpcs:ignore
             if (Onboarding::is_completed()) {
                 $this->main_load_assets();
             } else {
-
                 $this->activation_load_assets();
             }
         }
     }
 
-    public function main_load_assets()
-    {
-        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgbl', 'wgbl-reports'])) { //phpcs:ignore
-            $rule_repository = Rule::get_instance();
-            // Styles
-            wp_enqueue_style('wgbl-reset', WGBL_CSS_URL . 'common/reset.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-LineIcons', WGBL_CSS_URL . 'common/LineIcons.min.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-select2', WGBL_CSS_URL . 'common/select2.min.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-tipsy', WGBL_CSS_URL . 'common/jquery.tipsy.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-sweetalert', WGBL_CSS_URL . 'common/sweetalert.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-datetimepicker', WGBL_CSS_URL . 'common/jquery.datetimepicker.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-main', WGBL_CSS_URL . 'common/style.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-responsive', WGBL_CSS_URL . 'common/responsive.css', [], WGBL_VERSION);
-
-            // Scripts
-            wp_enqueue_script('wgbl-functions', WGBL_JS_URL . 'common/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-tipsy', WGBL_JS_URL . 'common/jquery.tipsy.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-datetimepicker', WGBL_JS_URL . 'common/jquery.datetimepicker.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-select2', WGBL_JS_URL . 'common/select2.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-main', WGBL_JS_URL . 'common/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_localize_script('wgbl-main', 'WGBL_DATA', [
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'ajax_nonce' => wp_create_nonce('wgbl_ajax_nonce'),
-                'ruleMethods' => $rule_repository->get_rule_methods(),
-                'ruleMethodOptions' => $rule_repository->get_rule_method_options(),
-                'loadingImage' => '<span class="wgbl-button-loading"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34px" height="34px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><rect x="17.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="18;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="64;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate></rect><rect x="42.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate></rect><rect x="67.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate></rect></svg></span>',
-            ]);
-        }
-
-        // load assets for rules | settings 
-        if (!empty($_GET['page']) && $_GET['page'] == 'wgbl') { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            // Styles
-            wp_enqueue_style('wgbl-rules-main', WGBL_CSS_URL . 'rules/style.css', [], WGBL_VERSION);
-
-            // Scripts
-            wp_enqueue_script('wgb-rules-form-conditions', WGBL_JS_URL . 'rules/form_data/common/conditions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgb-rules-form-get', WGBL_JS_URL . 'rules/form_data/common/get.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgb-rules-form-products_buy', WGBL_JS_URL . 'rules/form_data/common/products_buy.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgb-rules-form-quantities', WGBL_JS_URL . 'rules/form_data/common/quantities.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgb-rules-form-methods', WGBL_JS_URL . 'rules/form_data/methods.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgb-rules-functions', WGBL_JS_URL . 'rules/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgb-rules-main', WGBL_JS_URL . 'rules/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_localize_script('wgb-rules-main', 'WGBL_RULES_DATA', $this->get_rules_js_data()); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('jquery-ui-sortable');
-        }
-
-        // load assets for reports
-        if (!empty($_GET['page']) && $_GET['page'] == 'wgbl-reports') { //phpcs:ignore
-            // Styles
-            wp_enqueue_style('wgbl-reports-bootstrap', WGBL_CSS_URL . 'common/bootstrap.dataTables.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-reports-datatable', WGBL_CSS_URL . 'common/dataTables.bootstrap4.min.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-reports-daterangepicker', WGBL_CSS_URL . 'common/daterangepicker.css', [], WGBL_VERSION);
-            wp_enqueue_style('wgbl-reports-main', WGBL_CSS_URL . 'reports/style.css', [], WGBL_VERSION);
-
-            // Scripts
-            wp_enqueue_script('moment');
-            wp_enqueue_script('wgbl-chartjs', WGBL_JS_URL . 'common/chartjs/chart.umd.min.js', [], WGBL_VERSION, true);
-            wp_enqueue_script('wgbl-chartjs-adapter-date-fns', WGBL_JS_URL . 'common/chartjs/chartjs-adapter-date-fns.js', ['wgbl-chartjs'], WGBL_VERSION); //phpcs:ignore
-            wp_enqueue_script('wgbl-reports-datatable', WGBL_JS_URL . 'common/jquery.dataTables.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-datatable-buttons', WGBL_JS_URL . 'common/dataTables.buttons.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-pdfmake', WGBL_JS_URL . 'common/pdfmake.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-jszip', WGBL_JS_URL . 'common/jszip.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-vfs-fonts', WGBL_JS_URL . 'common/vfs_fonts.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-buttons-html5', WGBL_JS_URL . 'common/buttons.html5.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-buttons-print', WGBL_JS_URL . 'common/buttons.print.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-buttons-flash', WGBL_JS_URL . 'common/buttons.flash.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-daterangepicker', WGBL_JS_URL . 'common/daterangepicker.min.js', ['jquery', 'moment'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-functions', WGBL_JS_URL . 'reports/functions.js', ['jquery', 'moment'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-            wp_enqueue_script('wgbl-reports-main', WGBL_JS_URL . 'reports/main.js', ['jquery', 'moment'], WGBL_VERSION); //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NotInFooter
-
-            wp_localize_script('wgbl-reports-main', 'WGBL_REPORTS_DATA', $this->get_reports_js_data());
-        }
-    }
-
     private function activation_load_assets()
     {
-        wp_enqueue_style('wgbl-reset', WGBL_CSS_URL . 'common/reset.css', [], WGBL_VERSION);
-        wp_enqueue_style('wgbl-sweetalert', WGBL_CSS_URL . 'common/sweetalert.css', [], WGBL_VERSION);
-        wp_enqueue_style('wgbl-onboarding', WGBL_FW_URL . 'onboarding/assets/css/onboarding.css', [], WGBL_VERSION);
+        wp_enqueue_style('wgb-reset', WGBL_CSS_URL . 'common/reset.css', [], WGBL_VERSION);
+        wp_enqueue_style('wgb-sweetalert', WGBL_CSS_URL . 'common/sweetalert.css', [], WGBL_VERSION);
+        wp_enqueue_style('wgb-onboarding', WGBL_FW_URL . 'onboarding/assets/css/onboarding.css', [], WGBL_VERSION);
 
-        wp_enqueue_script('wgbl-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], true, WGBL_VERSION);
-        wp_enqueue_script('wgbl-onboarding', WGBL_FW_URL . 'onboarding/assets/js/onboarding.js', ['jquery'], true, WGBL_VERSION);
+        wp_enqueue_script('wgb-sweetalert', WGBL_JS_URL . 'common/sweetalert.min.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+        wp_enqueue_script('wgb-onboarding', WGBL_FW_URL . 'onboarding/assets/js/onboarding.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
 
-        wp_localize_script('wgbl-onboarding', 'ithemeland_onboarding', [
+        wp_localize_script('wgb-onboarding', 'ithemeland_onboarding', [
             'nonce' => wp_create_nonce('ithemeland_onboarding_action'),
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'redirecting_text' => __('Redirecting...', 'ithemeland-free-gifts-for-woo'),
-            'skip_text' => __('Skip', 'ithemeland-free-gifts-for-woo')
+            'redirecting_text' => esc_html__('Redirecting...', 'ithemeland-free-gifts-for-woo'),
+            'skip_text' => esc_html__('Skip', 'ithemeland-free-gifts-for-woo')
         ]);
     }
 
     public static function wp_loaded()
     {
-        //    
+        if (!self::is_initable()) {
+            return false;
+        }
     }
 
     public static function activate()
     {
-        //
+        $cart_page_id = get_option('woocommerce_cart_page_id');
+        $checkout_page_id = get_option('woocommerce_checkout_page_id');
+
+        if ($cart_page_id) {
+            $post = get_post($cart_page_id);
+            if ($post) {
+                if (strpos($post->post_content, 'wp-block-wgb-wc-gift') === false && strpos($post->post_content, '<!-- wp:woocommerce/cart -->') !== false) {
+                    $pattern = '/(<\/div>\s*<!--\s*\/wp:woocommerce\/cart-items-block\s*-->)/i';
+
+                    $wgb_block = <<<HTML
+                        \n<!-- wp:wgb/wc-gift -->
+                        <div class="wp-block-wgb-wc-gift"></div>
+                        <!-- /wp:wgb/wc-gift -->\n
+                    HTML;
+
+                    if (preg_match($pattern, $post->post_content)) {
+                        $new_content = preg_replace($pattern, $wgb_block . '$1', $post->post_content, 1);
+                    } else {
+                        $new_content = $post->post_content . $wgb_block;
+                    }
+
+                    if ($new_content !== $post->post_content) {
+                        wp_update_post(array(
+                            'ID' => $post->ID,
+                            'post_content' => $new_content,
+                        ));
+                    }
+                }
+            }
+        }
+
+        if ($checkout_page_id) {
+            $post = get_post($checkout_page_id);
+            if ($post) {
+                if (strpos($post->post_content, 'wp-block-wgb-wc-gift') === false && strpos($post->post_content, '<!-- wp:woocommerce/checkout -->') !== false) {
+                    $wgb_block = '<!-- wp:wgb/wc-gift -->
+                        <div class="wp-block-wgb-wc-gift"></div>
+                        <!-- /wp:wgb/wc-gift -->';
+
+                    $post->post_content .= "\n" . $wgb_block;
+                    wp_update_post($post);
+                }
+            }
+        }
     }
 
     public static function deactivate()
     {
-        //
+        // 
     }
 
     private function get_reports_js_data()
@@ -238,6 +323,11 @@ class WGBL
 
     private function get_rules_js_data()
     {
+        $rule_repository = Rule::get_instance();
+        $shipping_methods_options = $rule_repository->get_shipping_methods_options();
+        $setting_repository = Setting::get_instance();
+        $settings = $setting_repository->get();
+
         // get product buy fields
         $product_buy_item = [
             'type' => 'product',
@@ -289,8 +379,10 @@ class WGBL
             'status' => 'enable',
             'description' => '',
         ];
-        $rule_repository = Rule::get_instance();
+
         $rule_methods_grouped = $rule_repository->get_rule_methods_grouped();
+        $wgb_language = WGBL_Language::get_instance();
+        $site_languages = $wgb_language->get_languages();
 
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/rule-item.php';
@@ -313,6 +405,18 @@ class WGBL
         include WGBL_VIEWS_DIR . 'rules/quantities/tiered-quantity/row.php';
         $tiered_quantity_row = ob_get_clean();
 
+        // get products group row
+        $group_id = 'set_group_id_here';
+        ob_start();
+        include WGBL_VIEWS_DIR . 'rules/get_products_group/row.php';
+        $get_products_group_row = ob_get_clean();
+
+        $group_item['type'] = 'set_type_here';
+        $class_name = 'set_class_here';
+        ob_start();
+        include WGBL_VIEWS_DIR . 'rules/get_products_group/value.php';
+        $get_products_group_value_field = ob_get_clean();
+
         return [
             'new_rule' => $new_rule,
             'quantities' => [
@@ -333,7 +437,33 @@ class WGBL
             'condition' => [
                 'row' => $condition_row,
                 'extra_fields' => $condition_extra_fields,
-            ]
+            ],
+            'get_products_group' => [
+                'row' => $get_products_group_row,
+                'value_field' => $get_products_group_value_field
+            ],
+            'settings' => $settings
         ];
+    }
+
+    public static function is_initable()
+    {
+        if (!is_null(self::$is_initable)) {
+            return self::$is_initable;
+        }
+
+        if (!class_exists('WooCommerce')) {
+            self::woocommerce_required();
+            self::$is_initable = false;
+            return false;
+        }
+
+        if (defined('WGB_NAME')) {
+            self::$is_initable = false;
+            return false;
+        }
+
+        self::$is_initable = true;
+        return true;
     }
 }

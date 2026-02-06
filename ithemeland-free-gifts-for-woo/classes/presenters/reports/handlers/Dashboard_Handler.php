@@ -1,13 +1,13 @@
 <?php
 
-namespace wgbl\classes\presenters\reports\handlers;
+namespace wgb\classes\presenters\reports\handlers;
 
-use wgbl\classes\helpers\Date_Helper;
-use wgbl\classes\helpers\Plugin_Helper;
-use wgbl\classes\presenters\reports\Handler_Interface;
-use wgbl\classes\repositories\Order;
-use wgbl\classes\repositories\Product;
-use wgbl\classes\repositories\Rule;
+use wgb\classes\helpers\Date_Helper;
+use wgb\classes\helpers\Plugin_Helper;
+use wgb\classes\presenters\reports\Handler_Interface;
+use wgb\classes\repositories\Order;
+use wgb\classes\repositories\Product;
+use wgb\classes\repositories\Rule;
 
 defined('ABSPATH') || exit();
 

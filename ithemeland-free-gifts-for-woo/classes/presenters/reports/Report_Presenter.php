@@ -1,8 +1,8 @@
 <?php
 
-namespace wgbl\classes\presenters\reports;
+namespace wgb\classes\presenters\reports;
 
-use wgbl\classes\presenters\reports\handlers\Dashboard_Handler;
+use wgb\classes\presenters\reports\handlers\Dashboard_Handler;
 
 defined('ABSPATH') || exit();
 

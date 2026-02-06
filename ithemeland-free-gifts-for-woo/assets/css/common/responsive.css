@@ -1,32 +1,163 @@
 @Media screen and (max-width: 1400px) {
-    .wgbl-widget-box {
+    .wgb-widget-box {
         padding: 25px 10px;
     }
 }
 
 @Media screen and (max-width: 1280px) {
-    .wgbl-col-3 {
+    .wgb-col-3 {
         width: 50%;
     }
 }
 
 @Media screen and (max-width: 1024px) {
-    .wgbl-col-6 {
+    .wgb-col-6 {
         width: 100%;
     }
-    .wgbl-col-4, .wgbl-col-3 {
+    .wgb-col-4,
+    .wgb-col-3 {
         width: 50%;
     }
 }
 
+@media screen and (max-width: 955px) {
+    .wgb-modal {
+        width: 100%;
+        padding-left: 0;
+    }
+    .wgb-modal-box-lg,
+    .wgb-modal-box-sm {
+        width: 95%;
+    }
+    .wgb-header-left #wgb-full-screen {
+        display: none;
+    }
+    .wgb-plugin-help .wgb-plugin-help-text {
+        display: none;
+    }
+    .wgb-tabs-list li:first-child,
+    .wgb-menu-list li:first-child {
+        margin-left: 0;
+    }
+    .wgb-tabs-list li {
+        margin: 0;
+        width: 100%;
+        text-align: center;
+    }
+    .wgb-tabs-list li a {
+        margin: 0 !important;
+    }
+    .wgb-tabs-list li a.selected {
+        display: inline-table !important;
+    }
+}
+
 @Media screen and (max-width: 768px) {
-    .wgbl-col-4 {
+    .wgb-col-4 {
         width: 100%;
     }
 }
 
 @Media screen and (max-width: 650px) {
-    .wgbl-col-3, .wgbl-col-4, .wgbl-col-6, .wgbl-col-8, .wgbl-col-12 {
+    .wgb-plugin-name {
+        font-size: 14px;
+    }
+    .wgb-plugin-name img {
+        margin-right: 4px;
+    }
+    .wgb-condition-extra-fields,
+    .wgb-w25p,
+    .wgb-w30p,
+    .wgb-w70p,
+    .wgb-w10p,
+    .wgb-w56p,
+    .wgb-rule-section .wgb-rule-item-sortable-item .wgb-w70p,
+    .wgb-offer-rule-section .wgb-offer-rule-item-sortable-item .wgb-w70p,
+    .wgb-col-2-5,
+    .wgb-col-3,
+    .wgb-col-4,
+    .wgb-col-6,
+    .wgb-col-8,
+    .wgb-col-12 {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    #wgb-settings label {
+        width: 90%;
+    }
+    #wgb-settings input[type="text"],
+    #wgb-settings input[type="number"],
+    #wgb-settings select {
         width: 100%;
+    }
+    .wgb-form-group .wgb-description,
+    .wgb-form-group .wgb-description-under-value {
+        margin-left: 0;
+    }
+    .wgb-header-left li {
+        display: none;
+    }
+    #wgb-rules .wgb-rule-item {
+        position: relative;
+    }
+    .wgb-rule-duplicate,
+    .wgb-rule-delete {
+        position: absolute;
+        top: 10px;
+    }
+    .wgb-rule-duplicate i,
+    .wgb-rule-delete i {
+        font-size: 22px !important;
+    }
+    .wgb-rule-delete {
+        right: 7px;
+    }
+    .wgb-rule-duplicate {
+        right: 35px;
+    }
+    .wgb-rule-item-status {
+        width: 100%;
+        margin: 0;
+    }
+    .wgb-rule-header .wgb-float-left {
+        margin-bottom: 7px;
+    }
+    .wgb-rule-header .wgb-float-left,
+    .wgb-rule-header .wgb-float-right {
+        width: 100%;
+    }
+    .wgb-rule-header-details,
+    .wgb-offer-rule-header-details {
+        width: 100%;
+    }
+    #wgb-rules .wgb-rule-item .wgb-rule-header .wgb-rule-method-name::before {
+        content: "";
+        margin: 0 0 0 5px;
+    }
+    div[data-type="conditions"] .wgb-form-group,
+    div[data-type="get_products_group"] .wgb-form-group {
+        margin-bottom: 5px;
+    }
+    #wgb-rules .wgb-rule-item {
+        margin: 5px 0;
+    }
+    .wgb-rule-product-buy-product-item,
+    .select2-container .select2-selection--single,
+    div[data-type="conditions"] .wgb-form-group .select2-container .select2-selection--single,
+    div[data-type="conditions"] .select2-container--default .select2-selection--single .select2-selection__rendered,
+    div[data-type="conditions"] .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px !important;
+        line-height: 40px !important;
+    }
+    div[data-type="conditions"] .wgb-form-group input,
+    div[data-type="conditions"] .wgb-form-group select {
+        height: 40px !important;
+        line-height: 1 !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: 40px !important;
+    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 40px;
     }
 }

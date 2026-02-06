@@ -29,10 +29,12 @@ jQuery(document).ready(function ($) {
             $.post(it_wc_gift_add_order_ajax.ajax_url, data, function (response) {
 
                 if (response) {
-                    // window.alert('The gift is added to order');
+					//confirm(response);
+                    window.alert('The gifts is added to order');
                     location.reload();
                 } else {
                     window.alert('Fail');
+					location.reload();
                 }
                 // $('.add-gift-to-order').unblock();
             });

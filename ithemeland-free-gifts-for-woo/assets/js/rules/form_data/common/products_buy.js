@@ -1,57 +1,57 @@
 "use strict";
 
 jQuery(document).ready(function ($) {
-    $(document).on('change', '.wgbl-rule-product-buy-product-item', function () {
-        let rule = $(this).closest('.wgbl-rule-item');
+    $(document).on('change', '.wgb-rule-product-buy-product-item', function () {
+        let rule = $(this).closest('.wgb-rule-item');
         let ruleID = rule.attr('data-id');
-        let productBuyID = $(this).closest('.wgbl-rule-item-sortable-item').attr('data-id');
-        let item = $(this).closest('.wgbl-rule-item-sortable-item').find('.wgbl-product-buy-extra-fields');
+        let productBuyID = $(this).closest('.wgb-rule-item-sortable-item').attr('data-id');
+        let item = $(this).closest('.wgb-rule-item-sortable-item').find('.wgb-product-buy-extra-fields');
         item.attr('data-id', productBuyID);
 
         if (WGBL_RULES_DATA.product_buy.extra_fields[$(this).val()]) {
             item.html(WGBL_RULES_DATA.product_buy.extra_fields[$(this).val()].replaceAll('set_product_buy_id_here', productBuyID).replaceAll('set_rule_id_here', ruleID)).ready(function () {
-                wgblResetData();
+                wgbResetData();
             });
         }
     });
 
-    $(document).on('click', '.wgbl-product-buy-add-product', function () {
-        let rule = $(this).closest('.wgbl-rule-item');
+    $(document).on('click', '.wgb-product-buy-add-product', function () {
+        let rule = $(this).closest('.wgb-rule-item');
         let ruleID = rule.attr('data-id');
-        let productBuyID = parseInt($(this).closest('.wgbl-rule-item').find('.wgbl-product-buy-items .wgbl-rule-item-sortable-item').length);
+        let productBuyID = parseInt($(this).closest('.wgb-rule-item').find('.wgb-product-buy-items .wgb-rule-item-sortable-item').length);
 
         if (WGBL_RULES_DATA.product_buy.row) {
-            rule.find('.wgbl-product-buy-items').append((WGBL_RULES_DATA.product_buy.row).replaceAll('set_product_buy_id_here', productBuyID).replaceAll('set_rule_id_here', ruleID)).ready(function () {
-                let newItem = rule.find('.wgbl-product-buy-items .wgbl-rule-item-sortable-item').last();
+            rule.find('.wgb-product-buy-items').append((WGBL_RULES_DATA.product_buy.row).replaceAll('set_product_buy_id_here', productBuyID).replaceAll('set_rule_id_here', ruleID)).ready(function () {
+                let newItem = rule.find('.wgb-product-buy-items .wgb-rule-item-sortable-item').last();
                 newItem.attr('data-id', productBuyID);
-                wgblSelect2Set();
-                wgblGetProducts();
-                wgblProductBuyFixPriority(rule);
+                wgbSelect2Set();
+                wgbGetProducts();
+                wgbProductBuyFixPriority(rule);
             });
         }
     });
 
-    $(document).on('click', '.wgbl-product-item-delete', function () {
-        let ruleItem = $(this).closest('.wgbl-rule-item');
-        $(this).closest('.wgbl-rule-item-sortable-item').remove();
-        wgblProductBuyFixPriority(ruleItem);
+    $(document).on('click', '.wgb-product-item-delete', function () {
+        let ruleItem = $(this).closest('.wgb-rule-item');
+        $(this).closest('.wgb-rule-item-sortable-item').remove();
+        wgbProductBuyFixPriority(ruleItem);
     });
 
-    $(document).on('change', '.wgbl-product-buy-product-meta-field-type', function () {
-        let ruleID = $(this).closest('.wgbl-rule-item').attr('data-id');
-        let productBuyID = $(this).closest('.wgbl-rule-item-sortable-item').attr('data-id');
-        $(this).closest('.wgbl-product-buy-extra-fields').find('.wgbl-product-buy-extra-fields-col-4').html(wgblGetProductBuyProductMetaFieldTypeFields($(this).val(), ruleID, productBuyID))
+    $(document).on('change', '.wgb-product-buy-product-meta-field-type', function () {
+        let ruleID = $(this).closest('.wgb-rule-item').attr('data-id');
+        let productBuyID = $(this).closest('.wgb-rule-item-sortable-item').attr('data-id');
+        $(this).closest('.wgb-product-buy-extra-fields').find('.wgb-product-buy-extra-fields-col-4').html(wgbGetProductBuyProductMetaFieldTypeFields($(this).val(), ruleID, productBuyID))
     });
 
-    $(document).on('change', '.wgbl-product-buy-coupons-applied-type', function () {
-        let ruleID = $(this).closest('.wgbl-rule-item').attr('data-id');
-        let productBuyID = $(this).closest('.wgbl-rule-item-sortable-item').attr('data-id');
-        $(this).closest('.wgbl-product-buy-extra-fields').find('.wgbl-product-buy-extra-fields-col-4').html(wgblGetProductBuyCouponsAppliedTypeFields($(this).val(), ruleID, productBuyID));
-        wgblResetData();
+    $(document).on('change', '.wgb-product-buy-coupons-applied-type', function () {
+        let ruleID = $(this).closest('.wgb-rule-item').attr('data-id');
+        let productBuyID = $(this).closest('.wgb-rule-item-sortable-item').attr('data-id');
+        $(this).closest('.wgb-product-buy-extra-fields').find('.wgb-product-buy-extra-fields-col-4').html(wgbGetProductBuyCouponsAppliedTypeFields($(this).val(), ruleID, productBuyID));
+        wgbResetData();
     });
 })
 
-function wgblGetProductBuyProductMetaFieldTypeFields(type, ruleID, productBuyID) {
+function wgbGetProductBuyProductMetaFieldTypeFields(type, ruleID, productBuyID) {
     let output;
     switch (type) {
         case 'contains':
@@ -73,14 +73,14 @@ function wgblGetProductBuyProductMetaFieldTypeFields(type, ruleID, productBuyID)
     return output;
 }
 
-function wgblGetProductBuyCouponsAppliedTypeFields(type, ruleID, productBuyID) {
+function wgbGetProductBuyCouponsAppliedTypeFields(type, ruleID, productBuyID) {
     let output;
     switch (type) {
         case 'at_least_one':
         case 'all':
         case 'only':
         case 'none':
-            output = '<select name="rule[' + ruleID + '][product_buy][' + productBuyID + '][coupons][]" class="wgbl-select2-coupons wgbl-select2-option-values" data-option-name="coupons" data-type="select2" data-placeholder="Select ..." multiple required></select>';
+            output = '<select name="rule[' + ruleID + '][product_buy][' + productBuyID + '][coupons][]" class="wgb-select2-coupons wgb-select2-option-values" data-option-name="coupons" data-type="select2" data-placeholder="Select ..." multiple required></select>';
             break;
         default:
             output = '';
@@ -88,15 +88,15 @@ function wgblGetProductBuyCouponsAppliedTypeFields(type, ruleID, productBuyID) {
     return output;
 }
 
-function wgblShowProductBuy(id) {
-    let productBuy = jQuery('.wgbl-rule-item[data-id=' + id + '] div[data-type=product-buy]');
+function wgbShowProductBuy(id) {
+    let productBuy = jQuery('.wgb-rule-item[data-id=' + id + '] div[data-type=product-buy]');
     productBuy.find('select').prop('disabled', false);
     productBuy.find('input').prop('disabled', false);
     productBuy.show();
 }
 
-function wgblHideProductBuy(id) {
-    let productBuy = jQuery('.wgbl-rule-item[data-id=' + id + '] div[data-type=product-buy]');
+function wgbHideProductBuy(id) {
+    let productBuy = jQuery('.wgb-rule-item[data-id=' + id + '] div[data-type=product-buy]');
     productBuy.find('select').prop('disabled', true);
     productBuy.find('input').prop('disabled', true);
     productBuy.hide();

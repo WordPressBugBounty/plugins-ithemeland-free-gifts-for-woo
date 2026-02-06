@@ -1,8 +1,8 @@
 <?php
 
-namespace wgbl\framework\analytics;
+namespace wgb\framework\analytics;
 
-use wgbl\framework\onboarding\Onboarding;
+use wgb\framework\onboarding\Onboarding;
 
 defined('ABSPATH') || exit();
 
@@ -29,7 +29,7 @@ class AnalyticsTracker
             return false;
         }
 
-        $transient_name = 'ithemeland_wgbl_analytics_send';
+        $transient_name = 'ithemeland_wgb_analytics_send';
         if (false === get_transient($transient_name)) {
             $analytics_service = AnalyticsService::get_instance();
             $analytics_service->send();
@@ -41,7 +41,7 @@ class AnalyticsTracker
     {
         register_setting(
             'general',
-            'wgbl_usage_track',
+            'wgb_usage_track',
             array(
                 'type' => 'boolean',
                 'sanitize_callback' => [$this, 'sanitize_checkbox'],
@@ -50,14 +50,14 @@ class AnalyticsTracker
         );
 
         add_settings_field(
-            'wgbl_usage_track',
-            __('Enable Usage Tracking', 'ithemeland-free-gifts-for-woo'),
+            'wgb_usage_track',
+            esc_html__('Enable Usage Tracking', 'ithemeland-free-gifts-for-woo'),
             [$this, 'usage_tracking_checkbox'],
             'general',
             'default',
             array(
-                'label_for' => 'wgbl_usage_track_general',
-                'description' => __('Allow anonymous usage data tracking to help improve our plugin.', 'ithemeland-free-gifts-for-woo')
+                'label_for' => 'wgb_usage_track_general',
+                'description' => esc_html__('Allow anonymous usage data tracking to help improve our plugin.', 'ithemeland-free-gifts-for-woo')
             )
         );
     }

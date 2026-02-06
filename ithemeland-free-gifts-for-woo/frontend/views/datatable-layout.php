@@ -7,8 +7,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$add_gift_lable = esc_html(get_option('itg_localization_add_gift', 'Add Gift'));
+$add_gift_label = esc_html(get_option('itg_localization_add_gift', 'Add Gift'));
 $select_gift = esc_html(get_option('itg_localization_select_gift', 'Select Gift'));
+
+if (empty($items)) {
+    return;
+}
 
 ?>
 <?php
@@ -17,6 +21,9 @@ $select_gift = esc_html(get_option('itg_localization_select_gift', 'Select Gift'
  * 
  * @since 2.0.0
  */
+
+use wgb\classes\helpers\Sanitizer;
+
 do_action('itg_before_gift_products_content');
 ?>
 
@@ -49,10 +56,11 @@ do_action('itg_before_gift_products_content');
             <?php
             foreach ($items as $key => $gift_product) {
                 $_product       = wc_get_product($gift_product['product_id']);
-
+                $qty = $gift_product['stock_qty'];
                 $link_classes = array('wgb-product-item-cnt');
                 if ($gift_product['hide_add_to_cart']) {
                     $link_classes[] = 'disable-hover';
+                    $qty = 1;
                 }
             ?>
                 <tr class="<?php echo esc_attr(implode(' ', $link_classes)); ?>">
@@ -87,7 +95,7 @@ do_action('itg_before_gift_products_content');
                     ?>
                         <td>
                             <div class="wgb-add-gift-btn btn-select-gift-button" data-rule-id="<?php echo esc_attr($gift_product['rule_id']); ?>" data-id="<?php echo esc_attr($gift_product['product_id']); ?>">
-                                <?php echo wp_kses_post($select_gift); ?>
+                                <?php echo wp_kses($select_gift, Sanitizer::allowed_html()); ?>
                                 <div class="wgb-loading-icon wgb-d-none">
                                     <div class="wgb-spinner wgb-spinner--2"></div>
                                 </div>
@@ -104,12 +112,27 @@ do_action('itg_before_gift_products_content');
                         ];
                     ?>
                         <td>
-                            <a class="<?php echo esc_attr(implode(' ', itg_get_gift_product_add_to_cart_classes($settings))); ?>" data-gift_id="<?php echo esc_attr($gift_id); ?>" data-product_id="<?php echo esc_attr($gift_product['product_id']); ?>" data-rule_id="<?php echo esc_attr($gift_product['rule_id']); ?>" href="<?php echo esc_url(itg_get_gift_product_add_to_cart_url($gift_data)); ?>">
-                                <div class="wgb-loading-icon wgb-d-none">
-                                    <div class="wgb-spinner wgb-spinner--2"></div>
-                                </div>
-                                <?php echo esc_html($add_gift_lable); ?>
-                            </a>
+                            <div class='itg-gift-product-add-to-cart-actions'>
+                                <?php
+                                if ($settings['enable_ajax_add_to_cart'] == 'true' && $settings['enabled-qty'] == 'true') {
+                                ?>
+                                    <span class='itg-gift-product-qty-container'>
+                                        <input class='itg-gift-product-qty' type='number' min='1' size='5' max='<?php echo esc_attr($qty); ?>' value='1' />
+                                    </span>
+                                <?php } ?>
+                                <span>
+                                    <a class="<?php echo esc_attr(implode(' ', itg_get_gift_product_add_to_cart_classes($settings))); ?>"
+                                        data-gift_id="<?php echo esc_attr($gift_id); ?>"
+                                        data-product_id="<?php echo esc_attr($gift_product['product_id']); ?>"
+                                        data-rule_id="<?php echo esc_attr($gift_product['rule_id']); ?>"
+                                        href="<?php echo esc_url(itg_get_gift_product_add_to_cart_url($gift_data)); ?>">
+                                        <div class="wgb-loading-icon wgb-d-none">
+                                            <div class="wgb-spinner wgb-spinner--2"></div>
+                                        </div>
+                                        <?php echo esc_html($add_gift_label); ?>
+                                    </a>
+                                </span>
+                            </div>
                         </td>
                     <?php
                     }

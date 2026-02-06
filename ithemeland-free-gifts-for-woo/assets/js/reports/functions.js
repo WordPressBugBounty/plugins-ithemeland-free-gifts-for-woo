@@ -1,10 +1,10 @@
 "use strict";
 
-var wgblReportData;
+var wgbReportData;
 
-function wgblGetMainDate() {
-    if (jQuery('#wgbl-main-date-filter').length > 0) {
-        let date = jQuery('#wgbl-main-date-filter').val().replace(/ /g, '').split('-');
+function wgbGetMainDate() {
+    if (jQuery('#wgb-main-date-filter').length > 0) {
+        let date = jQuery('#wgb-main-date-filter').val().replace(/ /g, '').split('-');
         return {
             from: (date[0]) ? date[0] : null,
             to: (date[1]) ? date[1] : null
@@ -13,109 +13,109 @@ function wgblGetMainDate() {
     return {};
 }
 
-function wgblRemoveSkeletonLoading() {
-    jQuery('.wgbl-skeleton').removeClass('wgbl-skeleton');
+function wgbRemoveSkeletonLoading() {
+    jQuery('.wgb-skeleton').removeClass('wgb-skeleton');
 }
 
-function wgblGetReports() {
+function wgbGetReports() {
     jQuery.ajax({
         url: WGBL_DATA.ajax_url,
         type: 'post',
         dataType: 'json',
         data: {
-            action: 'wgbl_get_reports',
+            action: 'wgb_get_reports',
             nonce: WGBL_DATA.ajax_nonce,
-            dates: wgblGetMainDate(),
+            dates: wgbGetMainDate(),
             page_params: window.location.search
         },
         success: function (response) {
-            wgblReportData = response;
-            wgblSetReportItems(response);
+            wgbReportData = response;
+            wgbSetReportItems(response);
         },
         error: function () {
-            wgblHideButtonLoading();
-            wgblRemoveSkeletonLoading();
-            wgblSetReportItems([]);
+            wgbHideButtonLoading();
+            wgbRemoveSkeletonLoading();
+            wgbSetReportItems([]);
         }
     });
 }
 
-function wgblSetReportItems(data) {
+function wgbSetReportItems(data) {
     let page = (WGBL_REPORTS_DATA.subMenu && WGBL_REPORTS_DATA.subMenu !== '') ? WGBL_REPORTS_DATA.subMenu : WGBL_REPORTS_DATA.subPage;
     switch (page) {
         case 'dashboard':
-            wgblSetDashboardPageItems(data);
+            wgbSetDashboardPageItems(data);
             break;
         case 'rules':
-            wgblSetRulesPageItems(data);
+            wgbSetRulesPageItems(data);
             break;
         case 'orders':
-            wgblSetOrdersPageItems(data);
+            wgbSetOrdersPageItems(data);
             break;
         case 'all-customers':
-            wgblSetAllCustomersPageItems(data);
+            wgbSetAllCustomersPageItems(data);
             break;
         case 'used-rules-by-customer':
-            wgblSetUsedRulesByCustomerPageItems(data);
+            wgbSetUsedRulesByCustomerPageItems(data);
             break;
         case 'products':
-            wgblSetProductsPageItems(data);
+            wgbSetProductsPageItems(data);
             break;
         case 'gotten-gifts-by-customer':
-            wgblSetGottenGiftsByCustomerPageItems(data);
+            wgbSetGottenGiftsByCustomerPageItems(data);
             break;
     }
 }
 
-function wgblSetDashboardPageItems(data) {
+function wgbSetDashboardPageItems(data) {
     // set boxes 
-    jQuery('#wgbl-reports-dashboard-total-gift-count').text(data.total_gift_count);
-    jQuery('#wgbl-reports-dashboard-total-customers').text(data.total_customers);
-    jQuery('#wgbl-reports-dashboard-number-of-used-rule').text(data.number_of_used_rule);
-    jQuery('#wgbl-reports-dashboard-number-of-orders').text(data.number_of_orders);
+    jQuery('#wgb-reports-dashboard-total-gift-count').text(data.total_gift_count);
+    jQuery('#wgb-reports-dashboard-total-customers').text(data.total_customers);
+    jQuery('#wgb-reports-dashboard-number-of-used-rule').text(data.number_of_used_rule);
+    jQuery('#wgb-reports-dashboard-number-of-orders').text(data.number_of_orders);
 
     // set charts
-    wgblReInitChart1(data.chart1);
-    wgblReInitChart2(data.chart2);
+    wgbReInitChart1(data.chart1);
+    wgbReInitChart2(data.chart2);
 
     // set recent orders used the gift
-    wgblSetRecentOrdersUsedTheGift(data.recent_orders_used_the_gift);
+    wgbSetRecentOrdersUsedTheGift(data.recent_orders_used_the_gift);
 
     // set top methods
-    wgblSetTopMethods(data.top_methods);
+    wgbSetTopMethods(data.top_methods);
 
     // set top rules
-    wgblSetTopRules(data.top_rules);
+    wgbSetTopRules(data.top_rules);
 
     // set top gifts
-    wgblSetTopGifts(data.top_gifts);
+    wgbSetTopGifts(data.top_gifts);
 
     // set top categories
-    wgblSetTopCategories(data.top_categories);
+    wgbSetTopCategories(data.top_categories);
 
     // set top countries
-    wgblSetTopCountries(data.top_countries);
+    wgbSetTopCountries(data.top_countries);
 
     // set top states
-    wgblSetTopStates(data.top_states);
+    wgbSetTopStates(data.top_states);
 
     // set used gifts
-    wgblSetUsedGifts(data.used_gifts);
+    wgbSetUsedGifts(data.used_gifts);
 
     // set used gifts
-    wgblSetRecentCustomersGetGift(data.recent_customers_get_gift);
+    wgbSetRecentCustomersGetGift(data.recent_customers_get_gift);
 
     // remove skeleton loading
-    wgblRemoveSkeletonLoading();
+    wgbRemoveSkeletonLoading();
 }
 
-function wgblSetRulesPageItems(data) {
-    let table = jQuery('#wgbl-reports-rules');
+function wgbSetRulesPageItems(data) {
+    let table = jQuery('#wgb-reports-rules');
     table.find('tbody').html('<tr><td colspan="7">No item</td></tr>');
     if (data.rules instanceof Object && Object.keys(data.rules).length > 0) {
         // destroy datatable
-        if (jQuery.fn.DataTable.isDataTable('#wgbl-reports-rules')) {
-            jQuery('#wgbl-reports-rules').DataTable().destroy();
+        if (jQuery.fn.DataTable.isDataTable('#wgb-reports-rules')) {
+            jQuery('#wgb-reports-rules').DataTable().destroy();
         }
         table.find('tbody').html('');
         let rulesLength = Object.keys(data.rules).length;
@@ -126,12 +126,12 @@ function wgblSetRulesPageItems(data) {
             let viewCustomerButton = '-';
 
             if (rule.used_count > 0) {
-                let viewUsedGiftFilterUrl = wgblSetFilterParamsForGottenGiftsByCustomerPage({ rulesName: rule.uid });
-                let viewUsedOrderFilterUrl = wgblSetFilterParamsForOrdersPage({ rulesName: rule.uid });
-                let viewCustomerButtonFilterUrl = wgblSetFilterParamsForUsedRulesByCustomerPage({ rulesName: rule.uid });
-                viewUsedGiftButton = '<a class="wgbl-reports-view-button" href="' + viewUsedGiftFilterUrl + '">View</a>';
-                viewUsedOrderButton = '<a class="wgbl-reports-view-button" href="' + viewUsedOrderFilterUrl + '">View</a>';
-                viewCustomerButton = '<a class="wgbl-reports-view-button" href="' + viewCustomerButtonFilterUrl + '">View</a>';
+                let viewUsedGiftFilterUrl = wgbSetFilterParamsForGottenGiftsByCustomerPage({ rulesName: rule.uid });
+                let viewUsedOrderFilterUrl = wgbSetFilterParamsForOrdersPage({ rulesName: rule.uid });
+                let viewCustomerButtonFilterUrl = wgbSetFilterParamsForUsedRulesByCustomerPage({ rulesName: rule.uid });
+                viewUsedGiftButton = '<a class="wgb-reports-view-button" href="' + viewUsedGiftFilterUrl + '">View</a>';
+                viewUsedOrderButton = '<a class="wgb-reports-view-button" href="' + viewUsedOrderFilterUrl + '">View</a>';
+                viewCustomerButton = '<a class="wgb-reports-view-button" href="' + viewCustomerButtonFilterUrl + '">View</a>';
             }
 
             table.append('<tr>' +
@@ -147,22 +147,22 @@ function wgblSetRulesPageItems(data) {
             // init DataTable
             if (!--rulesLength) {
                 table.DataTable(WGBL_REPORTS_DATA.dataTableOptions);
-                wgblHideButtonLoading();
+                wgbHideButtonLoading();
 
                 // remove skeleton loading
-                wgblRemoveSkeletonLoading();
+                wgbRemoveSkeletonLoading();
             }
         });
     }
 }
 
-function wgblSetOrdersPageItems(data) {
-    let table = jQuery('#wgbl-reports-orders');
+function wgbSetOrdersPageItems(data) {
+    let table = jQuery('#wgb-reports-orders');
     table.find('tbody').html('<tr><td colspan="7">No item</td></tr>');
     if (data.orders instanceof Object && Object.keys(data.orders).length > 0) {
         // destroy datatable
-        if (jQuery.fn.DataTable.isDataTable('#wgbl-reports-orders')) {
-            jQuery('#wgbl-reports-orders').DataTable().destroy();
+        if (jQuery.fn.DataTable.isDataTable('#wgb-reports-orders')) {
+            jQuery('#wgb-reports-orders').DataTable().destroy();
         }
         table.find('tbody').html('');
         let ordersLength = Object.keys(data.orders).length;
@@ -173,7 +173,7 @@ function wgblSetOrdersPageItems(data) {
             if (order.rules_name instanceof Object && Object.keys(order.rules_name).length > 0) {
                 let length = Object.keys(order.rules_name).length;
                 jQuery.each(order.rules_name, function (ruleId, ruleName) {
-                    let ruleFilterUrl = wgblSetFilterParamsForRulesPage({ rulesName: ruleId });
+                    let ruleFilterUrl = wgbSetFilterParamsForRulesPage({ rulesName: ruleId });
                     rulesName += '<a href="' + ruleFilterUrl + '">' + ruleName + '</a>';
                     if (--length) {
                         rulesName += ', ';
@@ -185,7 +185,7 @@ function wgblSetOrdersPageItems(data) {
                 '<td><a href="' + order.order_link + '">#' + order.order_id + '<a/></td>' +
                 '<td>' + order.customer_email + '</td>' +
                 '<td>' + order.order_date + '</td>' +
-                '<td><span class="wgbl-order-status ' + order.order_status + '">' + statusLabel + '</span></td>' +
+                '<td><span class="wgb-order-status ' + order.order_status + '">' + statusLabel + '</span></td>' +
                 '<td>' + rulesName + '</td>' +
                 '<td>' + order.rules_id + '</td>' +
                 '<td>' + order.gifts_name + '</td>' +
@@ -194,59 +194,59 @@ function wgblSetOrdersPageItems(data) {
             // init DataTable
             if (!--ordersLength) {
                 table.DataTable(WGBL_REPORTS_DATA.dataTableOptions);
-                wgblHideButtonLoading();
+                wgbHideButtonLoading();
 
                 // remove skeleton loading
-                wgblRemoveSkeletonLoading();
+                wgbRemoveSkeletonLoading();
             }
         });
     }
 }
 
-function wgblSetAllCustomersPageItems(data) {
-    let table = jQuery('#wgbl-reports-all-customers');
+function wgbSetAllCustomersPageItems(data) {
+    let table = jQuery('#wgb-reports-all-customers');
     table.find('tbody').html('<tr><td colspan="7">No item</td></tr>');
     if (data.customers instanceof Object && Object.keys(data.customers).length > 0) {
         // destroy datatable
-        if (jQuery.fn.DataTable.isDataTable('#wgbl-reports-all-customers')) {
-            jQuery('#wgbl-reports-all-customers').DataTable().destroy();
+        if (jQuery.fn.DataTable.isDataTable('#wgb-reports-all-customers')) {
+            jQuery('#wgb-reports-all-customers').DataTable().destroy();
         }
         table.find('tbody').html('');
         let customersLength = Object.keys(data.customers).length;
         jQuery.each(data.customers, function (key, customer) {
-            let viewOrdersFilterUrl = wgblSetFilterParamsForOrdersPage({ customerEmail: customer.customer_email });
-            let viewRulesFilterUrl = wgblSetFilterParamsForUsedRulesByCustomerPage({ email: customer.customer_email });
-            let viewGiftsFilterUrl = wgblSetFilterParamsForGottenGiftsByCustomerPage({ customerEmail: customer.customer_email });
+            let viewOrdersFilterUrl = wgbSetFilterParamsForOrdersPage({ customerEmail: customer.customer_email });
+            let viewRulesFilterUrl = wgbSetFilterParamsForUsedRulesByCustomerPage({ email: customer.customer_email });
+            let viewGiftsFilterUrl = wgbSetFilterParamsForGottenGiftsByCustomerPage({ customerEmail: customer.customer_email });
 
             table.append('<tr>' +
                 '<td>' + customer.customer_email + '</td>' +
                 '<td>' + customer.customer_name + '</td>' +
                 '<td>' + customer.customer_username + '</td>' +
                 '<td>' + customer.order_count + '</td>' +
-                '<td><a class="wgbl-reports-view-button" href="' + viewOrdersFilterUrl + '">View</a></td>' +
-                '<td><a class="wgbl-reports-view-button" href="' + viewRulesFilterUrl + '">View</a></td>' +
-                '<td><a class="wgbl-reports-view-button" href="' + viewGiftsFilterUrl + '">View</a></td>' +
+                '<td><a class="wgb-reports-view-button" href="' + viewOrdersFilterUrl + '">View</a></td>' +
+                '<td><a class="wgb-reports-view-button" href="' + viewRulesFilterUrl + '">View</a></td>' +
+                '<td><a class="wgb-reports-view-button" href="' + viewGiftsFilterUrl + '">View</a></td>' +
                 '</tr>');
 
             // init DataTable
             if (!--customersLength) {
                 table.DataTable(WGBL_REPORTS_DATA.dataTableOptions);
-                wgblHideButtonLoading();
+                wgbHideButtonLoading();
 
                 // remove skeleton loading
-                wgblRemoveSkeletonLoading();
+                wgbRemoveSkeletonLoading();
             }
         });
     }
 }
 
-function wgblSetUsedRulesByCustomerPageItems(data) {
-    let table = jQuery('#wgbl-reports-used-rules-by-customers');
+function wgbSetUsedRulesByCustomerPageItems(data) {
+    let table = jQuery('#wgb-reports-used-rules-by-customers');
     table.find('tbody').html('<tr><td colspan="7">No item</td></tr>');
     if (data.used_rules instanceof Object && Object.keys(data.used_rules).length > 0) {
         // destroy datatable
-        if (jQuery.fn.DataTable.isDataTable('#wgbl-reports-used-rules-by-customers')) {
-            jQuery('#wgbl-reports-used-rules-by-customers').DataTable().destroy();
+        if (jQuery.fn.DataTable.isDataTable('#wgb-reports-used-rules-by-customers')) {
+            jQuery('#wgb-reports-used-rules-by-customers').DataTable().destroy();
         }
         table.find('tbody').html('');
         let length = Object.keys(data.used_rules).length;
@@ -265,29 +265,29 @@ function wgblSetUsedRulesByCustomerPageItems(data) {
             // init DataTable
             if (!--length) {
                 table.DataTable(WGBL_REPORTS_DATA.dataTableOptions);
-                wgblHideButtonLoading();
+                wgbHideButtonLoading();
 
                 // remove skeleton loading
-                wgblRemoveSkeletonLoading();
+                wgbRemoveSkeletonLoading();
             }
         });
     }
 }
 
-function wgblSetProductsPageItems(data) {
-    let table = jQuery('#wgbl-reports-products');
+function wgbSetProductsPageItems(data) {
+    let table = jQuery('#wgb-reports-products');
     table.find('tbody').html('<tr><td colspan="7">No item</td></tr>');
     if (data.products instanceof Object && Object.keys(data.products).length > 0) {
         // destroy datatable
-        if (jQuery.fn.DataTable.isDataTable('#wgbl-reports-products')) {
-            jQuery('#wgbl-reports-products').DataTable().destroy();
+        if (jQuery.fn.DataTable.isDataTable('#wgb-reports-products')) {
+            jQuery('#wgb-reports-products').DataTable().destroy();
         }
         table.find('tbody').html('');
         let length = Object.keys(data.products).length;
         jQuery.each(data.products, function (key, product) {
             let brands = (table.find('thead th.it-product-brands').length > 0) ? '<td>' + product.brand + '</td>' : '';
-            let viewCustomerFilterUrl = wgblSetFilterParamsForGottenGiftsByCustomerPage({ products: product.product_id });
-            let viewOrdersFilterUrl = wgblSetFilterParamsForOrdersPage({ gifts: product.product_id });
+            let viewCustomerFilterUrl = wgbSetFilterParamsForGottenGiftsByCustomerPage({ products: product.product_id });
+            let viewOrdersFilterUrl = wgbSetFilterParamsForOrdersPage({ gifts: product.product_id });
 
             table.append('<tr>' +
                 '<td><a href="' + product.product_link + '">#' + product.product_id + '</a></td>' +
@@ -296,29 +296,29 @@ function wgblSetProductsPageItems(data) {
                 '<td>' + product.category + '</td>' +
                 brands +
                 '<td>' + product.count + '</td>' +
-                '<td><a class="wgbl-reports-view-button" href="' + viewCustomerFilterUrl + '">View</a></td>' +
-                '<td><a class="wgbl-reports-view-button" href="' + viewOrdersFilterUrl + '">View</a></td>' +
+                '<td><a class="wgb-reports-view-button" href="' + viewCustomerFilterUrl + '">View</a></td>' +
+                '<td><a class="wgb-reports-view-button" href="' + viewOrdersFilterUrl + '">View</a></td>' +
                 '</tr>');
 
             // init DataTable
             if (!--length) {
                 table.DataTable(WGBL_REPORTS_DATA.dataTableOptions);
-                wgblHideButtonLoading();
+                wgbHideButtonLoading();
 
                 // remove skeleton loading
-                wgblRemoveSkeletonLoading();
+                wgbRemoveSkeletonLoading();
             }
         });
     }
 }
 
-function wgblSetGottenGiftsByCustomerPageItems(data) {
-    let table = jQuery('#wgbl-reports-gotten-gifts-by-customer');
+function wgbSetGottenGiftsByCustomerPageItems(data) {
+    let table = jQuery('#wgb-reports-gotten-gifts-by-customer');
     table.find('tbody').html('<tr><td colspan="7">No item</td></tr>');
     if (data.gifts instanceof Object && Object.keys(data.gifts).length > 0) {
         // destroy datatable
-        if (jQuery.fn.DataTable.isDataTable('#wgbl-reports-gotten-gifts-by-customer')) {
-            jQuery('#wgbl-reports-gotten-gifts-by-customer').DataTable().destroy();
+        if (jQuery.fn.DataTable.isDataTable('#wgb-reports-gotten-gifts-by-customer')) {
+            jQuery('#wgb-reports-gotten-gifts-by-customer').DataTable().destroy();
         }
         table.find('tbody').html('');
         let length = Object.keys(data.gifts).length;
@@ -337,21 +337,21 @@ function wgblSetGottenGiftsByCustomerPageItems(data) {
             // init DataTable
             if (!--length) {
                 table.DataTable(WGBL_REPORTS_DATA.dataTableOptions);
-                wgblHideButtonLoading();
+                wgbHideButtonLoading();
 
                 // remove skeleton loading
-                wgblRemoveSkeletonLoading();
+                wgbRemoveSkeletonLoading();
             }
         });
     }
 }
 
-function wgblReInitChart1(data) {
-    let period = jQuery('#wgbl-chart1-buttons').find('button.active').val();
+function wgbReInitChart1(data) {
+    let period = jQuery('#wgb-chart1-buttons').find('button.active').val();
     period = (period && period !== '') ? period : 'month';
     let chartData = data[period];
 
-    let chartElement = document.getElementById('wgbl-report-dashboard-chart1');
+    let chartElement = document.getElementById('wgb-report-dashboard-chart1');
 
     let chartInstance = Chart.getChart(chartElement);
     if (chartInstance) {
@@ -399,11 +399,11 @@ function wgblReInitChart1(data) {
     });
 }
 
-function wgblReInitChart2(data) {
-    let chartType = jQuery('#wgbl-chart2-buttons button.active').val();
+function wgbReInitChart2(data) {
+    let chartType = jQuery('#wgb-chart2-buttons button.active').val();
     let chartData = (chartType && chartType !== '') ? data[chartType] : data.product;
 
-    let chartElement = document.getElementById('wgbl-report-dashboard-chart2');
+    let chartElement = document.getElementById('wgb-report-dashboard-chart2');
 
     let chartInstance = Chart.getChart(chartElement);
     if (chartInstance) {
@@ -451,8 +451,8 @@ function wgblReInitChart2(data) {
     });
 }
 
-function wgblSetRecentOrdersUsedTheGift(data) {
-    let table = jQuery('#wgbl-dashboard-recent-orders-used-gift');
+function wgbSetRecentOrdersUsedTheGift(data) {
+    let table = jQuery('#wgb-dashboard-recent-orders-used-gift');
     table.find('tbody').html('<tr><td colspan="5">No item</td></tr>');
     if (data.length > 0) {
         table.find('tbody').html('');
@@ -463,7 +463,7 @@ function wgblSetRecentOrdersUsedTheGift(data) {
             if (val.rules_name instanceof Object && Object.keys(val.rules_name).length > 0) {
                 let length = Object.keys(val.rules_name).length;
                 jQuery.each(val.rules_name, function (ruleId, ruleName) {
-                    let ruleFilterUrl = wgblSetFilterParamsForRulesPage({ rulesName: ruleId });
+                    let ruleFilterUrl = wgbSetFilterParamsForRulesPage({ rulesName: ruleId });
                     rulesName += '<a href="' + ruleFilterUrl + '">' + ruleName + '</a>';
                     if (--length) {
                         rulesName += ', ';
@@ -474,7 +474,7 @@ function wgblSetRecentOrdersUsedTheGift(data) {
             table.append('<tr>' +
                 '<td><a href="' + val.order_link + '">#' + val.order_id + '</a></td>' +
                 '<td>' + val.order_date + '</td>' +
-                '<td><span class="wgbl-order-status ' + val.order_status + '">' + statusLabel + '</span></td>' +
+                '<td><span class="wgb-order-status ' + val.order_status + '">' + statusLabel + '</span></td>' +
                 '<td>' + rulesName + '</td>' +
                 '<td>' + val.gifts_name + '</td>' +
                 '</tr>');
@@ -482,13 +482,13 @@ function wgblSetRecentOrdersUsedTheGift(data) {
     }
 }
 
-function wgblSetTopMethods(data) {
-    let table = jQuery('#wgbl-dashboard-top-methods');
+function wgbSetTopMethods(data) {
+    let table = jQuery('#wgb-dashboard-top-methods');
     table.find('tbody').html('<tr><td colspan="2">No item</td></tr>');
     if (data instanceof Object && Object.keys(data).length > 0) {
         table.find('tbody').html('');
         jQuery.each(data, function (key, val) {
-            let filterUrl = wgblSetFilterParamsForRulesPage({ ruleMethod: val.method_name });
+            let filterUrl = wgbSetFilterParamsForRulesPage({ ruleMethod: val.method_name });
             table.append('<tr>' +
                 '<td><a href="' + filterUrl + '">' + val.method_label + '</a></td>' +
                 '<td>' + val.count + '</td>' +
@@ -497,8 +497,8 @@ function wgblSetTopMethods(data) {
     }
 }
 
-function wgblSetTopRules(data) {
-    let table = jQuery('#wgbl-dashboard-top-rules');
+function wgbSetTopRules(data) {
+    let table = jQuery('#wgb-dashboard-top-rules');
     table.find('tbody').html('<tr><td colspan="2">No item</td></tr>');
     if (data instanceof Object && Object.keys(data).length > 0) {
         table.find('tbody').html('');
@@ -511,13 +511,13 @@ function wgblSetTopRules(data) {
     }
 }
 
-function wgblSetTopGifts(data) {
-    let table = jQuery('#wgbl-dashboard-top-gifts');
+function wgbSetTopGifts(data) {
+    let table = jQuery('#wgb-dashboard-top-gifts');
     table.find('tbody').html('<tr><td colspan="2">No item</td></tr>');
     if (data instanceof Object && Object.keys(data).length > 0) {
         table.find('tbody').html('');
         jQuery.each(data, function (key, val) {
-            let filterUrl = wgblSetFilterParamsForProductsPage({ productsName: val.product_id })
+            let filterUrl = wgbSetFilterParamsForProductsPage({ productsName: val.product_id })
             table.append('<tr>' +
                 '<td><a href="' + filterUrl + '">' + val.product_name + '</a></td>' +
                 '<td>' + val.count + '</td>' +
@@ -526,8 +526,8 @@ function wgblSetTopGifts(data) {
     }
 }
 
-function wgblSetTopCategories(data) {
-    let table = jQuery('#wgbl-dashboard-top-categories');
+function wgbSetTopCategories(data) {
+    let table = jQuery('#wgb-dashboard-top-categories');
     table.find('tbody').html('<tr><td colspan="2">No item</td></tr>');
     if (data instanceof Object && Object.keys(data).length > 0) {
         table.find('tbody').html('');
@@ -540,8 +540,8 @@ function wgblSetTopCategories(data) {
     }
 }
 
-function wgblSetTopCountries(data) {
-    let table = jQuery('#wgbl-dashboard-top-countries');
+function wgbSetTopCountries(data) {
+    let table = jQuery('#wgb-dashboard-top-countries');
     table.find('tbody').html('<tr><td colspan="2">No item</td></tr>');
     if (data instanceof Object && Object.keys(data).length > 0) {
         table.find('tbody').html('');
@@ -554,8 +554,8 @@ function wgblSetTopCountries(data) {
     }
 }
 
-function wgblSetTopStates(data) {
-    let table = jQuery('#wgbl-dashboard-top-states');
+function wgbSetTopStates(data) {
+    let table = jQuery('#wgb-dashboard-top-states');
     table.find('tbody').html('<tr><td colspan="2">No item</td></tr>');
     if (data instanceof Object && Object.keys(data).length > 0) {
         table.find('tbody').html('');
@@ -568,13 +568,13 @@ function wgblSetTopStates(data) {
     }
 }
 
-function wgblSetRecentCustomersGetGift(data) {
-    let table = jQuery('#wgbl-dashboard-recent-customers-get-gift');
+function wgbSetRecentCustomersGetGift(data) {
+    let table = jQuery('#wgb-dashboard-recent-customers-get-gift');
     table.find('tbody').html('<tr><td colspan="6">No item</td></tr>');
     if (data.length > 0) {
         table.find('tbody').html('');
         jQuery.each(data, function (key, val) {
-            let usernameFilterUrl = wgblSetFilterParamsForAllCustomersPage({
+            let usernameFilterUrl = wgbSetFilterParamsForAllCustomersPage({
                 username: val.customer_id
             });
             table.append('<tr>' +
@@ -589,8 +589,8 @@ function wgblSetRecentCustomersGetGift(data) {
     }
 }
 
-function wgblSetUsedGifts(data) {
-    let table = jQuery('#wgbl-dashboard-used-gifts');
+function wgbSetUsedGifts(data) {
+    let table = jQuery('#wgb-dashboard-used-gifts');
     table.find('tbody').html('<tr><td colspan="4">No item</td></tr>');
     if (data.length > 0) {
         table.find('tbody').html('');
@@ -609,7 +609,7 @@ function wgblSetUsedGifts(data) {
 
 
 // set filter functions
-function wgblSetFilterParamsForRulesPage(filters) {
+function wgbSetFilterParamsForRulesPage(filters) {
     let ruleMethod = (filters.ruleMethod) ? filters.ruleMethod : '';
     let ruleId = (filters.ruleId) ? filters.ruleId : '';
     let rulesName = (filters.rulesName) ? filters.rulesName : '';
@@ -618,7 +618,7 @@ function wgblSetFilterParamsForRulesPage(filters) {
     return WGBL_REPORTS_DATA.mainUrl + '&sub-page=rules&rule-method=' + ruleMethod + '&rules-name=' + rulesName + '&rule-id=' + ruleId + '&display-just-use=' + displayJustUse;
 }
 
-function wgblSetFilterParamsForOrdersPage(filters) {
+function wgbSetFilterParamsForOrdersPage(filters) {
     let orderId = (filters.orderId) ? filters.orderId : '';
     let rulesName = (filters.rulesName) ? filters.rulesName : '';
     let gifts = (filters.gifts) ? filters.gifts : '';
@@ -630,7 +630,7 @@ function wgblSetFilterParamsForOrdersPage(filters) {
     return WGBL_REPORTS_DATA.mainUrl + '&sub-page=orders&order-id=' + orderId + '&rules-name=' + rulesName + '&gifts=' + gifts + '&order-date=' + orderDate + '&order-status=' + orderStatus + '&usernames=' + usernames + '&customer-email=' + customerEmail;
 }
 
-function wgblSetFilterParamsForAllCustomersPage(filters) {
+function wgbSetFilterParamsForAllCustomersPage(filters) {
     let email = (filters.email) ? filters.email : '';
     let username = (filters.username) ? filters.username : '';
     let count = (filters.count) ? filters.count : '';
@@ -638,7 +638,7 @@ function wgblSetFilterParamsForAllCustomersPage(filters) {
     return WGBL_REPORTS_DATA.mainUrl + '&sub-page=customers&sub-menu=all-customers&email=' + email + '&username=' + username + '&count=' + count;
 }
 
-function wgblSetFilterParamsForUsedRulesByCustomerPage(filters) {
+function wgbSetFilterParamsForUsedRulesByCustomerPage(filters) {
     let date = (filters.date) ? filters.date : '';
     let email = (filters.email) ? filters.email : '';
     let username = (filters.username) ? filters.username : '';
@@ -649,7 +649,7 @@ function wgblSetFilterParamsForUsedRulesByCustomerPage(filters) {
     return WGBL_REPORTS_DATA.mainUrl + '&sub-page=customers&sub-menu=used-rules-by-customer&date=' + date + '&email=' + email + '&username=' + username + '&rules-name=' + rulesName + '&order-id=' + orderId + '&rules-method=' + rulesMethod;
 }
 
-function wgblSetFilterParamsForProductsPage(filters) {
+function wgbSetFilterParamsForProductsPage(filters) {
     let brand = (filters.brand) ? filters.brand : '';
     let category = (filters.category) ? filters.category : '';
     let productsName = (filters.productsName) ? filters.productsName : '';
@@ -657,7 +657,7 @@ function wgblSetFilterParamsForProductsPage(filters) {
     return WGBL_REPORTS_DATA.mainUrl + '&sub-page=products&sub-menu=products&brand=' + brand + '&category=' + category + '&products-name=' + productsName;
 }
 
-function wgblSetFilterParamsForGottenGiftsByCustomerPage(filters) {
+function wgbSetFilterParamsForGottenGiftsByCustomerPage(filters) {
     let date = (filters.date) ? filters.date : '';
     let usernames = (filters.usernames) ? filters.usernames : '';
     let products = (filters.products) ? filters.products : '';

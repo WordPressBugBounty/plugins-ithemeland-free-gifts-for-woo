@@ -1,0 +1,47 @@
+.wp-block[data-type="wgb/gift-carousel"] {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 28px;
+    margin-top: 28px;
+    max-width: 1100px;
+}
+
+.wp-block[data-type="wgb/gift-carousel"] input[type="text"],
+.wp-block[data-type="wgb/gift-carousel"] input[type="number"],
+.wp-block[data-type="wgb/gift-carousel"] span,
+.wp-block[data-type="wgb/gift-carousel"] label {
+    /* width: 100%; */
+    display: inline-block;
+}
+
+.wp-block[data-type="wgb/gift-carousel"] label {
+    font-size: 14px;
+}
+
+.wp-block[data-type="wgb/gift-carousel"] h2 {
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.wp-block[data-type="wgb/gift-carousel"] span {
+    font-size: 13px;
+    color: #868686;
+}
+
+.wp-block[data-type="wgb/gift-carousel"] input[type="text"],
+.wp-block[data-type="wgb/gift-carousel"] input[type="number"] {
+    max-width: 450px;
+}
+
+.wgb-blocks-gift-carousel-half-container {
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.wgb-item-carousel{
+    width: 32%;
+    display: inline-block;
+    text-align: center;
+}

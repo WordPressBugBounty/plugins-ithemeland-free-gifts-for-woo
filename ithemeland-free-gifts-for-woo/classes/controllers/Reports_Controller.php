@@ -1,19 +1,18 @@
 <?php
 
-namespace wgbl\classes\controllers;
+namespace wgb\classes\controllers;
 
-use wgbl\classes\helpers\Plugin_Helper;
-use wgbl\classes\repositories\Rule;
-use wgbl\classes\repositories\Setting;
-use wgbl\framework\onboarding\Onboarding;
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
-defined('ABSPATH') || exit();
+use wgb\classes\helpers\Plugin_Helper;
+use wgb\classes\repositories\Rule;
+use wgb\classes\repositories\Setting;
+use wgb\framework\onboarding\Onboarding;
 
 class Reports_Controller
 {
     private $rule_repository;
     private $rule_methods;
-    private $rule_methods_grouped;
     private $page_title;
     private $doc_link;
 
@@ -21,10 +20,9 @@ class Reports_Controller
     {
         $this->rule_repository = Rule::get_instance();
         $this->rule_methods = $this->rule_repository->get_rule_methods();
-        $this->rule_methods_grouped = $this->rule_repository->get_rule_methods_grouped();
 
-        $this->page_title = esc_html__('iThemeland Free Gifts For Woo', 'ithemeland-free-gifts-for-woo');
-        $this->doc_link = "https://ithemelandco.com/support-center/";
+        $this->page_title = esc_html__('GIFTiT – iThemeland Free Gifts for Woo Lite', 'ithemeland-free-gifts-for-woo');
+        $this->doc_link = "https://ithemelandco.com/support-center";
     }
 
     public function index()
@@ -34,8 +32,7 @@ class Reports_Controller
             return $this->activation_page();
         }
         $method = (!empty($_GET['sub-page']) && !empty($methods[$_GET['sub-page']])) ? $methods[$_GET['sub-page']] : 'dashboard'; //phpcs:ignore
-        // if (!method_exists($this, $method)) {
-        // }
+
         $this->{$method}();
     }
 

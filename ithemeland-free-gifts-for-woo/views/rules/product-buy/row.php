@@ -2,11 +2,11 @@
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
 ?>
 
-<div class="wgbl-rule-item-sortable-item" data-id="<?php echo esc_attr($product_buy_id); ?>">
-    <button type="button" class="wgbl-rule-item-product-buy-sortable-btn wgbl-button-tr wgbl-float-left"><i class="dashicons dashicons-menu"></i></button>
-    <div class="wgbl-w25p">
-        <div class="wgbl-form-group">
-            <select name="rule[<?php echo esc_attr($rule_id); ?>][product_buy][<?php echo esc_attr($product_buy_id); ?>][type]" class="wgbl-rule-product-buy-product-item wgbl-select2-grouped" data-type="select2">
+<div class="wgb-rule-item-sortable-item" data-id="<?php echo esc_attr($product_buy_id); ?>">
+    <button type="button" class="wgb-rule-item-product-buy-sortable-btn wgb-button-tr wgb-float-left"><i class="dashicons dashicons-menu"></i></button>
+    <div class="wgb-w25p">
+        <div class="wgb-form-group">
+            <select name="rule[<?php echo esc_attr($rule_id); ?>][product_buy][<?php echo esc_attr($product_buy_id); ?>][type]" class="wgb-rule-product-buy-product-item wgb-select2-grouped" data-type="select2">
                 <optgroup label="Product">
                     <option value="product" <?php echo (!empty($product_buy_item['type']) && $product_buy_item['type'] == 'product') ? 'selected' : ''; ?>><?php esc_html_e('Product', 'ithemeland-free-gifts-for-woo'); ?></option>
                     <option value="product_variation" <?php echo (!empty($product_buy_item['type']) && $product_buy_item['type'] == 'product_variation') ? 'selected' : ''; ?>><?php esc_html_e('Product Variation', 'ithemeland-free-gifts-for-woo'); ?></option>
@@ -24,8 +24,8 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
             </select>
         </div>
     </div>
-    <div class="wgbl-product-buy-extra-fields">
+    <div class="wgb-product-buy-extra-fields">
         <?php include WGBL_VIEWS_DIR . 'rules/product-buy/extra-field.php'; ?>
     </div>
-    <button type="button" class="wgbl-button-tr wgbl-float-right wgbl-product-item-delete"><i class="dashicons dashicons-no-alt"></i></button>
+    <button type="button" class="wgb-button-tr wgb-float-right wgb-product-item-delete"><i class="dashicons dashicons-no-alt"></i></button>
 </div>

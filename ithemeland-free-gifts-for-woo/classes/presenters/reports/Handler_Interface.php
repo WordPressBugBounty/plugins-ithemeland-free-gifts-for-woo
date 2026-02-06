@@ -1,6 +1,6 @@
 <?php
 
-namespace wgbl\classes\presenters\reports;
+namespace wgb\classes\presenters\reports;
 
 defined('ABSPATH') || exit();
 

@@ -13,7 +13,7 @@ jQuery(document).ready(function ($) {
             url: ithemeland_onboarding.ajaxurl,
             type: "POST",
             data: {
-                action: "wgbl_ithemeland_onboarding_plugin",
+                action: "wgb_ithemeland_onboarding_plugin",
                 activation_type: "allow",
                 ithemeland_opt_in: optIn,
                 ithemeland_usage_track: usageTracking,
@@ -45,7 +45,7 @@ jQuery(document).ready(function ($) {
             url: ithemeland_onboarding.ajaxurl,
             type: "POST",
             data: {
-                action: "wgbl_ithemeland_onboarding_plugin",
+                action: "wgb_ithemeland_onboarding_plugin",
                 activation_type: "skip",
                 _wpnonce: ithemeland_onboarding.nonce,
             },

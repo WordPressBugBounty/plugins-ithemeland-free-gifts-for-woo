@@ -1,6 +1,6 @@
 <div class="onboarding-section">
     <div class="ithemeland-onboarding-head">
-        <img src="<?php echo esc_url(WGBL_FW_URL . 'onboarding/assets/images/iThemeland-popup-icon.png'); ?>" style="width:250px" alt="onboarding-icon"><?php //phpcs:ignore PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage   ?>
+        <img src="<?php echo esc_url(WGBL_FW_URL . 'onboarding/assets/images/iThemeland-popup-icon.png'); ?>" style="width:250px" alt="onboarding-icon">
     </div>
     <div class="ithemeland-onboarding-container">
         <div class="ithemeland-onboarding-box">

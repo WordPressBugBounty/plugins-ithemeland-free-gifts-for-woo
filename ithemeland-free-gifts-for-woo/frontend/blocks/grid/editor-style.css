@@ -1,0 +1,43 @@
+.wp-block[data-type="wgb/gift-grid"] {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 28px;
+    margin-top: 28px;
+    max-width: 1100px;
+}
+
+.wp-block[data-type="wgb/gift-grid"] select,
+.wp-block[data-type="wgb/gift-grid"] input[type="text"],
+.wp-block[data-type="wgb/gift-grid"] input[type="number"],
+.wp-block[data-type="wgb/gift-grid"] span,
+.wp-block[data-type="wgb/gift-grid"] label {
+    width: 100%;
+    display: inline-block;
+}
+
+.wp-block[data-type="wgb/gift-grid"] label {
+    font-size: 14px;
+}
+
+.wp-block[data-type="wgb/gift-grid"] h2 {
+    font-size: 19px;
+    font-weight: 600;
+}
+
+.wp-block[data-type="wgb/gift-grid"] span {
+    font-size: 13px;
+    color: #868686;
+}
+
+.wp-block[data-type="wgb/gift-grid"] input[type="text"],
+.wp-block[data-type="wgb/gift-grid"] select,
+.wp-block[data-type="wgb/gift-grid"] input[type="number"] {
+    max-width: 450px;
+}
+
+.wgb-blocks-gift-grid-half-container {
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+}

@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * Exit if accessed directly
+ */
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+$add_gift_label = esc_html(get_option('itg_localization_add_gift', 'Add Gift'));
+$select_gift = esc_html(get_option('itg_localization_select_gift', 'Select Gift'));
+$no_thanks = esc_html(get_option('itg_localization_no_thanks', 'No Thanks'));
+
+/**
+ * This hook is used to display the extra content before gift products content.
+ * 
+ * @since 2.0.0
+ */
+do_action('itg_before_gift_products_content');
+?>
+
+<div class="adv-gift-section wgb-product-cnt wgb-frontend-gifts wgb-item-layout2">
+    <div class="wgb-owl-carousel owl-carousel it-owl-carousel-items" id="pw_slider_adv_gift">
+
+        <?php
+        foreach ($items as $key => $gift_product) :
+            $_product = wc_get_product($gift_product['product_id']);
+
+            $link_classes = array('wgb-product-item-cnt');
+            if ($gift_product['hide_add_to_cart']) {
+                $link_classes[] = 'disable-hover';
+            }
+        ?>
+
+            <div class="<?php echo esc_attr(implode(' ', $link_classes)); ?>">
+                <div class="wgb-item-thumb">
+                    <?php itg_render_product_image($_product, 'woocommerce_thumbnail', true); ?>
+                    <div class="wgb-item-overlay"></div>
+                    <?php if ($settings['show_stock_quantity'] == 'true') : ?>
+                        <div class="wgb-stock">
+                            <div class="gift-product-stock">
+                                <?php itg_render_stock_status($gift_product['stock_qty'], $settings, $gift_product, true); ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+
+                </div>
+                <div class="wgb-item-content">
+                    <h2 class="wgb-item-title font-weight-bold">
+                        <?php itg_render_product_name($_product, $settings, true); ?>
+                    </h2>
+                    <?php
+                    if ($settings['display_price'] == 'yes') {
+                        itg_render_price_gift($_product, $gift_product, true);
+                    }
+                    ?>
+                </div>
+                <?php
+                do_action('it_free_gift_before_button_add_gift', $gift_product['product_id']);
+                $gift_id = $gift_product['rule_id'] . '-' . $gift_product['product_id'];
+                $gift_data = [
+                    'gift_id' => $gift_id,
+                    'product_id' => $gift_product['product_id'],
+                    'rule_id' => $gift_product['rule_id'],
+                ];
+                ?>
+                <a class="<?php echo esc_attr(implode(' ', itg_get_gift_product_add_to_cart_classes($settings))); ?>" data-gift_id="<?php echo esc_attr($gift_id); ?>" data-itg_mode="popup" data-product_id="<?php echo esc_attr($gift_product['product_id']); ?>" data-rule_id="<?php echo esc_attr($gift_product['rule_id']); ?>" href="<?php echo esc_url(itg_get_gift_product_add_to_cart_url($gift_data)); ?>">
+                    <div class="wgb-loading-icon wgb-d-none">
+                        <div class="wgb-spinner wgb-spinner--2"></div>
+                    </div>
+                    <?php echo esc_html($add_gift_label); ?>
+                </a>
+
+                <?php do_action('it_free_gift_after_button_add_gift', $gift_product['product_id']); ?>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<div class="ith-btn-no-thanks-cnt">
+    <div class="wgb-popup-close itg-popup-close"><?php echo esc_html($no_thanks); ?></div>
+</div>
+
+<?php
+/**
+ * This hook is used to display the extra content after gift products content.
+ *
+ * @since 2.0.0
+ */
+do_action('itg_after_gift_products_content');

@@ -1,8 +1,10 @@
 <?php
 
-namespace wgbl\classes\repositories;
+namespace wgb\classes\repositories;
 
-defined('ABSPATH') || exit();
+use wgb\classes\helpers\Sanitizer;
+
+defined('ABSPATH') || exit(); // Exit if accessed directly
 
 class Setting
 {
@@ -21,12 +23,12 @@ class Setting
 
     public function __construct()
     {
-        $this->option_name = "wgbl_settings";
+        $this->option_name = "wgb_settings";
     }
 
     public function update($settings)
     {
-        return update_option($this->option_name, esc_sql($settings));
+        return update_option($this->option_name, Sanitizer::array($settings));
     }
 
     public function get()
@@ -34,26 +36,84 @@ class Setting
         return get_option($this->option_name, []);
     }
 
+    public function update_general_settings($data)
+    {
+        $settings = $this->get();
+        if (!empty($data) && is_array($data)) {
+            foreach ($data as $key => $setting) {
+                if ($key == 'view_gift_in_cart' && is_array($setting)) {
+                    $settings[$key] = $settings[$key] + esc_sql($setting);
+                } else {
+                    $settings[$key] = esc_sql($setting);
+                }
+            }
+        }
+
+        return $this->update($settings);
+    }
+
     public function set_default_settings()
     {
         return update_option($this->option_name, [
             'dashboard_date' => 'one_month_ago',
+            'enable_ajax_add_to_cart' => 'true',
             'display_price' => 'no',
             'position' => 'bottom_cart',
             'layout' => 'carousel',
-            'view_gift_in_cart' => [
-                'number_per_page' => 4,
-                'desktop_columns' => 'wgb-col-md-2',
-                'tablet_columns' => 'wgb-col-sm-2',
-                'mobile_columns' => 'wgb-col-2',
-                'carousel' => [
-                    'speed' => 5000,
-                    'mobile' => 1,
-                    'tablet' => 3,
-                    'desktop' => 5,
-                ]
-            ]
+            'number_per_page' => 4,
+            'desktop_columns' => 'wgb-col-md-2',
+            'tablet_columns' => 'wgb-col-sm-2',
+            'mobile_columns' => 'wgb-col-2',
+            'carousel' => [
+                'speed' => 5000,
+                'mobile' => 1,
+                'tablet' => 3,
+                'desktop' => 5,
+            ],
+            'add_gift_text_color' => $this->get_add_gift_default_color('text_color'),
+            'add_gift_text_color_hover' => $this->get_add_gift_default_color('text_color_hover'),
+            'add_gift_background' => $this->get_add_gift_default_color('background'),
+            'add_gift_background_hover' => $this->get_add_gift_default_color('background_hover'),
+            'add_gift_border_color' => $this->get_add_gift_default_color('border_color'),
+            'add_gift_border_color_hover' => $this->get_add_gift_default_color('border_color_hover'),
         ]);
+    }
+
+    public function get_add_gift_default_color($name)
+    {
+        $colors = [
+            'text_color' => '#e4003b',
+            'text_color_hover' => '#ffffff',
+            'background' => '#ffffff',
+            'background_hover' => '#e4003b',
+            'border_color' => '#e4003b',
+            'border_color_hover' => '#e4003b',
+        ];
+
+        return (!empty($colors[$name])) ? $colors[$name] : '';
+    }
+
+    public function maybe_sync()
+    {
+        $settings = $this->get();
+        $need_to_update = false;
+
+        if (!empty($settings['desktop_columns']) && strpos($settings['desktop_columns'], 'wgbl') !== false) {
+            $settings['desktop_columns'] = str_replace('wgbl', 'wgb', $settings['desktop_columns']);
+            $need_to_update = true;
+        }
+        if (!empty($settings['tablet_columns']) && strpos($settings['tablet_columns'], 'wgbl') !== false) {
+            $settings['tablet_columns'] = str_replace('wgbl', 'wgb', $settings['tablet_columns']);
+            $need_to_update = true;
+        }
+        if (!empty($settings['mobile_columns']) && strpos($settings['mobile_columns'], 'wgbl') !== false) {
+            $settings['mobile_columns'] = str_replace('wgbl', 'wgb', $settings['mobile_columns']);
+            $need_to_update = true;
+        }
+
+        if ($need_to_update) {
+            $this->update($settings);
+        }
     }
 
     public function has_settings()
@@ -64,8 +124,7 @@ class Setting
     public function get_localization()
     {
         global $wpdb;
-        //$query = $wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", "itg_localization_%");
-        $localization_fields = $wpdb->get_results($wpdb->prepare("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE %s", "itg_localization_%"), ARRAY_A);//phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching 
+        $localization_fields = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->prefix}options WHERE option_name LIKE 'itg_localization_%'", ARRAY_A); //phpcs:ignore
         return array_column($localization_fields, 'option_value', 'option_name');
     }
 

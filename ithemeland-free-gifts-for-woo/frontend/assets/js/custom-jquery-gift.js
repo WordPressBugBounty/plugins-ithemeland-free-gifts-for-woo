@@ -544,7 +544,7 @@ jQuery(document).ready(function ($) {
                     .finally(() => {
                         // show result
                         if (notice && $(".wc-block-store-notices .woocommerce-notices-wrapper").length) {
-                            $(".wc-block-store-notices .woocommerce-notices-wrapper").prepend(notice);
+                            $(".wc-block-store-notices .woocommerce-notices-wrapper").html(notice);
                         }
                     });
             } else {
@@ -558,11 +558,13 @@ jQuery(document).ready(function ($) {
             $(document.body).trigger("update_checkout");
 
             // Add notice if available
-            if (notice && $(".woocommerce-notices-wrapper").length) {
-                $(".woocommerce-notices-wrapper").prepend(notice);
-            } else if (notice && $(".woocommerce-message").length) {
-                $(".woocommerce-message").html(notice);
-            }
+            $(document.body).on('updated_cart_totals', function () {
+                if (notice && $(".woocommerce-notices-wrapper").length) {
+                    $(".woocommerce-notices-wrapper").html(notice);
+                } else if (notice && $(".woocommerce-message").length) {
+                    $(".woocommerce-message").html(notice);
+                }
+            });
         }
     }
 });

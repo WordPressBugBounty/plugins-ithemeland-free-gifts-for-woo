@@ -518,6 +518,7 @@ div[data-type="conditions"] ul.select2-selection__rendered input {
     left: 32px;
 }
 
+.wgb-rule-mode option[value="discount"],
 .wgb-rule-method option[value="subtotal_repeat"],
 .wgb-rule-method option[value="bulk_quantity"],
 .wgb-rule-method option[value="bulk_pricing"],

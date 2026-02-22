@@ -6,6 +6,7 @@ defined('ABSPATH') || exit(); // Exit if accessed directly
 
 use wgb\classes\languages\WGBL_Language;
 use wgb\classes\repositories\Flush_Message;
+use wgb\classes\repositories\OfferRule;
 use wgb\classes\repositories\Rule;
 use wgb\classes\repositories\Setting;
 use wgb\classes\repositories\User;
@@ -53,6 +54,9 @@ class Rules_Controller
                 break;
             case 'reports':
                 $this->reports();
+                break;
+            case 'offer_rules':
+                $this->offer_rules();
                 break;
             default:
                 $_GET['tab'] = 'rules'; //phpcs:ignore
@@ -157,6 +161,19 @@ class Rules_Controller
     {
         $reports_controller = new Reports_Controller();
         $reports_controller->index();
+    }
+
+    private function offer_rules()
+    {
+        $flush_message_repository = new Flush_Message();
+        $flush_message = $flush_message_repository->get();
+
+        $offer_rule_repository = OfferRule::get_instance();
+        $rules = $offer_rule_repository->get_rules();
+        $rule_types = $offer_rule_repository->get_rule_types();
+        $option_values = $offer_rule_repository->get_option_values();
+
+        include_once WGBL_VIEWS_DIR . "offer_rules/main.php";
     }
 
     private function get_setting_view()

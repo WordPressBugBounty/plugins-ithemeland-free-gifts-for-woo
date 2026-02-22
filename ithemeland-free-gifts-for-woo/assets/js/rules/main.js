@@ -74,6 +74,15 @@ jQuery(document).ready(function ($) {
             item.find('div[data-type="quantities"] .wgb-rule-section h3').html(WGBL_DATA.translate.quantities_and_settings);
         }
 
+        item.find('.wgb-rule-mode').val('free_gift').change();
+        if ($.inArray($(this).val(), ['simple', 'subtotal', 'cheapest_item_in_cart']) !== -1) {
+            item.find('.wgb-rule-mode-container').show();
+            item.find('.wgb-rule-mode option[value="discount"]').prop('disabled', false);
+        } else {
+            item.find('.wgb-rule-mode-container').hide();
+            item.find('.wgb-rule-mode option[value="discount"]').prop('disabled', true);
+        }
+
         let basedOn = item.find('div[data-type="quantities-based-on"]');
         basedOn.find("label").hide();
 
@@ -81,6 +90,16 @@ jQuery(document).ready(function ($) {
             basedOn.find('label[data-label="price-based-on"]').show();
         } else {
             basedOn.find('label[data-label="quantities-based-on"]').show();
+        }
+
+        if ($(this).val() == "cheapest_item_in_cart") {
+            item.find('.wgb-quantity-item[data-type="quantities-auto-add-gift-to-cart"] label').css({
+                'margin-top': '26px'
+            });
+        } else {
+            item.find('.wgb-quantity-item[data-type="quantities-auto-add-gift-to-cart"] label').css({
+                'margin-top': '5px'
+            });
         }
 
         // Control promotion section visibility based on method
@@ -229,6 +248,22 @@ jQuery(document).ready(function ($) {
                     .find("input")
                     .prop("disabled", false);
                 break;
+        }
+    });
+
+    $(document).on("change", ".wgb-rule-mode", function () {
+        let rule = $(this).closest(".wgb-rule-item");
+        if ($(this).val() == 'discount') {
+            rule.find('div[data-type="discount_items"]').show();
+            rule.find('.wgb-quantity-item[data-type="quantities-same-gift"]').hide();
+            rule.find('.wgb-quantity-item[data-type="quantities-auto-add-gift-to-cart"]').hide();
+        } else {
+            rule.find('div[data-type="discount_items"]').hide();
+            if (rule.find('.wgb-rule-method').val() !== 'cheapest_item_in_cart') {
+                rule.find('.wgb-quantity-item[data-type="quantities-same-gift"]').show();
+            }
+            rule.find('.wgb-quantity-item[data-type="quantities-auto-add-gift-to-cart"]').show();
+
         }
     });
 

@@ -48,7 +48,7 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
         </div>
     </div>
     <div class="wgb-rule-body">
-        <div class="wgb-col-6">
+        <div class="wgb-col-3">
             <div class="wgb-form-group">
                 <label><?php esc_html_e('Method', 'ithemeland-free-gifts-for-woo'); ?></label>
                 <select name="rule[<?php echo esc_attr($rule_id); ?>][method]" class="wgb-rule-method">
@@ -70,8 +70,19 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
                 </select>
             </div>
         </div>
+
+        <div class="wgb-col-3 wgb-rule-mode-container" style="display: <?php echo (in_array($rule_item['method'], ['simple', 'subtotal', 'cheapest_item_in_cart'])) ? 'block' : 'none'; ?>;">
+            <div class="wgb-form-group">
+                <label><?php esc_html_e('Rule Mode', 'ithemeland-free-gifts-for-woo'); ?></label>
+                <select name="rule[<?php echo esc_attr($rule_id); ?>][rule_mode]" class="wgb-rule-mode">
+                    <option value="free_gift" <?php echo (isset($rule_item['rule_mode']) && $rule_item['rule_mode'] == 'free_gift') ? 'selected' : ''; ?>><?php esc_html_e('Free Gift', 'ithemeland-free-gifts-for-woo'); ?></option>
+                    <option value="discount" <?php echo (!in_array($rule_item['method'], ['simple', 'subtotal', 'cheapest_item_in_cart'])) ? 'disabled' : ''; ?> <?php echo (isset($rule_item['rule_mode']) && $rule_item['rule_mode'] == 'discount') ? 'selected' : ''; ?>><?php esc_html_e('Discount', 'ithemeland-free-gifts-for-woo'); ?> - <?php esc_html_e('In Pro Version', 'ithemeland-free-gifts-for-woo'); ?> </option>
+                </select>
+            </div>
+        </div>
+
         <div class="method-dependencies">
-            <div class="wgb-col-2-5 wgb-quantity-item" data-type="quantities-apply-on-cart-item" style="display: <?php echo ($rule_item['method'] == 'cheapest_item_in_cart') ? 'block' : 'none'; ?>">
+            <div class="wgb-col-3 wgb-quantity-item" data-type="quantities-apply-on-cart-item" style="display: <?php echo ($rule_item['method'] == 'cheapest_item_in_cart') ? 'block' : 'none'; ?>">
                 <div class="wgb-form-group">
                     <label><?php esc_html_e('Price Type', 'ithemeland-free-gifts-for-woo'); ?></label>
                     <select name="rule[<?php echo esc_attr($rule_id); ?>][quantity][price_type]" <?php echo ($rule_item['method'] != 'cheapest_item_in_cart') ? 'disabled' : ''; ?>>
@@ -153,32 +164,34 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
                                 <input name="rule[<?php echo esc_attr($rule_id); ?>][quantity][get]" type="number" min="1" placeholder="Quantity" value="<?php echo (!empty($rule_item['quantity']['get'])) ? esc_attr($rule_item['quantity']['get']) : ''; ?>" required <?php echo (in_array($rule_item['method'], ['bulk_quantity', 'bulk_pricing', 'tiered_quantity', 'free_shipping', 'get_group_of_products'])) ? 'disabled' : ''; ?>>
                             </div>
                         </div>
-                        <div class="wgb-col-2-5 wgb-quantity-item" data-type="quantities-same-gift" style="display: <?php echo ($rule_item['method'] != 'cheapest_item_in_cart') ? 'block' : 'none'; ?>">
-                            <div class="wgb-form-group wgb-checkbox-group">
-                                <label>
-                                    <input type="checkbox" data-id="<?php echo esc_attr($rule_id); ?>" data-name="same_gift" class="wgb-rule-quantities-checkbox" <?php echo (!empty($rule_item['quantity']['same_gift']) && $rule_item['quantity']['same_gift'] == 'yes') ? 'checked="checked"' : ''; ?>>
-                                    <?php esc_html_e('Same Gift', 'ithemeland-free-gifts-for-woo'); ?>
-                                </label>
-                                <input type="hidden" name="rule[<?php echo esc_attr($rule_id); ?>][quantity][same_gift]" value="<?php echo (!empty($rule_item['quantity']['same_gift']) && $rule_item['quantity']['same_gift'] == 'yes') ? 'yes' : 'no'; ?>" <?php echo (in_array($rule_item['method'], ['bulk_quantity', 'bulk_pricing', 'tiered_quantity', 'cheapest_item_in_cart', 'free_shipping', 'get_group_of_products'])) ? 'disabled' : ''; ?>>
+                        <div class="wgb-col-3">
+                            <div class="wgb-quantity-item" data-type="quantities-same-gift" style="padding-left: 15px; display: <?php echo ($rule_item['method'] != 'cheapest_item_in_cart' && (!isset($rule_item['rule_mode']) || $rule_item['rule_mode'] != 'discount')) ? 'block' : 'none'; ?>">
+                                <div class="wgb-form-group wgb-checkbox-group" style="margin-bottom: 5px;">
+                                    <label style="margin-top: 5px;">
+                                        <input type="checkbox" data-id="<?php echo esc_attr($rule_id); ?>" data-name="same_gift" class="wgb-rule-quantities-checkbox" <?php echo (!empty($rule_item['quantity']['same_gift']) && $rule_item['quantity']['same_gift'] == 'yes') ? 'checked="checked"' : ''; ?>>
+                                        <?php esc_html_e('Same Gift', 'ithemeland-free-gifts-for-woo'); ?>
+                                    </label>
+                                    <input type="hidden" name="rule[<?php echo esc_attr($rule_id); ?>][quantity][same_gift]" value="<?php echo (!empty($rule_item['quantity']['same_gift']) && $rule_item['quantity']['same_gift'] == 'yes') ? 'yes' : 'no'; ?>" <?php echo (in_array($rule_item['method'], ['bulk_quantity', 'bulk_pricing', 'tiered_quantity', 'cheapest_item_in_cart', 'free_shipping', 'get_group_of_products'])) ? 'disabled' : ''; ?>>
+                                </div>
                             </div>
-                        </div>
-                        <div class="wgb-col-2-5 wgb-quantity-item" data-type="quantities-auto-add-gift-to-cart">
-                            <div class="wgb-form-group wgb-checkbox-group">
-                                <label>
-                                    <input type="checkbox" data-id="<?php echo esc_attr($rule_id); ?>" data-name="auto_add_gift_to_cart" class="wgb-rule-quantities-checkbox" <?php echo (!empty($rule_item['quantity']['auto_add_gift_to_cart']) && $rule_item['quantity']['auto_add_gift_to_cart'] == 'yes') ? 'checked="checked"' : ''; ?>>
-                                    <?php esc_html_e('Auto Add Gift To Cart', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626"><?php esc_html_e('In Pro Version', 'ithemeland-free-gifts-for-woo'); ?></span>
-                                </label>
-                                <input type="hidden" name="rule[<?php echo esc_attr($rule_id); ?>][quantity][auto_add_gift_to_cart]" value="<?php echo (!empty($rule_item['quantity']['auto_add_gift_to_cart']) && $rule_item['quantity']['auto_add_gift_to_cart'] == 'yes') ? 'yes' : 'no'; ?>" <?php echo (in_array($rule_item['method'], ['bulk_quantity', 'bulk_pricing', 'tiered_quantity', 'free_shipping', 'get_group_of_products'])) ? 'disabled' : ''; ?>>
+                            <div class="wgb-quantity-item" data-type="quantities-auto-add-gift-to-cart" style="padding-left: 15px; display: <?php echo (!isset($rule_item['rule_mode']) || $rule_item['rule_mode'] != 'discount') ? 'block' : 'none'; ?>;">
+                                <div class="wgb-form-group wgb-checkbox-group" style="margin-bottom: 5px;">
+                                    <label style="margin-top: <?php echo ($rule_item['method'] == 'cheapest_item_in_cart') ? '26px' : '5px'; ?>;">
+                                        <input type="checkbox" data-id="<?php echo esc_attr($rule_id); ?>" data-name="auto_add_gift_to_cart" class="wgb-rule-quantities-checkbox" <?php echo (!empty($rule_item['quantity']['auto_add_gift_to_cart']) && $rule_item['quantity']['auto_add_gift_to_cart'] == 'yes') ? 'checked="checked"' : ''; ?>>
+                                        <?php esc_html_e('Auto Add Gift To Cart', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626"><?php esc_html_e('In Pro Version', 'ithemeland-free-gifts-for-woo'); ?></span>
+                                    </label>
+                                    <input type="hidden" name="rule[<?php echo esc_attr($rule_id); ?>][quantity][auto_add_gift_to_cart]" value="<?php echo (!empty($rule_item['quantity']['auto_add_gift_to_cart']) && $rule_item['quantity']['auto_add_gift_to_cart'] == 'yes') ? 'yes' : 'no'; ?>" <?php echo (in_array($rule_item['method'], ['bulk_quantity', 'bulk_pricing', 'tiered_quantity', 'free_shipping', 'get_group_of_products'])) ? 'disabled' : ''; ?>>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="wgb-rule-section-content" data-method-type="get_group_of_products" style="display: <?php echo ($rule_item['method'] == 'get_group_of_products') ? 'block' : 'none'; ?>">
                         <div class="wgb-col-3 wgb-quantity-item">
                             <div class="wgb-form-group" data-type="quantities-operator" style="margin-top: 17px;">
-                                <label style="width: 60px;float: left;"><?php esc_html_e('Operator', 'ithemeland-free-gifts-for-woocommerce'); ?></label>
+                                <label style="width: 60px;float: left;"><?php esc_html_e('Operator', 'ithemeland-free-gifts-for-woo'); ?></label>
                                 <select name="rule[<?php echo esc_attr($rule_id); ?>][quantity][operator]" class="wgb-product-group-operator" <?php echo ($rule_item['method'] != 'get_group_of_products') ? 'disabled' : ''; ?> style="width: 58%;float: left;">
-                                    <option value="or" <?php echo (isset($rule_item['quantity']['operator']) && $rule_item['quantity']['operator'] == 'or') ? 'selected' : ''; ?>><?php esc_html_e('OR', 'ithemeland-free-gifts-for-woocommerce'); ?></option>
-                                    <option value="and" <?php echo (isset($rule_item['quantity']['operator']) && $rule_item['quantity']['operator'] == 'and') ? 'selected' : ''; ?>><?php esc_html_e('AND', 'ithemeland-free-gifts-for-woocommerce'); ?></option>
+                                    <option value="or" <?php echo (isset($rule_item['quantity']['operator']) && $rule_item['quantity']['operator'] == 'or') ? 'selected' : ''; ?>><?php esc_html_e('OR', 'ithemeland-free-gifts-for-woo'); ?></option>
+                                    <option value="and" <?php echo (isset($rule_item['quantity']['operator']) && $rule_item['quantity']['operator'] == 'and') ? 'selected' : ''; ?>><?php esc_html_e('AND', 'ithemeland-free-gifts-for-woo'); ?></option>
                                 </select>
                             </div>
                         </div>
@@ -186,7 +199,7 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
                             <div class="wgb-form-group wgb-checkbox-group">
                                 <label style="margin-top: 19px;">
                                     <input type="checkbox" data-id="<?php echo esc_attr($rule_id); ?>" data-name="same_gift" class="wgb-rule-quantities-checkbox" <?php echo (!empty($rule_item['quantity']['same_gift']) && $rule_item['quantity']['same_gift'] == 'yes') ? 'checked="checked"' : ''; ?>>
-                                    <?php esc_html_e('Same Gift', 'ithemeland-free-gifts-for-woocommerce'); ?>
+                                    <?php esc_html_e('Same Gift', 'ithemeland-free-gifts-for-woo'); ?>
                                 </label>
                                 <input type="hidden" name="rule[<?php echo esc_attr($rule_id); ?>][quantity][same_gift]" value="<?php echo (!empty($rule_item['quantity']['same_gift']) && $rule_item['quantity']['same_gift'] == 'yes') ? 'yes' : 'no'; ?>" <?php echo ($rule_item['method'] != 'get_group_of_products') ? 'disabled' : ''; ?>>
                             </div>
@@ -417,7 +430,7 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
             </div>
             <div class="wgb-col-12" data-type="get_products_group" style="<?php echo ($rule_item['method'] != 'get_group_of_products') ? 'display: none;' : ''; ?>">
                 <div class="wgb-rule-section">
-                    <h3><?php esc_html_e('Get Products Group', 'ithemeland-free-gifts-for-woocommerce'); ?></h3>
+                    <h3><?php esc_html_e('Get Products Group', 'ithemeland-free-gifts-for-woo'); ?></h3>
                     <div class="wgb-rule-section-content">
                         <div class="wgb-rule-products-group-items">
                             <?php
@@ -430,7 +443,7 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
                             }
                             ?>
                         </div>
-                        <button type="button" class="wgb-float-right wgb-button wgb-button-white-green wgb-add-get-products-group-item"><?php esc_html_e('Add Row', 'ithemeland-free-gifts-for-woocommerce'); ?></button>
+                        <button type="button" class="wgb-float-right wgb-button wgb-button-white-green wgb-add-get-products-group-item"><?php esc_html_e('Add Row', 'ithemeland-free-gifts-for-woo'); ?></button>
 
                     </div>
                 </div>
@@ -485,40 +498,6 @@ $rule_item['method'] = (!empty($rule_item['method'])) ? $rule_item['method'] : '
                                     <?php esc_html_e('Eg: Spend {difference_amount} more and get a your gift', 'ithemeland-free-gifts-for-woo'); ?>
                                 </p>
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="wgb-col-12" data-type="offer_bar" style="<?php echo (in_array($rule_item['method'], ['buy_x_get_x', 'buy_x_get_x_repeat', 'cheapest_item_in_cart', 'free_shipping', 'get_group_of_products'])) ? 'display: none;' : ''; ?>">
-                <div class="wgb-rule-section">
-                    <div style="display: inline-flex;">
-                        <h3><?php esc_html_e('Offer Bar', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626"><?php esc_html_e('In Pro Version', 'ithemeland-free-gifts-for-woo'); ?></span></h3>
-                        <span class="wgb-tooltip" style="margin-right: 20px;">?
-                            <span class="tooltip-text"><?php esc_attr_e('It helps to display offer information in Get product pages', 'ithemeland-free-gifts-for-woo'); ?></span>
-                        </span>
-                        <label class="wgb-toggleWrapper">
-                            <input type="checkbox" class="wgb-discount-bar-toggle" id="wgb-discountBarToggle-<?php echo esc_attr($rule_id); ?>" name="rule[<?php echo esc_attr($rule_id); ?>][offer_bar][enabled]" value="1" <?php echo (!empty($rule_item['offer_bar']['enabled'])) ? 'checked="checked"' : ''; ?>>
-                            <span></span>
-                        </label>
-                    </div>
-                    <div class="wgb-rule-section-content wgb-discount-bar-section-dependent">
-                        <div class="wgb-form-group">
-                            <div class="wgb-col-2-5">
-                                <div style="display: grid; gap:5px;">
-                                    <label><?php esc_html_e('Background Color', 'ithemeland-free-gifts-for-woo'); ?></label>
-                                    <input type="color" name="rule[<?php echo esc_attr($rule_id); ?>][offer_bar][bg_color]" class="wgb-input" value="<?php echo !empty($rule_item['offer_bar']['bg_color']) ? esc_attr($rule_item['offer_bar']['bg_color']) : '#e2e2e2'; ?>">
-                                    <label><?php esc_html_e('Text Color', 'ithemeland-free-gifts-for-woo'); ?></label>
-                                    <input type="color" name="rule[<?php echo esc_attr($rule_id); ?>][offer_bar][text_color]" class="wgb-input" value="<?php echo !empty($rule_item['offer_bar']['text_color']) ? esc_attr($rule_item['offer_bar']['text_color']) : '#000000'; ?>">
-                                </div>
-                            </div>
-                            <div class="wgb-col-8">
-                                <label><?php esc_html_e('Description', 'ithemeland-free-gifts-for-woo'); ?></label>
-                                <textarea name="rule[<?php echo esc_attr($rule_id); ?>][offer_bar][description]" class="wgb-input" style="width: 100%; height: 100px;" placeholder="<?php esc_html_e('Enter Offer Bar description...', 'ithemeland-free-gifts-for-woo'); ?>"><?php echo !empty($rule_item['offer_bar']['description']) ? esc_textarea($rule_item['offer_bar']['description']) : ''; ?></textarea>
-                                <p>
-                                    <?php esc_html_e('Leave blank to ignore', 'ithemeland-free-gifts-for-woo'); ?>
-                                    <br>
-                                </p>
                             </div>
                         </div>
                     </div>

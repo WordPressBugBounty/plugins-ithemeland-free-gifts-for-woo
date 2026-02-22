@@ -4,7 +4,7 @@ Donate link: https://ithemelandco.com/
 Tags: woocommerce gift, boost sale, free gift, buy one get one , Gift Product Woocommerce
 Requires at least: 4.6.1
 Tested up to: 6.9
-Stable tag: 3.3.0
+Stable tag: 4.0.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -238,11 +238,12 @@ You can easily translate the plugin into the desired languages by using translat
 12. free gifts for woocommerce datatable layout
 
 == Changelog ==
-= 3.3 =
-* Fixed : Issue in save setting 
-* Fixed : Issue "Strike and Display the price"
+= 4.0 =
+* Fixed : compatible with pro version 4.0.0
+* Fixed : block notices
+* Fixed : change settings
 Tested up to: WP 6.9.x
-Tested up to: WC 10.3.x
+Tested up to: WC 10.5.x
 
 = 3.2 =
 * Fixed : compatible with pro version

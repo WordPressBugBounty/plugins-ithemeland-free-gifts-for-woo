@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: iThemeland Free Gifts For Woo Lite\n"
-"POT-Creation-Date: 2025-10-08 12:22+0330\n"
-"PO-Revision-Date: 2025-10-08 12:22+0330\n"
+"POT-Creation-Date: 2026-02-12 14:05+0330\n"
+"PO-Revision-Date: 2026-02-12 14:05+0330\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,98 +21,77 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: classes/bootstrap/WGBL.php:72
-msgid "Woo Free Gift"
+#: classes/bootstrap/WGBL.php:73
+msgid "GIFTiT"
 msgstr ""
 
-#: classes/bootstrap/WGBL.php:73
+#: classes/bootstrap/WGBL.php:74
 msgid "Rules | Settings"
 msgstr ""
 
-#: classes/bootstrap/WGBL.php:134 views/rules/rule-item.php:116
+#: classes/bootstrap/WGBL.php:141 views/rules/rule-item.php:132
 msgid "Quantities & Settings"
 msgstr ""
 
-#: classes/bootstrap/WGBL.php:135 views/rules/rule-item.php:114
+#: classes/bootstrap/WGBL.php:142 views/rules/rule-item.php:130
 msgid "Select shipping"
 msgstr ""
 
-#: classes/bootstrap/WGBL.php:229
+#: classes/bootstrap/WGBL.php:248
 msgid "Redirecting..."
 msgstr ""
 
-#: classes/bootstrap/WGBL.php:230 framework/onboarding/views/main.php:33
+#: classes/bootstrap/WGBL.php:249 framework/onboarding/views/main.php:33
 msgid "Skip"
 msgstr ""
 
-#. Plugin Name of the plugin/theme
 #: classes/controllers/Reports_Controller.php:24
-#: classes/controllers/Rules_Controller.php:21
+#: classes/controllers/Rules_Controller.php:22
 #: classes/controllers/WGBL_Addons.php:16
-msgid "iThemeland Free Gifts For Woo Lite"
+msgid "GIFTiT – iThemeland Free Gifts for Woo Lite"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:32 views/layout/tabs_title.php:3
+#: classes/controllers/Rules_Controller.php:33 views/layout/tabs_title.php:4
 #: views/reports/tabs_title.php:8
 msgid "Rules"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:33 views/layout/tabs_title.php:8
+#: classes/controllers/Rules_Controller.php:34 views/layout/tabs_title.php:10
 msgid "Settings"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:34 views/layout/tabs_title.php:13
+#: classes/controllers/Rules_Controller.php:35 views/layout/tabs_title.php:16
 msgid "Shortcodes"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:35 views/layout/tabs_title.php:18
+#: classes/controllers/Rules_Controller.php:36 views/layout/tabs_title.php:22
 msgid "Reports"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:121
-#: classes/repositories/Rule.php:137
+#: classes/controllers/Rules_Controller.php:125
+#: classes/repositories/Rule.php:190
 msgid "General"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:122
+#: classes/controllers/Rules_Controller.php:126
 msgid "Display"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:123
+#: classes/controllers/Rules_Controller.php:127
 msgid "Localization"
 msgstr ""
 
-#: classes/controllers/Rules_Controller.php:124
+#: classes/controllers/Rules_Controller.php:128
 msgid "Promotion"
 msgstr ""
 
-#: classes/controllers/WGBL_Ajax.php:253 classes/repositories/Product.php:55
-msgid "Simple product"
-msgstr ""
-
-#: classes/controllers/WGBL_Ajax.php:254 classes/repositories/Product.php:56
-msgid "Grouped product"
-msgstr ""
-
-#: classes/controllers/WGBL_Ajax.php:255 classes/repositories/Product.php:57
-msgid "External/Affiliate product"
-msgstr ""
-
-#: classes/controllers/WGBL_Ajax.php:256 classes/repositories/Product.php:58
-msgid "Variable product"
-msgstr ""
-
-#: classes/controllers/WGBL_Ajax.php:257 classes/repositories/Product.php:59
-msgid "Variation"
-msgstr ""
-
-#: classes/controllers/WGBL_Post.php:44
+#: classes/controllers/WGBL_Post.php:46 classes/controllers/WGBL_Post.php:73
 msgid "Error"
 msgstr ""
 
-#: classes/controllers/WGBL_Post.php:57 classes/controllers/WGBL_Post.php:74
-#: classes/controllers/WGBL_Post.php:93 classes/controllers/WGBL_Post.php:117
-#: classes/controllers/WGBL_Post.php:141
+#: classes/controllers/WGBL_Post.php:59 classes/controllers/WGBL_Post.php:86
+#: classes/controllers/WGBL_Post.php:103 classes/controllers/WGBL_Post.php:122
+#: classes/controllers/WGBL_Post.php:146 classes/controllers/WGBL_Post.php:170
 msgid "Your changes have been successfully saved."
 msgstr ""
 
@@ -140,77 +119,109 @@ msgstr ""
 msgid "Buy Add-On"
 msgstr ""
 
-#: classes/repositories/Rule.php:53 classes/repositories/Rule.php:72
-#: classes/repositories/Rule.php:74 frontend/classes/admin-order.php:120
+#: classes/repositories/OfferRule.php:57 views/offer_rules/rule-item.php:32
+msgid "Offer in single"
+msgstr ""
+
+#: classes/repositories/Product.php:55
+msgid "Simple product"
+msgstr ""
+
+#: classes/repositories/Product.php:56
+msgid "Grouped product"
+msgstr ""
+
+#: classes/repositories/Product.php:57
+msgid "External/Affiliate product"
+msgstr ""
+
+#: classes/repositories/Product.php:58
+msgid "Variable product"
+msgstr ""
+
+#: classes/repositories/Product.php:59
+msgid "Variation"
+msgstr ""
+
+#: classes/repositories/Rule.php:99 classes/repositories/Rule.php:119
+#: classes/repositories/Rule.php:121 frontend/classes/admin-order.php:120
 msgid "Simple"
 msgstr ""
 
-#: classes/repositories/Rule.php:54 classes/repositories/Rule.php:80
+#: classes/repositories/Rule.php:100 classes/repositories/Rule.php:127
 #: frontend/classes/admin-order.php:126
 msgid "Subtotal"
 msgstr ""
 
-#: classes/repositories/Rule.php:55 classes/repositories/Rule.php:87
+#: classes/repositories/Rule.php:101 classes/repositories/Rule.php:134
 msgid "Tiered Quantity - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:56 classes/repositories/Rule.php:93
+#: classes/repositories/Rule.php:102 classes/repositories/Rule.php:146
 msgid "Bulk Quantity - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:57 classes/repositories/Rule.php:94
+#: classes/repositories/Rule.php:103 classes/repositories/Rule.php:147
 msgid "Bulk Pricing - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:58 classes/repositories/Rule.php:100
+#: classes/repositories/Rule.php:104 classes/repositories/Rule.php:153
 msgid "Buy x get x - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:59 classes/repositories/Rule.php:101
+#: classes/repositories/Rule.php:105 classes/repositories/Rule.php:154
 msgid "Buy x get x repeat - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:60 classes/repositories/Rule.php:102
+#: classes/repositories/Rule.php:106 classes/repositories/Rule.php:155
 msgid "Buy x get y - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:61 classes/repositories/Rule.php:103
+#: classes/repositories/Rule.php:107 classes/repositories/Rule.php:156
 msgid "Buy x get y repeat - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:62 classes/repositories/Rule.php:81
+#: classes/repositories/Rule.php:108 classes/repositories/Rule.php:128
 msgid "Subtotal repeat - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:63 classes/repositories/Rule.php:109
+#: classes/repositories/Rule.php:109 classes/repositories/Rule.php:162
 msgid "Cheapest item in cart - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:64 classes/repositories/Rule.php:110
+#: classes/repositories/Rule.php:110 classes/repositories/Rule.php:163
 msgid "Free shipping - In Pro version"
 msgstr ""
 
-#: classes/repositories/Rule.php:78
+#: classes/repositories/Rule.php:111 classes/repositories/Rule.php:140
+msgid "Get Group of Products - In Pro version"
+msgstr ""
+
+#: classes/repositories/Rule.php:125
 msgid "Cart Subtotal"
 msgstr ""
 
-#: classes/repositories/Rule.php:85
+#: classes/repositories/Rule.php:132
 msgid "Tiered"
 msgstr ""
 
-#: classes/repositories/Rule.php:91
+#: classes/repositories/Rule.php:138
+msgid "Group"
+msgstr ""
+
+#: classes/repositories/Rule.php:144
 msgid "Bulk"
 msgstr ""
 
-#: classes/repositories/Rule.php:98
+#: classes/repositories/Rule.php:151
 msgid "Buy / Get"
 msgstr ""
 
-#: classes/repositories/Rule.php:107
+#: classes/repositories/Rule.php:160
 msgid "Other"
 msgstr ""
 
-#: classes/repositories/Rule.php:140
+#: classes/repositories/Rule.php:193
 msgid "All shipping methods"
 msgstr ""
 
@@ -339,7 +350,7 @@ msgstr ""
 msgid "Added By Admin"
 msgstr ""
 
-#: frontend/classes/admin-order.php:139
+#: frontend/classes/admin-order.php:139 views/rules/rule-item.php:78
 msgid "Free Gift"
 msgstr ""
 
@@ -347,12 +358,12 @@ msgstr ""
 msgid "Rule Gift ID"
 msgstr ""
 
-#: frontend/classes/admin-order.php:143
+#: frontend/classes/admin-order.php:143 views/offer_rules/rule-item.php:30
 msgid "Type"
 msgstr ""
 
 #: frontend/classes/admin-order.php:145 views/reports/dashboard.php:126
-#: views/rules/rule-item.php:48
+#: views/rules/rule-item.php:53
 msgid "Method"
 msgstr ""
 
@@ -372,125 +383,125 @@ msgstr ""
 msgid "Offer applied:"
 msgstr ""
 
-#: frontend/classes/engueue-js-css.php:83
+#: frontend/classes/enqueue-js-css.php:82
 msgid "Showing page"
 msgstr ""
 
-#: frontend/classes/engueue-js-css.php:83 frontend/views/grid-layout.php:172
+#: frontend/classes/enqueue-js-css.php:82 frontend/views/grid-layout.php:172
 msgid "of"
 msgstr ""
 
-#: frontend/classes/engueue-js-css.php:84
+#: frontend/classes/enqueue-js-css.php:83
 msgid "search"
 msgstr ""
 
-#: frontend/classes/engueue-js-css.php:85
+#: frontend/classes/enqueue-js-css.php:84
 msgid "first"
 msgstr ""
 
-#: frontend/classes/engueue-js-css.php:86
+#: frontend/classes/enqueue-js-css.php:85
 msgid "previous"
 msgstr ""
 
-#: frontend/classes/engueue-js-css.php:87
+#: frontend/classes/enqueue-js-css.php:86
 msgid "next"
 msgstr ""
 
-#: frontend/classes/engueue-js-css.php:88
+#: frontend/classes/enqueue-js-css.php:87
 msgid "last"
 msgstr ""
 
-#: frontend/classes/front-order.php:571
+#: frontend/classes/front-order.php:572
 msgid "Cannot process action1"
 msgstr ""
 
-#: frontend/classes/front-order.php:576
+#: frontend/classes/front-order.php:577
 msgid "Cannot process action2"
 msgstr ""
 
-#: frontend/classes/front-order.php:580
+#: frontend/classes/front-order.php:581
 msgid "Cannot process action3"
 msgstr ""
 
-#: frontend/classes/front-order.php:584
+#: frontend/classes/front-order.php:585
 msgid "Cannot process action4"
 msgstr ""
 
-#: frontend/classes/front-order.php:588
+#: frontend/classes/front-order.php:589
 msgid "Cannot process action5"
 msgstr ""
 
-#: frontend/classes/front-order.php:601
+#: frontend/classes/front-order.php:602
 msgid "Cannot process action6"
 msgstr ""
 
-#: frontend/classes/front-order.php:627
+#: frontend/classes/front-order.php:628
 msgid "Cannot process action7"
 msgstr ""
 
-#: frontend/classes/front-order.php:632
+#: frontend/classes/front-order.php:633
 msgid "Cannot process action8"
 msgstr ""
 
-#: frontend/classes/front-order.php:636
+#: frontend/classes/front-order.php:637
 msgid "Cannot process action9"
 msgstr ""
 
-#: frontend/classes/front-order.php:689
+#: frontend/classes/front-order.php:690
 msgid "Failed to add gift to cart"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:972
+#: frontend/functions/condition-functions.php:180
 msgid "Current"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:975
+#: frontend/functions/condition-functions.php:183
 msgid "current day"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:980
+#: frontend/functions/condition-functions.php:188
 msgid "current month"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:984
+#: frontend/functions/condition-functions.php:192
 msgid "current year"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:992
+#: frontend/functions/condition-functions.php:200
 msgid "Days"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:998
+#: frontend/functions/condition-functions.php:206
 msgid "Weeks"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:1004
+#: frontend/functions/condition-functions.php:212
 msgid "Months"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:1010
+#: frontend/functions/condition-functions.php:218
 msgid "Years"
 msgstr ""
 
-#: frontend/functions/condition-functions.php:1018
+#: frontend/functions/condition-functions.php:226
 msgid "day"
 msgid_plural "days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: frontend/functions/condition-functions.php:1026
+#: frontend/functions/condition-functions.php:234
 msgid "week"
 msgid_plural "weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: frontend/functions/condition-functions.php:1034
+#: frontend/functions/condition-functions.php:242
 msgid "month"
 msgid_plural "months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: frontend/functions/condition-functions.php:1042
+#: frontend/functions/condition-functions.php:250
 msgid "year"
 msgid_plural "years"
 msgstr[0] ""
@@ -544,7 +555,7 @@ msgstr ""
 msgid "Purchase Key ..."
 msgstr ""
 
-#: views/alerts/woocommerce_required.php:7
+#: views/alerts/woocommerce_required.php:8
 msgid "WooCommerce Plugin is Inactive !"
 msgstr ""
 
@@ -554,6 +565,420 @@ msgstr ""
 
 #: views/layout/header.php:26
 msgid "Watch Pro version"
+msgstr ""
+
+#: views/layout/tabs_title.php:28
+msgid "Display Offer"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:11 views/rules/conditions/row.php:14
+msgid "Date & Times"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:12 views/reports/dashboard.php:100
+#: views/reports/dashboard.php:267 views/rules/conditions/row.php:15
+msgid "Date"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:13 views/rules/conditions/row.php:16
+msgid "Time"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:14 views/rules/conditions/row.php:17
+msgid "Date & Time"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:15 views/rules/conditions/row.php:18
+msgid "Days of week"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:17
+msgid "Cart"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:18 views/rules/conditions/row.php:21
+msgid "Cart subtotal Price"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:19 views/rules/conditions/row.php:22
+msgid "Cart Total Price"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:20 views/rules/conditions/row.php:23
+msgid "Cart total weight"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:21 views/rules/conditions/row.php:24
+msgid "Cart Total Quantity"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:22 views/rules/conditions/row.php:25
+msgid "Cart item count"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:23 views/rules/conditions/row.php:26
+msgid "Coupons applied"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:25
+msgid "Cart Items"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:26 views/rules/conditions/row.php:29
+msgid "Cart items - Products"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:27 views/rules/conditions/row.php:30
+msgid "Cart items - Variations"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:28 views/rules/conditions/row.php:31
+msgid "Cart items - Categories"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:29 views/rules/conditions/row.php:32
+msgid "Cart items - Attributes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:30 views/rules/conditions/row.php:33
+msgid "Cart items - Tags"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:31 views/rules/conditions/row.php:34
+msgid "Cart items - Brands"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:32 views/rules/conditions/row.php:35
+msgid "Cart items - Shipping Classes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:34
+msgid "Cart Items - Quantity"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:35 views/rules/conditions/row.php:38
+msgid "Cart item quantity - Products"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:36 views/rules/conditions/row.php:39
+msgid "Cart item quantity - Variations"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:37 views/rules/conditions/row.php:40
+msgid "Cart item quantity - Categories"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:38 views/rules/conditions/row.php:41
+msgid "Cart item quantity - Attributes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:39 views/rules/conditions/row.php:42
+msgid "Cart item quantity - Tags"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:40 views/rules/conditions/row.php:43
+msgid "Cart item quantity - Shipping Classes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:42
+msgid "Cart Items - Subtotal"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:43 views/rules/conditions/row.php:46
+msgid "Cart item subtotal - Products"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:44 views/rules/conditions/row.php:47
+msgid "Cart item subtotal - Variations"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:45 views/rules/conditions/row.php:48
+msgid "Cart item subtotal - Categories"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:46 views/rules/conditions/row.php:49
+msgid "Cart item subtotal - Attributes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:47 views/rules/conditions/row.php:50
+msgid "Cart item subtotal - Tags"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:48 views/rules/conditions/row.php:51
+msgid "Cart item subtotal - Shipping Classes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:50
+msgid "Checkout"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:51 views/rules/conditions/row.php:54
+msgid "Payment method"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:53
+msgid "Checkout - Address"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:54 views/rules/conditions/row.php:57
+msgid "Shipping country"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:55 views/rules/conditions/row.php:58
+msgid "Shipping state"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:56 views/rules/conditions/row.php:59
+msgid "Shipping postcode"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:57 views/rules/conditions/row.php:60
+msgid "Shipping zone"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:59
+#: views/offer_rules/conditions/row.php:60 views/rules/conditions/row.php:63
+msgid "Customer"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:61 views/rules/conditions/row.php:64
+msgid "User role"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:62 views/rules/conditions/row.php:65
+msgid "User Capability"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:63 views/rules/conditions/row.php:66
+msgid "User Meta"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:64 views/rules/conditions/row.php:67
+msgid "Is logged in"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:66
+msgid "Customer - Value"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:67 views/rules/conditions/row.php:70
+msgid "Spent - Total"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:68 views/rules/conditions/row.php:71
+msgid "Spent - Average per order"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:69 views/rules/conditions/row.php:72
+msgid "Spent - Last order"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:70 views/rules/conditions/row.php:73
+msgid "Order count"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:71 views/rules/conditions/row.php:74
+msgid "Last Order"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:72 views/rules/conditions/row.php:75
+msgid "Customer review count"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:74
+msgid "Purchase History"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:75 views/rules/conditions/row.php:78
+msgid "Purchased - Products"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:76 views/rules/conditions/row.php:79
+msgid "Purchased - Variations"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:77 views/rules/conditions/row.php:80
+msgid "Purchased - Categories"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:78 views/rules/conditions/row.php:81
+msgid "Purchased - Attributes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:79 views/rules/conditions/row.php:82
+msgid "Purchased - Tags"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:81
+msgid "Purchase History - Quantity"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:82 views/rules/conditions/row.php:85
+msgid "Quantity purchased - Products"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:83 views/rules/conditions/row.php:86
+msgid "Quantity purchased - Variations"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:84 views/rules/conditions/row.php:87
+msgid "Quantity purchased - Categories"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:85 views/rules/conditions/row.php:88
+msgid "Quantity purchased - Attributes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:86 views/rules/conditions/row.php:89
+msgid "Quantity purchased - Tags"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:88
+msgid "Purchase History - Value"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:89 views/rules/conditions/row.php:92
+msgid "Value purchased - Products"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:90 views/rules/conditions/row.php:93
+msgid "Value purchased - Variations"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:91 views/rules/conditions/row.php:94
+msgid "Value purchased - Categories"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:92 views/rules/conditions/row.php:95
+msgid "Value purchased - Attributes"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:93 views/rules/conditions/row.php:96
+msgid "Value purchased - Tags"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:95
+msgid "Purchase Gifts History"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:96 views/rules/conditions/row.php:99
+msgid "Quantity purchased - All rules"
+msgstr ""
+
+#: views/offer_rules/conditions/row.php:97 views/rules/conditions/row.php:100
+msgid "Quantity purchased - This rule"
+msgstr ""
+
+#: views/offer_rules/main.php:45
+msgid "No offer configured."
+msgstr ""
+
+#: views/offer_rules/main.php:46
+msgid "Add Offer"
+msgstr ""
+
+#: views/offer_rules/main.php:47 views/rules/main.php:48
+#: views/settings/display.php:271 views/settings/general.php:104
+#: views/settings/localization.php:80 views/settings/promotion.php:151
+msgid "Save Changes"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:39
+msgid "Offer name"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:46
+msgid "Choose where to show the notice offer"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:48
+msgid "Woocommerce Before Add To Cart Form"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:49
+msgid "Woocommerce After Add To Cart Form"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:50
+msgid "Woocommerce Product Meta End"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:51
+msgid "Woocommerce Product Meta Start"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:52
+msgid "Woocommerce After Single Product"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:53
+msgid "Woocommerce Before Single Product"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:54
+msgid "Woocommerce After Single Product Summary"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:55
+msgid "Woocommerce Before Single Product Summary"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:62 views/rules/rule-item.php:492
+msgid "Message"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:63
+msgid "Buy $100 and Get this product as Free Gift"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:72 views/settings/promotion.php:127
+msgid "Background Color"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:79
+msgid "Text Color"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:86
+msgid "Text Align"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:87
+msgid "Left"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:91
+msgid "Center"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:95
+msgid "Right"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:106
+msgid "Display For"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:110 views/reports/tabs_title.php:26
+msgid "Products"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:111 views/offer_rules/rule-item.php:130
+#: views/rules/rule-item.php:357 views/rules/rule-item.php:376
+#: views/rules/rule-item.php:394 views/rules/rule-item.php:413
+msgid "Select ..."
+msgstr ""
+
+#: views/offer_rules/rule-item.php:129
+msgid "Category/Tag/Taxonomy"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:151 views/rules/rule-item.php:453
+msgid "Conditions"
+msgstr ""
+
+#: views/offer_rules/rule-item.php:164 views/rules/rule-item.php:466
+msgid "Add Condition"
 msgstr ""
 
 #: views/reports/dashboard.php:33
@@ -576,7 +1001,8 @@ msgstr ""
 msgid "Top gift"
 msgstr ""
 
-#: views/reports/dashboard.php:70 views/rules/product-buy/row.php:11
+#: views/reports/dashboard.php:70 views/rules/get_products_group/row.php:12
+#: views/rules/product-buy/row.php:11
 msgid "Product"
 msgstr ""
 
@@ -610,11 +1036,6 @@ msgstr ""
 
 #: views/reports/dashboard.php:99 views/reports/dashboard.php:266
 msgid "Order ID"
-msgstr ""
-
-#: views/reports/dashboard.php:100 views/reports/dashboard.php:267
-#: views/rules/conditions/row.php:15
-msgid "Date"
 msgstr ""
 
 #: views/reports/dashboard.php:101
@@ -652,7 +1073,7 @@ msgstr ""
 msgid "Top 5 rules"
 msgstr ""
 
-#: views/reports/dashboard.php:148 views/rules/rule-item.php:99
+#: views/reports/dashboard.php:148 views/rules/rule-item.php:115
 msgid "Rule name"
 msgstr ""
 
@@ -744,10 +1165,6 @@ msgstr ""
 msgid "Gifts/Products"
 msgstr ""
 
-#: views/reports/tabs_title.php:26
-msgid "Products"
-msgstr ""
-
 #: views/reports/tabs_title.php:27
 msgid "Received gifts by customer"
 msgstr ""
@@ -760,300 +1177,72 @@ msgstr ""
 msgid "Select date"
 msgstr ""
 
-#: views/rules/conditions/row.php:14
-msgid "Date & Times"
-msgstr ""
-
-#: views/rules/conditions/row.php:16
-msgid "Time"
-msgstr ""
-
-#: views/rules/conditions/row.php:17
-msgid "Date & Time"
-msgstr ""
-
-#: views/rules/conditions/row.php:18
-msgid "Days of week"
-msgstr ""
-
 #: views/rules/conditions/row.php:20
 msgid "Cart - In Pro"
-msgstr ""
-
-#: views/rules/conditions/row.php:21
-msgid "Cart subtotal Price"
-msgstr ""
-
-#: views/rules/conditions/row.php:22
-msgid "Cart Total Price"
-msgstr ""
-
-#: views/rules/conditions/row.php:23
-msgid "Cart total weight"
-msgstr ""
-
-#: views/rules/conditions/row.php:24
-msgid "Cart Total Quantity"
-msgstr ""
-
-#: views/rules/conditions/row.php:25
-msgid "Cart item count"
-msgstr ""
-
-#: views/rules/conditions/row.php:26
-msgid "Coupons applied"
 msgstr ""
 
 #: views/rules/conditions/row.php:28
 msgid "Cart Items - In Pro"
 msgstr ""
 
-#: views/rules/conditions/row.php:29
-msgid "Cart items - Products"
-msgstr ""
-
-#: views/rules/conditions/row.php:30
-msgid "Cart items - Variations"
-msgstr ""
-
-#: views/rules/conditions/row.php:31
-msgid "Cart items - Categories"
-msgstr ""
-
-#: views/rules/conditions/row.php:32
-msgid "Cart items - Attributes"
-msgstr ""
-
-#: views/rules/conditions/row.php:33
-msgid "Cart items - Tags"
-msgstr ""
-
-#: views/rules/conditions/row.php:34
-msgid "Cart items - Brands"
-msgstr ""
-
-#: views/rules/conditions/row.php:35
-msgid "Cart items - Shipping Classes"
-msgstr ""
-
 #: views/rules/conditions/row.php:37
 msgid "Cart Items - Quantity - In Pro"
-msgstr ""
-
-#: views/rules/conditions/row.php:38
-msgid "Cart item quantity - Products"
-msgstr ""
-
-#: views/rules/conditions/row.php:39
-msgid "Cart item quantity - Variations"
-msgstr ""
-
-#: views/rules/conditions/row.php:40
-msgid "Cart item quantity - Categories"
-msgstr ""
-
-#: views/rules/conditions/row.php:41
-msgid "Cart item quantity - Attributes"
-msgstr ""
-
-#: views/rules/conditions/row.php:42
-msgid "Cart item quantity - Tags"
-msgstr ""
-
-#: views/rules/conditions/row.php:43
-msgid "Cart item quantity - Shipping Classes"
 msgstr ""
 
 #: views/rules/conditions/row.php:45
 msgid "Cart Items - Subtotal - In Pro"
 msgstr ""
 
-#: views/rules/conditions/row.php:46
-msgid "Cart item subtotal - Products"
-msgstr ""
-
-#: views/rules/conditions/row.php:47
-msgid "Cart item subtotal - Variations"
-msgstr ""
-
-#: views/rules/conditions/row.php:48
-msgid "Cart item subtotal - Categories"
-msgstr ""
-
-#: views/rules/conditions/row.php:49
-msgid "Cart item subtotal - Attributes"
-msgstr ""
-
-#: views/rules/conditions/row.php:50
-msgid "Cart item subtotal - Tags"
-msgstr ""
-
-#: views/rules/conditions/row.php:51
-msgid "Cart item subtotal - Shipping Classes"
-msgstr ""
-
 #: views/rules/conditions/row.php:53
 msgid "Checkout - In Pro"
-msgstr ""
-
-#: views/rules/conditions/row.php:54
-msgid "Payment method"
 msgstr ""
 
 #: views/rules/conditions/row.php:56
 msgid "Checkout - Address - In Pro"
 msgstr ""
 
-#: views/rules/conditions/row.php:57
-msgid "Shipping country"
-msgstr ""
-
-#: views/rules/conditions/row.php:58
-msgid "Shipping state"
-msgstr ""
-
-#: views/rules/conditions/row.php:59
-msgid "Shipping postcode"
-msgstr ""
-
-#: views/rules/conditions/row.php:60
-msgid "Shipping zone"
-msgstr ""
-
 #: views/rules/conditions/row.php:62
 msgid "Customer - In Pro"
-msgstr ""
-
-#: views/rules/conditions/row.php:63
-msgid "Customer"
-msgstr ""
-
-#: views/rules/conditions/row.php:64
-msgid "User role"
-msgstr ""
-
-#: views/rules/conditions/row.php:65
-msgid "User Capability"
-msgstr ""
-
-#: views/rules/conditions/row.php:66
-msgid "User Meta"
-msgstr ""
-
-#: views/rules/conditions/row.php:67
-msgid "Is logged in"
 msgstr ""
 
 #: views/rules/conditions/row.php:69
 msgid "Customer - Value - In Pro"
 msgstr ""
 
-#: views/rules/conditions/row.php:70
-msgid "Spent - Total"
-msgstr ""
-
-#: views/rules/conditions/row.php:71
-msgid "Spent - Average per order"
-msgstr ""
-
-#: views/rules/conditions/row.php:72
-msgid "Spent - Last order"
-msgstr ""
-
-#: views/rules/conditions/row.php:73
-msgid "Order count"
-msgstr ""
-
-#: views/rules/conditions/row.php:74
-msgid "Last Order"
-msgstr ""
-
-#: views/rules/conditions/row.php:75
-msgid "Customer review count"
-msgstr ""
-
 #: views/rules/conditions/row.php:77
 msgid "Purchase History - In Pro"
-msgstr ""
-
-#: views/rules/conditions/row.php:78
-msgid "Purchased - Products"
-msgstr ""
-
-#: views/rules/conditions/row.php:79
-msgid "Purchased - Variations"
-msgstr ""
-
-#: views/rules/conditions/row.php:80
-msgid "Purchased - Categories"
-msgstr ""
-
-#: views/rules/conditions/row.php:81
-msgid "Purchased - Attributes"
-msgstr ""
-
-#: views/rules/conditions/row.php:82
-msgid "Purchased - Tags"
 msgstr ""
 
 #: views/rules/conditions/row.php:84
 msgid "Purchase History - Quantity - In Pro"
 msgstr ""
 
-#: views/rules/conditions/row.php:85
-msgid "Quantity purchased - Products"
-msgstr ""
-
-#: views/rules/conditions/row.php:86
-msgid "Quantity purchased - Variations"
-msgstr ""
-
-#: views/rules/conditions/row.php:87
-msgid "Quantity purchased - Categories"
-msgstr ""
-
-#: views/rules/conditions/row.php:88
-msgid "Quantity purchased - Attributes"
-msgstr ""
-
-#: views/rules/conditions/row.php:89
-msgid "Quantity purchased - Tags"
-msgstr ""
-
 #: views/rules/conditions/row.php:91
 msgid "Purchase History - Value - In Pro"
-msgstr ""
-
-#: views/rules/conditions/row.php:92
-msgid "Value purchased - Products"
-msgstr ""
-
-#: views/rules/conditions/row.php:93
-msgid "Value purchased - Variations"
-msgstr ""
-
-#: views/rules/conditions/row.php:94
-msgid "Value purchased - Categories"
-msgstr ""
-
-#: views/rules/conditions/row.php:95
-msgid "Value purchased - Attributes"
-msgstr ""
-
-#: views/rules/conditions/row.php:96
-msgid "Value purchased - Tags"
 msgstr ""
 
 #: views/rules/conditions/row.php:98
 msgid "Purchase Gifts History - In Pro"
 msgstr ""
 
-#: views/rules/conditions/row.php:99
-msgid "Quantity purchased - All rules"
+#: views/rules/get_products_group/row.php:5
+msgid "Qty"
 msgstr ""
 
-#: views/rules/conditions/row.php:100
-msgid "Quantity purchased - This rule"
+#: views/rules/get_products_group/row.php:13
+msgid "Product variation"
+msgstr ""
+
+#: views/rules/get_products_group/row.php:14
+msgid "Product category"
+msgstr ""
+
+#: views/rules/get_products_group/row.php:15
+msgid "Product attributes"
+msgstr ""
+
+#: views/rules/get_products_group/row.php:16
+msgid "Product tags"
 msgstr ""
 
 #: views/rules/main.php:46
@@ -1062,12 +1251,6 @@ msgstr ""
 
 #: views/rules/main.php:47
 msgid "Add Rule"
-msgstr ""
-
-#: views/rules/main.php:48 views/settings/display.php:271
-#: views/settings/general.php:127 views/settings/localization.php:80
-#: views/settings/promotion.php:151
-msgid "Save Changes"
 msgstr ""
 
 #: views/rules/product-buy/row.php:12
@@ -1118,249 +1301,237 @@ msgstr ""
 msgid "To"
 msgstr ""
 
-#: views/rules/rule-item.php:16
+#: views/rules/rule-item.php:20
 msgid "Unknown method"
 msgstr ""
 
-#: views/rules/rule-item.php:22
+#: views/rules/rule-item.php:27
 msgid "All Languages"
 msgstr ""
 
-#: views/rules/rule-item.php:32
+#: views/rules/rule-item.php:37
 msgid "Enable - Apply with other applicable rules"
 msgstr ""
 
-#: views/rules/rule-item.php:35
+#: views/rules/rule-item.php:40
 msgid "Enable - if other rules are not Applied"
 msgstr ""
 
-#: views/rules/rule-item.php:38
+#: views/rules/rule-item.php:43
 msgid "Disabled"
 msgstr ""
 
-#: views/rules/rule-item.php:71
-msgid "Price Type"
-msgstr ""
-
-#: views/rules/rule-item.php:73
-msgid "Price of the product in the cart"
-msgstr ""
-
-#: views/rules/rule-item.php:74
-msgid "Sub-Total price of the product in the cart"
-msgstr ""
-
-#: views/rules/rule-item.php:75
-msgid "Regular price of the product"
-msgstr ""
-
 #: views/rules/rule-item.php:76
-msgid "Sale price of the product"
+msgid "Rule Mode"
 msgstr ""
 
-#: views/rules/rule-item.php:82
-msgid "Quantities Based On"
-msgstr ""
-
-#: views/rules/rule-item.php:83
-msgid "Price Based On"
-msgstr ""
-
-#: views/rules/rule-item.php:86
-msgid "Each individual product"
-msgstr ""
-
-#: views/rules/rule-item.php:87
-msgid "Each individual variation"
-msgstr ""
-
-#: views/rules/rule-item.php:88
-msgid "Each individual cart line item"
-msgstr ""
-
-#: views/rules/rule-item.php:91
-msgid "Quantities added up by category"
-msgstr ""
-
-#: views/rules/rule-item.php:92
-msgid "All quantities added up"
-msgstr ""
-
-#: views/rules/rule-item.php:105 views/rules/rule-item.php:469
-msgid "Description"
-msgstr ""
-
-#: views/rules/rule-item.php:123
-msgid "Comparison Operator"
-msgstr ""
-
-#: views/rules/rule-item.php:125
-msgid "Select Comparison"
-msgstr ""
-
-#: views/rules/rule-item.php:126
-msgid "Greater than ( > )"
-msgstr ""
-
-#: views/rules/rule-item.php:127
-msgid "Greater than or equal ( >= )"
-msgstr ""
-
-#: views/rules/rule-item.php:128
-msgid "Less than ( < )"
-msgstr ""
-
-#: views/rules/rule-item.php:129
-msgid "Less than or equal ( <= )"
-msgstr ""
-
-#: views/rules/rule-item.php:135
-msgid "Subtotal Amount"
-msgstr ""
-
-#: views/rules/rule-item.php:141
-msgid "Buy"
-msgstr ""
-
-#: views/rules/rule-item.php:147
-msgid "Get"
-msgstr ""
-
-#: views/rules/rule-item.php:155 views/rules/rule-item.php:186
-#: views/rules/rule-item.php:217 views/rules/rule-item.php:248
-msgid "Same Gift"
-msgstr ""
-
-#: views/rules/rule-item.php:164 views/rules/rule-item.php:192
-msgid "Auto Add Gift To Cart"
-msgstr ""
-
-#: views/rules/rule-item.php:164 views/rules/rule-item.php:192
-#: views/rules/rule-item.php:223 views/rules/rule-item.php:254
-#: views/rules/rule-item.php:412 views/rules/rule-item.php:449
-#: views/settings/general.php:89 views/settings/promotion.php:32
+#: views/rules/rule-item.php:76 views/rules/rule-item.php:181
+#: views/rules/rule-item.php:230 views/rules/rule-item.php:261
+#: views/rules/rule-item.php:292 views/rules/rule-item.php:472
+#: views/settings/promotion.php:32
 msgid "In Pro Version"
 msgstr ""
 
-#: views/rules/rule-item.php:198 views/rules/rule-item.php:229
-#: views/rules/rule-item.php:260
+#: views/rules/rule-item.php:79
+msgid "Discount"
+msgstr ""
+
+#: views/rules/rule-item.php:87
+msgid "Price Type"
+msgstr ""
+
+#: views/rules/rule-item.php:89
+msgid "Price of the product in the cart"
+msgstr ""
+
+#: views/rules/rule-item.php:90
+msgid "Sub-Total price of the product in the cart"
+msgstr ""
+
+#: views/rules/rule-item.php:91
+msgid "Regular price of the product"
+msgstr ""
+
+#: views/rules/rule-item.php:92
+msgid "Sale price of the product"
+msgstr ""
+
+#: views/rules/rule-item.php:98
+msgid "Quantities Based On"
+msgstr ""
+
+#: views/rules/rule-item.php:99
+msgid "Price Based On"
+msgstr ""
+
+#: views/rules/rule-item.php:102
+msgid "Each individual product"
+msgstr ""
+
+#: views/rules/rule-item.php:103
+msgid "Each individual variation"
+msgstr ""
+
+#: views/rules/rule-item.php:104
+msgid "Each individual cart line item"
+msgstr ""
+
+#: views/rules/rule-item.php:107
+msgid "Quantities added up by category"
+msgstr ""
+
+#: views/rules/rule-item.php:108
+msgid "All quantities added up"
+msgstr ""
+
+#: views/rules/rule-item.php:121
+msgid "Description"
+msgstr ""
+
+#: views/rules/rule-item.php:139
+msgid "Comparison Operator"
+msgstr ""
+
+#: views/rules/rule-item.php:141
+msgid "Select Comparison"
+msgstr ""
+
+#: views/rules/rule-item.php:142
+msgid "Greater than ( > )"
+msgstr ""
+
+#: views/rules/rule-item.php:143
+msgid "Greater than or equal ( >= )"
+msgstr ""
+
+#: views/rules/rule-item.php:144
+msgid "Less than ( < )"
+msgstr ""
+
+#: views/rules/rule-item.php:145
+msgid "Less than or equal ( <= )"
+msgstr ""
+
+#: views/rules/rule-item.php:151
+msgid "Subtotal Amount"
+msgstr ""
+
+#: views/rules/rule-item.php:157
+msgid "Buy"
+msgstr ""
+
+#: views/rules/rule-item.php:163
+msgid "Get"
+msgstr ""
+
+#: views/rules/rule-item.php:172 views/rules/rule-item.php:202
+#: views/rules/rule-item.php:224 views/rules/rule-item.php:255
+#: views/rules/rule-item.php:286
+msgid "Same Gift"
+msgstr ""
+
+#: views/rules/rule-item.php:181 views/rules/rule-item.php:230
+msgid "Auto Add Gift To Cart"
+msgstr ""
+
+#: views/rules/rule-item.php:191
+msgid "Operator"
+msgstr ""
+
+#: views/rules/rule-item.php:193
+msgid "OR"
+msgstr ""
+
+#: views/rules/rule-item.php:194
+msgid "AND"
+msgstr ""
+
+#: views/rules/rule-item.php:236 views/rules/rule-item.php:267
+#: views/rules/rule-item.php:298
 msgid "Add item"
 msgstr ""
 
-#: views/rules/rule-item.php:223 views/rules/rule-item.php:254
+#: views/rules/rule-item.php:261 views/rules/rule-item.php:292
 msgid "Auto Add Gift To Cart "
 msgstr ""
 
-#: views/rules/rule-item.php:268
+#: views/rules/rule-item.php:306
 msgid "Select shipping methods for free"
 msgstr ""
 
-#: views/rules/rule-item.php:295
+#: views/rules/rule-item.php:333
 msgid "Products - Buy"
 msgstr ""
 
-#: views/rules/rule-item.php:308
+#: views/rules/rule-item.php:346
 msgid "Add Product"
 msgstr ""
 
-#: views/rules/rule-item.php:314
+#: views/rules/rule-item.php:352
 msgid "Products - Get"
 msgstr ""
 
-#: views/rules/rule-item.php:318
+#: views/rules/rule-item.php:356
 msgid "Include Products"
 msgstr ""
 
-#: views/rules/rule-item.php:319 views/rules/rule-item.php:337
-#: views/rules/rule-item.php:355 views/rules/rule-item.php:373
-msgid "Select ..."
-msgstr ""
-
-#: views/rules/rule-item.php:336
+#: views/rules/rule-item.php:375
 msgid "Include Category/Tag/Taxonomy"
 msgstr ""
 
-#: views/rules/rule-item.php:354
+#: views/rules/rule-item.php:393
 msgid "Exclude Products"
 msgstr ""
 
-#: views/rules/rule-item.php:372
+#: views/rules/rule-item.php:412
 msgid "Exclude Category/Tag/Taxonomy"
 msgstr ""
 
-#: views/rules/rule-item.php:393
-msgid "Conditions"
+#: views/rules/rule-item.php:433
+msgid "Get Products Group"
 msgstr ""
 
-#: views/rules/rule-item.php:406
-msgid "Add Condition"
+#: views/rules/rule-item.php:446
+msgid "Add Row"
 msgstr ""
 
-#: views/rules/rule-item.php:412
+#: views/rules/rule-item.php:472
 msgid "Promotion Message"
 msgstr ""
 
-#: views/rules/rule-item.php:421
-msgid "Subtotal From"
+#: views/rules/rule-item.php:481
+msgid "Display From"
 msgstr ""
 
-#: views/rules/rule-item.php:423
+#: views/rules/rule-item.php:483
 msgid "Set a threshold from which you want to start showing promotion message"
 msgstr ""
 
-#: views/rules/rule-item.php:423
+#: views/rules/rule-item.php:483
 msgid ""
 "Example: Lets say you offer a gift  for 200  and above. you may want to set "
 "100 here. So that the customer can see the promo text when his cart subtotal "
 "reaches 100."
 msgstr ""
 
-#: views/rules/rule-item.php:426
+#: views/rules/rule-item.php:486
 msgid "Enter price..."
 msgstr ""
 
-#: views/rules/rule-item.php:428
+#: views/rules/rule-item.php:488
 msgid "leave blank to ignore"
 msgstr ""
 
-#: views/rules/rule-item.php:432
-msgid "Message"
-msgstr ""
-
-#: views/rules/rule-item.php:433
+#: views/rules/rule-item.php:493
 msgid "Spend just {difference_amount} more to receive your free gift!"
 msgstr ""
 
-#: views/rules/rule-item.php:435
+#: views/rules/rule-item.php:495
 msgid "{difference_amount} -> Difference amount to get gift"
 msgstr ""
 
-#: views/rules/rule-item.php:438
+#: views/rules/rule-item.php:498
 msgid "Eg: Spend {difference_amount} more and get a your gift"
-msgstr ""
-
-#: views/rules/rule-item.php:449 views/settings/general.php:89
-msgid "Offer Bar"
-msgstr ""
-
-#: views/rules/rule-item.php:451
-msgid "It helps to display offer information in Get product pages"
-msgstr ""
-
-#: views/rules/rule-item.php:462 views/settings/promotion.php:127
-msgid "Background Color"
-msgstr ""
-
-#: views/rules/rule-item.php:464
-msgid "Text Color"
-msgstr ""
-
-#: views/rules/rule-item.php:470
-msgid "Enter Offer Bar description..."
-msgstr ""
-
-#: views/rules/rule-item.php:472
-msgid "Leave blank to ignore"
 msgstr ""
 
 #: views/settings/display.php:31
@@ -1676,70 +1847,20 @@ msgstr ""
 msgid "When enabled, a user can remove the automatically added gift products."
 msgstr ""
 
-#: views/settings/general.php:91
-msgid ""
-"This section allows you to configure the offer bar to be shown on the "
-"product page."
-msgstr ""
-
-#: views/settings/general.php:95
-msgid "Choose where to show the notice"
-msgstr ""
-
-#: views/settings/general.php:98 views/settings/promotion.php:101
-msgid "Select position..."
-msgstr ""
-
-#: views/settings/general.php:99
-msgid "Woocommerce Before Add To Cart Form"
-msgstr ""
-
-#: views/settings/general.php:100
-msgid "Woocommerce After Add To Cart Form"
-msgstr ""
-
-#: views/settings/general.php:101
-msgid "Woocommerce Product Meta End"
-msgstr ""
-
-#: views/settings/general.php:102
-msgid "Woocommerce Product Meta Start"
-msgstr ""
-
-#: views/settings/general.php:103
-msgid "Woocommerce After Single Product"
-msgstr ""
-
-#: views/settings/general.php:104
-msgid "Woocommerce Before Single Product"
-msgstr ""
-
-#: views/settings/general.php:105
-msgid "Woocommerce After Single Product Summary"
-msgstr ""
-
-#: views/settings/general.php:106
-msgid "Woocommerce Before Single Product Summary"
-msgstr ""
-
-#: views/settings/general.php:108
-msgid "Choose position to show the offer bar."
-msgstr ""
-
-#: views/settings/general.php:112
+#: views/settings/general.php:89
 msgid "Show Price rule Description in customer emails"
 msgstr ""
 
-#: views/settings/general.php:115
+#: views/settings/general.php:92
 msgid ""
 "Enable to add the info about the rule applied in the email sent to customers"
 msgstr ""
 
-#: views/settings/general.php:121
+#: views/settings/general.php:98
 msgid "Extend the rules to translated contents"
 msgstr ""
 
-#: views/settings/general.php:123
+#: views/settings/general.php:100
 msgid "If enabled the rules will be applied also to translated products"
 msgstr ""
 
@@ -1908,6 +2029,10 @@ msgstr ""
 msgid "Select Template Get Products"
 msgstr ""
 
+#: views/settings/promotion.php:101
+msgid "Select position..."
+msgstr ""
+
 #: views/settings/promotion.php:102
 msgid "Glass Morphism"
 msgstr ""
@@ -1966,6 +2091,10 @@ msgstr ""
 
 #: views/settings/promotion.php:144
 msgid "Choose the title hover color for template"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "iThemeland Free Gifts For Woo Lite"
 msgstr ""
 
 #. Plugin URI of the plugin/theme

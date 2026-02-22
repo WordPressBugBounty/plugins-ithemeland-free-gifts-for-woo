@@ -10,6 +10,7 @@ use wgb\classes\controllers\Rules_Controller;
 use wgb\classes\controllers\WGBL_Ajax;
 use wgb\classes\controllers\WGBL_Post;
 use wgb\classes\languages\WGBL_Language;
+use wgb\classes\repositories\OfferRule;
 use wgb\classes\repositories\Order;
 use wgb\classes\repositories\Rule;
 use wgb\classes\repositories\Setting;
@@ -205,6 +206,16 @@ class WGBL
                     'wp_nonce' => wp_create_nonce(),
                     'loadingImage' => '<span class="wgb-button-loading"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34px" height="34px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid"><rect x="17.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="18;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="64;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.16s"></animate></rect><rect x="42.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1" begin="-0.08s"></animate></rect><rect x="67.5" y="30" width="15" height="40" fill="#ffffff"><animate attributeName="y" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="20.999999999999996;30;30" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate><animate attributeName="height" repeatCount="indefinite" dur="0.8s" calcMode="spline" keyTimes="0;0.5;1" values="58.00000000000001;40;40" keySplines="0 0.5 0.5 1;0 0.5 0.5 1"></animate></rect></svg></span>',
                 ]);
+            }
+
+            if (!empty($_GET['tab']) && $_GET['tab'] == 'offer_rules') { //phpcs:ignore
+                wp_enqueue_style('wgb-offer-rules-main', WGBL_CSS_URL . 'offer_rules/style.css', [], WGBL_VERSION);
+
+                wp_enqueue_script('wgb-offer-rules-functions', WGBL_JS_URL . 'offer_rules/functions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-offer-rules-conditions', WGBL_JS_URL . 'offer_rules/conditions.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_enqueue_script('wgb-offer-rules-main', WGBL_JS_URL . 'offer_rules/main.js', ['jquery'], WGBL_VERSION); //phpcs:ignore
+                wp_localize_script('wgb-offer-rules-main', 'WGBL_OFFER_RULES_DATA', $this->get_offer_rules_js_data());
+                wp_enqueue_script('jquery-ui-sortable');
             }
 
             wp_enqueue_style('wgb-responsive', WGBL_CSS_URL . 'common/responsive.css', [], WGBL_VERSION);
@@ -445,6 +456,57 @@ class WGBL
             'settings' => $settings
         ];
     }
+
+    private function get_offer_rules_js_data()
+    {
+        $rule_id = 'set_rule_id_here';
+
+        // get condition fields
+        $condition_item = [
+            'type' => 'date',
+            'method_option' => 'from',
+            'value' => '',
+        ];
+        $condition_id = 'set_condition_id_here';
+        ob_start();
+        include WGBL_VIEWS_DIR . 'offer_rules/conditions/row.php';
+        $condition_row = ob_get_clean();
+
+        $condition_render = Condition_Render::get_instance();
+        $condition_render->set_data([
+            'condition_item' => $condition_item,
+            'rule_id' => $rule_id,
+            'condition_id' => $condition_id,
+            'option_values' => '',
+            'field_status' => '',
+        ]);
+        $condition_extra_fields = $condition_render->get_all_extra_fields();
+
+        // new rule item
+        $rule_item = [
+            'rule_name' => 'New Offer',
+            'uid' => 'set_uid_here',
+            'method' => 'simple',
+            'status' => 'enable',
+            'description' => '',
+        ];
+
+        $offer_rule_repository = OfferRule::get_instance();
+        $rule_types = $offer_rule_repository->get_rule_types();
+
+        ob_start();
+        include WGBL_VIEWS_DIR . 'offer_rules/rule-item.php';
+        $new_rule = ob_get_clean();
+
+        return [
+            'new_rule' => $new_rule,
+            'condition' => [
+                'row' => $condition_row,
+                'extra_fields' => $condition_extra_fields,
+            ]
+        ];
+    }
+
 
     public static function is_initable()
     {

@@ -108,7 +108,7 @@ class Rule
             'subtotal_repeat' => esc_html__('Subtotal repeat - In Pro version', 'ithemeland-free-gifts-for-woo'),
             'cheapest_item_in_cart' => esc_html__('Cheapest item in cart - In Pro version', 'ithemeland-free-gifts-for-woo'),
             'free_shipping' => esc_html__('Free shipping - In Pro version', 'ithemeland-free-gifts-for-woo'),
-            'get_group_of_products' => esc_html__('Get Group of Products - In Pro version', 'ithemeland-free-gifts-for-woocommerce'),
+            'get_group_of_products' => esc_html__('Get Group of Products - In Pro version', 'ithemeland-free-gifts-for-woo'),
         ];
     }
 
@@ -135,9 +135,9 @@ class Rule
                 ],
             ],
             'group' => [
-                'label' => esc_html__('Group', 'ithemeland-free-gifts-for-woocommerce'),
+                'label' => esc_html__('Group', 'ithemeland-free-gifts-for-woo'),
                 'methods' => [
-                    'get_group_of_products' => esc_html__('Get Group of Products - In Pro version', 'ithemeland-free-gifts-for-woocommerce'),
+                    'get_group_of_products' => esc_html__('Get Group of Products - In Pro version', 'ithemeland-free-gifts-for-woo'),
                 ],
             ],
             'bulk' => [

@@ -31,12 +31,12 @@ include WGBL_VIEWS_DIR . "layout/header.php"; ?>
                                 <?php endif; ?>
                                 <?php
                                 if (!empty($rules['items'])) :
-                                    $rule_id = 0;
-                                    foreach ($rules['items'] as $rule_item) :
-                                        if (!empty($rule_item['uid'])) {
+                                    $itfreegift_rule_id = 0;
+                                    foreach ($rules['items'] as $itfreegift_rule_item) :
+                                        if (!empty($itfreegift_rule_item['uid'])) {
                                             include WGBL_VIEWS_DIR . 'offer_rules/rule-item.php';
                                         }
-                                        $rule_id++;
+                                        $itfreegift_rule_id++;
                                     endforeach;
                                 endif;
                                 ?>

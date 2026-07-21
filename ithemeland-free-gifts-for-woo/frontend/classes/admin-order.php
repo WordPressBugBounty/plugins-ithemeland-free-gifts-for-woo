@@ -1,7 +1,5 @@
 <?php
 
-use wgb\classes\helpers\Sanitizer;
-
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -208,15 +206,15 @@ class class_wc_advanced_gift_admin
         $order       = wc_get_order($order_id);
 
         foreach ($product_ids as $product_id) {
-            $_product = wc_get_product($product_id);
-            $title    = $_product->get_title();
-            if ($_product->post_type == 'product_variation') {
+            $itfreegift__product = wc_get_product($product_id);
+            $title    = $itfreegift__product->get_title();
+            if ($itfreegift__product->post_type == 'product_variation') {
                 $product_id = wp_get_post_parent_id($product_id);
-                $title      = $_product->get_name();
+                $title      = $itfreegift__product->get_name();
             }
             $item                 = array();
-            $item['variation_id'] = $this->get_variation_id($_product);
-            @$item['variation_data'] = $item['variation_id'] ? $this->get_variation_attributes($_product) : '';
+            $item['variation_id'] = $this->get_variation_id($itfreegift__product);
+            @$item['variation_data'] = $item['variation_id'] ? $this->get_variation_attributes($itfreegift__product) : '';
             $item_id = wc_add_order_item($order_id, array(
                 'order_item_name' =>
                 $title,
@@ -224,11 +222,11 @@ class class_wc_advanced_gift_admin
             ));
 
             if ($item_id) {
-                $note .= $_product->get_title() . '(' . $_product->get_sku() . ') , ';
+                $note .= $itfreegift__product->get_title() . '(' . $itfreegift__product->get_sku() . ') , ';
                 wc_add_order_item_meta($item_id, '_qty', 1);
-                wc_add_order_item_meta($item_id, '_tax_class', $_product->get_tax_class());
+                wc_add_order_item_meta($item_id, '_tax_class', $itfreegift__product->get_tax_class());
                 wc_add_order_item_meta($item_id, '_product_id', $product_id);
-                wc_add_order_item_meta($item_id, '_variation_id', $this->get_variation_id($_product));
+                wc_add_order_item_meta($item_id, '_variation_id', $this->get_variation_id($itfreegift__product));
                 wc_add_order_item_meta($item_id, '_line_subtotal', wc_format_decimal(0, 4));
                 wc_add_order_item_meta($item_id, '_line_total', wc_format_decimal(0, 4));
                 wc_add_order_item_meta($item_id, '_line_tax', wc_format_decimal(0, 4));
@@ -253,21 +251,21 @@ class class_wc_advanced_gift_admin
         wp_die();
     }
 
-    protected function get_variation_id($_product)
+    protected function get_variation_id($itfreegift__product)
     {
         if (version_compare(WC()->version, "2.7.0") >= 0) {
-            return $_product->get_id();
+            return $itfreegift__product->get_id();
         } else {
-            return $_product->variation_id;
+            return $itfreegift__product->variation_id;
         }
     }
 
-    protected function get_variation_attributes($_product)
+    protected function get_variation_attributes($itfreegift__product)
     {
         if (version_compare(WC()->version, "2.7.0") >= 0) {
-            return wc_get_product_variation_attributes($_product->get_id());
+            return wc_get_product_variation_attributes($itfreegift__product->get_id());
         } else {
-            return $_product->get_variation_attributes();
+            return $itfreegift__product->get_variation_attributes();
         }
     }
 }

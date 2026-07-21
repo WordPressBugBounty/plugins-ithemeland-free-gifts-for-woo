@@ -1,15 +1,15 @@
 <?php
 
-namespace wgb\frontend\blocks;
+namespace ITFreeGift\frontend\blocks;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-use wgb\frontend\blocks\carousel\WGBL_Block_Carousel;
-use wgb\frontend\blocks\datatable\WGBL_Block_Datatable;
-use wgb\frontend\blocks\grid\WGBL_Block_Grid;
-use wgb\frontend\blocks\notice\WGBL_Block_Notice;
+use ITFreeGift\frontend\blocks\carousel\WGBL_Block_Carousel;
+use ITFreeGift\frontend\blocks\datatable\WGBL_Block_Datatable;
+use ITFreeGift\frontend\blocks\grid\WGBL_Block_Grid;
+use ITFreeGift\frontend\blocks\notice\WGBL_Block_Notice;
 
 class WGBL_Blocks
 {

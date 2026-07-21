@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule\helpers;
+namespace ITFreeGift\frontend\classes\services\apply_rule\helpers;
 
 if (!defined('ABSPATH')) {
     exit;

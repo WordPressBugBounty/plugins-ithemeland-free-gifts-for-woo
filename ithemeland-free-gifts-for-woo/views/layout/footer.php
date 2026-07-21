@@ -1,6 +1,6 @@
 <?php
 
-use wgb\classes\helpers\Sanitizer;
+use ITFreeGift\classes\helpers\Sanitizer;
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
 ?>

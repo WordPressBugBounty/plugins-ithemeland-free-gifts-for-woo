@@ -7,29 +7,29 @@ namespace Composer\Autoload;
 class ComposerStaticInitdfa2cfeba11f3b9585ea5402f5b85e01
 {
     public static $prefixLengthsPsr4 = array (
-        'w' => 
+        'I' => 
         array (
-            'wgb\\frontend\\' => 13,
-            'wgb\\framework\\' => 14,
-            'wgb\\classes\\' => 12,
-            'wgb\\blocks\\' => 11,
+            'ITFreeGift\\frontend\\' => 20,
+            'ITFreeGift\\framework\\' => 21,
+            'ITFreeGift\\classes\\' => 19,
+            'ITFreeGift\\blocks\\' => 18,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'wgb\\frontend\\' => 
+        'ITFreeGift\\frontend\\' => 
         array (
             0 => __DIR__ . '/../..' . '/frontend',
         ),
-        'wgb\\framework\\' => 
+        'ITFreeGift\\framework\\' => 
         array (
             0 => __DIR__ . '/../..' . '/framework',
         ),
-        'wgb\\classes\\' => 
+        'ITFreeGift\\classes\\' => 
         array (
             0 => __DIR__ . '/../..' . '/classes',
         ),
-        'wgb\\blocks\\' => 
+        'ITFreeGift\\blocks\\' => 
         array (
             0 => __DIR__ . '/../..' . '/blocks',
         ),

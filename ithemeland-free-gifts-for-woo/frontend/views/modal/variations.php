@@ -1,4 +1,7 @@
 <?php
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 /**
  * Validate field value
@@ -11,96 +14,96 @@
  * @var $settings
  */
 
-$retrieved_group_input_value = WC()->cart->get_cart();
+$itfreegift_retrieved_group_input_value = WC()->cart->get_cart();
 
-$count_info = itg_check_quantity_gift_in_session($retrieved_group_input_value);
+$itfreegift_count_info = itfreegift_check_quantity_gift_in_session($itfreegift_retrieved_group_input_value);
 
-$no_thanks = esc_html(get_option('itg_localization_no_thanks', 'No Thanks'));
+$itfreegift_no_thanks = esc_html(get_option('itg_localization_no_thanks', 'No Thanks'));
 
-foreach ($products_ids as $product_id) :
+foreach ($products_ids as $itfreegift_product_id) :
     //For exclude in select variations
     if (isset($gift_rule_exclude[$uid]) && in_array(
-        $product_id,
+        $itfreegift_product_id,
         $gift_rule_exclude[$uid]
     )) {
         continue;
     }
-    $gift_id  = $uid . '-' . $product_id;
-    $_product = wc_get_product($product_id);
+    $itfreegift_gift_id  = $uid . '-' . $itfreegift_product_id;
+    $itfreegift__product = wc_get_product($itfreegift_product_id);
 
-    if ($_product->post_type == 'product_variation') {
-        $title = $_product->get_name();
-        //$title = $_product->get_name().implode(" - ", $_product->get_variation_attributes());
+    if ($itfreegift__product->post_type == 'product_variation') {
+        $title = $itfreegift__product->get_name();
+        //$title = $itfreegift__product->get_name().implode(" - ", $itfreegift__product->get_variation_attributes());
     } else {
-        $title = $_product->get_title();
+        $title = $itfreegift__product->get_title();
     }
 
-    $pw_number_gift_allowed = $gift_item_variable[$uid]['pw_number_gift_allowed'];
+    $itfreegift_pw_number_gift_allowed = $gift_item_variable[$uid]['pw_number_gift_allowed'];
     //Number Allow For Other Method
     if (in_array($gift_item_variable[$uid]['method'], array(
         'buy_x_get_x_repeat'
     ), true) && $gift_item_variable[$uid]['based_on'] == 'ind') {
-        $pw_number_gift_allowed = $gift_item_variable['all_gifts'][$gift_id]['q'];
+        $itfreegift_pw_number_gift_allowed = $gift_item_variable['all_gifts'][$itfreegift_gift_id]['q'];
     }
 
-    $product_type = $_product->get_type();
-    $product_variable = false;
-    if ($product_type == 'variable') {
-        $product_variable = true;
+    $itfreegift_product_type = $itfreegift__product->get_type();
+    $itfreegift_product_variable = false;
+    if ($itfreegift_product_type == 'variable') {
+        $itfreegift_product_variable = true;
     }
-    $item_hover = 'hovering';
+    $itfreegift_item_hover = 'hovering';
 
-    if (has_filter('it_free_gift_disable_hover')) {
-        $disable = apply_filters('it_free_gift_disable_hover', $gift_item_key, $gift_item_variable[$uid], $count_info, $gift_item_variable, $_product);
-        if ($disable) {
-            $item_hover = 'disable-hover';
+    if (has_filter('itfreegift_free_gift_disable_hover')) {
+        $itfreegift_disable = apply_filters('itfreegift_free_gift_disable_hover', $gift_item_key, $gift_item_variable[$uid], $itfreegift_count_info, $gift_item_variable, $itfreegift__product);
+        if ($itfreegift_disable) {
+            $itfreegift_item_hover = 'disable-hover';
         }
     }
 
     if (in_array(
-        $gift_id,
-        $count_info['gifts_set']
+        $itfreegift_gift_id,
+        $itfreegift_count_info['gifts_set']
     ) && $gift_item_variable[$uid]['can_several_gift'] == 'no') {
-        $item_hover = 'disable-hover';
+        $itfreegift_item_hover = 'disable-hover';
     }
     /**  Check Quantity  **/
-    $array_return   = deprecated_itg_quantities_gift_stock($_product, $product_qty_in_cart, $product_id, $product_type, $settings, $item_hover, $pw_number_gift_allowed, $uid, $count_info, $gift_item_variable[$uid]['can_several_gift']);
-    $item_hover     = $array_return['item_hover'];
-    $text_stock_qty = $array_return['text_stock_qty'];
-    $stock_status = $array_return['stock_status'];
+    $itfreegift_array_return   = itfreegift_deprecated_quantities_gift_stock($itfreegift__product, $product_qty_in_cart, $itfreegift_product_id, $itfreegift_product_type, $settings, $itfreegift_item_hover, $itfreegift_pw_number_gift_allowed, $uid, $itfreegift_count_info, $gift_item_variable[$uid]['can_several_gift']);
+    $itfreegift_item_hover     = $itfreegift_array_return['item_hover'];
+    $itfreegift_text_stock_qty = $itfreegift_array_return['text_stock_qty'];
+    $itfreegift_stock_status = $itfreegift_array_return['stock_status'];
 ?>
-    <div class="wgb-popup-post-item <?php echo esc_attr($item_hover); ?> <?php echo esc_attr($stock_status); ?>">
+    <div class="wgb-popup-post-item <?php echo esc_attr($itfreegift_item_hover); ?> <?php echo esc_attr($itfreegift_stock_status); ?>">
         <div class="wgb-popup-post-thumbnail">
-            <?php itg_render_product_image($_product); ?>
+            <?php itfreegift_render_product_image($itfreegift__product); ?>
             <?php if ($settings['show_stock_quantity'] == 'true') : ?>
-                <div class="wgb-item-overlay"><?php echo esc_html($text_stock_qty); ?></div>
-                <!--  <span class="wgb-product-item-stock-in-thumb"><?php echo esc_html($text_stock_qty); ?></span> -->
+                <div class="wgb-item-overlay"><?php echo esc_html($itfreegift_text_stock_qty); ?></div>
+                <!--  <span class="wgb-product-item-stock-in-thumb"><?php echo esc_html($itfreegift_text_stock_qty); ?></span> -->
             <?php endif; ?>
         </div>
         <div class="wgb-popup-post-title">
             <?php
-            itg_render_title_product_gift($title, $product_id, $settings, true);
+            itfreegift_render_title_product_gift($title, $itfreegift_product_id, $settings, true);
             ?>
         </div>
         <?php
 
-        $gift_data = [
-            'gift_id' => $gift_id,
-            'product_id' => $product_id,
+        $itfreegift_gift_data = [
+            'gift_id' => $itfreegift_gift_id,
+            'product_id' => $itfreegift_product_id,
             'rule_id' => $uid,
         ];
         ?>
-        <a class="<?php echo esc_attr(implode(' ', itg_get_gift_product_add_to_cart_classes($settings))); ?>" data-gift_id="<?php echo esc_attr($gift_id); ?>" data-product_id="<?php echo esc_attr($product_id); ?>" data-rule_id="<?php echo esc_attr($uid); ?>" href="<?php echo esc_url(itg_get_gift_product_add_to_cart_url($gift_data, '')); ?>">
+        <a class="<?php echo esc_attr(implode(' ', itfreegift_get_gift_product_add_to_cart_classes($settings))); ?>" data-gift_id="<?php echo esc_attr($itfreegift_gift_id); ?>" data-product_id="<?php echo esc_attr($itfreegift_product_id); ?>" data-rule_id="<?php echo esc_attr($uid); ?>" href="<?php echo esc_url(itfreegift_get_gift_product_add_to_cart_url($itfreegift_gift_data, '')); ?>">
             <div class="wgb-loading-icon wgb-d-none">
                 <div class="wgb-spinner wgb-spinner--2"></div>
             </div>
             <?php esc_html_e('Add Gift', 'ithemeland-free-gifts-for-woo'); ?>
-            <?php //echo esc_html($add_gift_label); 
+            <?php //echo esc_html($itfreegift_add_gift_label); 
             ?>
         </a>
     </div>
 
 <?php endforeach; ?>
 <div class="ith-btn-no-thanks-cnt">
-    <div class="itg-popup-close"><?php echo esc_html($no_thanks); ?></div>
+    <div class="itg-popup-close"><?php echo esc_html($itfreegift_no_thanks); ?></div>
 </div>

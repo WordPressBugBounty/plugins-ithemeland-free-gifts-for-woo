@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\api;
+namespace ITFreeGift\classes\api;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\repositories\Rule;
+use ITFreeGift\classes\repositories\Rule;
 
 class Api_Rule_Controller
 {

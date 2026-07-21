@@ -53,7 +53,7 @@ class iThemeland_cart_hook
     // }
     public function format_custom_meta_data($item_id, $item)
     {
-        $settings = itg_get_settings();
+        $settings = itfreegift_get_settings();
         if ($settings['show_description'] == 'yes') {
             $dynamic_rules = $item->get_meta('_ywdpd_discounts');
             if (! empty($dynamic_rules)) {
@@ -62,8 +62,8 @@ class iThemeland_cart_hook
                 foreach ($dynamic_rules['applied_discounts'] as $applied_discount) {
 
                     if (isset($applied_discount['set_id'])) {
-                        $rule_id = $applied_discount['set_id'];
-                        $rule    = ywdpd_get_rule($rule_id);
+                        $itfreegift_rule_id = $applied_discount['set_id'];
+                        $rule    = ywdpd_get_rule($itfreegift_rule_id);
                     } else {
                         $rule = $applied_discount['by'];
                     }
@@ -77,7 +77,7 @@ class iThemeland_cart_hook
                          *
                          * @return string
                          */
-                        $custom_meta .= '<li>' . apply_filters('ywdpd_rule_name', $rule->get_name(), $rule, $applied_discount) . '</li>';
+                        $custom_meta .= '<li>' . apply_filters('ywdpd_rule_name', $rule->get_name(), $rule, $applied_discount) . '</li>'; //phpcs:ignore
                     }
                 }
                 if (! empty($custom_meta)) { ?>
@@ -95,7 +95,7 @@ class iThemeland_cart_hook
     {
 
         if (isset($cart_item_data['it_free_gift'])) {
-            $price = apply_filters('itg_gift_product_price', $cart_item_data['it_free_gift']['price'], $cart_item_key, $cart_item_data);
+            $price = apply_filters('itfreegift_gift_product_price', $cart_item_data['it_free_gift']['price'], $cart_item_key, $cart_item_data);
 
             $cart_item_data['data']->update_meta_data('has_dynamic_price', true);
             $cart_item_data['data']->set_price($price);
@@ -199,7 +199,7 @@ class iThemeland_cart_hook
                 continue;
             }
 
-            $price = apply_filters('itg_gift_product_price', $value['it_free_gift']['price'], $key, $value);
+            $price = apply_filters('itfreegift_gift_product_price', $value['it_free_gift']['price'], $key, $value);
 
             $value['data']->set_price($price);
         }
@@ -208,7 +208,7 @@ class iThemeland_cart_hook
     public static function set_cart_item_price($price, $cart_item, $cart_item_key)
     {
 
-        $settings = itg_get_settings();
+        $settings = itfreegift_get_settings();
         $free_txt = get_option('itg_localization_free', 'Free');
         // check if product is a gift product
         if (! isset($cart_item['it_free_gift'])) {
@@ -248,7 +248,7 @@ class iThemeland_cart_hook
         if (!isset($cart_item['it_free_gift'])) {
             return $price;
         }
-        $settings = itg_get_settings();
+        $settings = itfreegift_get_settings();
         $free_txt = get_option('itg_localization_free', 'Free');
         $multiply_qty = false;
         $product_id = ! empty($cart_item['variation_id']) ? $cart_item['variation_id'] : $cart_item['product_id'];
@@ -286,7 +286,7 @@ class iThemeland_cart_hook
         if (! isset($cart_item['it_free_gift'])) {
             return $price;
         }
-        $settings = itg_get_settings();
+        $settings = itfreegift_get_settings();
         $free_txt = get_option('itg_localization_free', 'Free');
         $multiply_qty = false;
         $product_id = ! empty($cart_item['variation_id']) ? $cart_item['variation_id'] : $cart_item['product_id'];
@@ -346,9 +346,9 @@ class iThemeland_cart_hook
      */
     public static function maybe_add_custom_item_data($item_data, $cart_item)
     {
-        $settings = itg_get_settings();
+        $settings = itfreegift_get_settings();
         if ($settings['show_gift_type_lable'] == 'true') {
-            if (!isset($cart_item['it_free_gift']) || !itg_check_is_array($cart_item['it_free_gift'])) {
+            if (!isset($cart_item['it_free_gift']) || !itfreegift_check_is_array($cart_item['it_free_gift'])) {
                 return $item_data;
             }
 
@@ -380,7 +380,7 @@ class iThemeland_cart_hook
         }
 
         // Unset session values
-        itg_unset_removed_automatic_free_gift_products_from_session();
+        itfreegift_unset_removed_automatic_free_gift_products_from_session();
     }
 }
 new iThemeland_cart_hook();

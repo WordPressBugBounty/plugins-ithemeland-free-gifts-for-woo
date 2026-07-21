@@ -1,8 +1,8 @@
 <?php
 
-namespace wgb\framework\email_subscription;
+namespace ITFreeGift\framework\email_subscription;
 
-use wgb\framework\active_plugins\ActivePlugins;
+use ITFreeGift\framework\active_plugins\ActivePlugins;
 
 defined('ABSPATH') || exit();
 

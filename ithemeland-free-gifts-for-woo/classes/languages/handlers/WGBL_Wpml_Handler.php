@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\languages\handlers;
+namespace ITFreeGift\classes\languages\handlers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\languages\Handler_Interface;
+use ITFreeGift\classes\languages\Handler_Interface;
 
 class WGBL_Wpml_Handler implements Handler_Interface
 {
@@ -27,7 +27,7 @@ class WGBL_Wpml_Handler implements Handler_Interface
 
     private function set_languages()
     {
-        $active_languages = apply_filters('wpml_active_languages', []);
+        $active_languages = apply_filters('wpml_active_languages', []); //phpcs:ignore
         if (!empty($active_languages)) {
             foreach ($active_languages as $lang) {
                 if (!empty($lang['code']) && !empty($lang['translated_name'])) {

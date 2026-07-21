@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\classes\languages;
+namespace ITFreeGift\classes\languages;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 

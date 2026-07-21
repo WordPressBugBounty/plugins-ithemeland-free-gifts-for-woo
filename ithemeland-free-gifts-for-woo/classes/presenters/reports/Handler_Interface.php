@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\classes\presenters\reports;
+namespace ITFreeGift\classes\presenters\reports;
 
 defined('ABSPATH') || exit();
 

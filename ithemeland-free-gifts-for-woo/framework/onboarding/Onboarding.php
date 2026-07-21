@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\framework\onboarding;
+namespace ITFreeGift\framework\onboarding;
 
-use wgb\framework\active_plugins\ActivePlugins;
-use wgb\framework\analytics\AnalyticsService;
-use wgb\framework\email_subscription\EmailSubscription;
+use ITFreeGift\framework\active_plugins\ActivePlugins;
+use ITFreeGift\framework\analytics\AnalyticsService;
+use ITFreeGift\framework\email_subscription\EmailSubscription;
 
 defined('ABSPATH') || exit();
 

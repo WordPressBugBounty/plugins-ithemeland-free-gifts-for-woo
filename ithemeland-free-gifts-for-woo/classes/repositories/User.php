@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\repositories;
+namespace ITFreeGift\classes\repositories;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\helpers\Array_Helper;
+use ITFreeGift\classes\helpers\Array_Helper;
 
 class User
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\bootstrap;
+namespace ITFreeGift\classes\bootstrap;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\repositories\Product;
+use ITFreeGift\classes\repositories\Product;
 
 class WGBL_Custom_Queries
 {

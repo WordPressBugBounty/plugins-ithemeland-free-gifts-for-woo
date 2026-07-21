@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule;
+namespace ITFreeGift\frontend\classes\services\apply_rule;
 
-use wgb\frontend\classes\services\apply_rule\helpers\RulesDataBridge;
-use wgb\frontend\classes\services\apply_rule\condition_types\Simple;
-use wgb\frontend\classes\services\apply_rule\condition_types\Subtotal;
+use ITFreeGift\frontend\classes\services\apply_rule\helpers\RulesDataBridge;
+use ITFreeGift\frontend\classes\services\apply_rule\condition_types\Simple;
+use ITFreeGift\frontend\classes\services\apply_rule\condition_types\Subtotal;
 
 if (!defined('ABSPATH')) {
     exit;

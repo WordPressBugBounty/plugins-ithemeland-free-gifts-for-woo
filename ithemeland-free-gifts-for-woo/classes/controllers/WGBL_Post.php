@@ -1,14 +1,14 @@
 <?php
 
-namespace wgb\classes\controllers;
+namespace ITFreeGift\classes\controllers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\helpers\Sanitizer;
-use wgb\classes\repositories\Flush_Message;
-use wgb\classes\repositories\OfferRule;
-use wgb\classes\repositories\Rule;
-use wgb\classes\repositories\Setting;
+use ITFreeGift\classes\helpers\Sanitizer;
+use ITFreeGift\classes\repositories\Flush_Message;
+use ITFreeGift\classes\repositories\OfferRule;
+use ITFreeGift\classes\repositories\Rule;
+use ITFreeGift\classes\repositories\Setting;
 
 class WGBL_Post
 {
@@ -203,6 +203,6 @@ class WGBL_Post
             $flush_message_repository->set($params);
         }
 
-        return wp_redirect(WGBL_MAIN_PAGE . '&tab=' . $active_tab);
+        return wp_safe_redirect(WGBL_MAIN_PAGE . '&tab=' . $active_tab);
     }
 }

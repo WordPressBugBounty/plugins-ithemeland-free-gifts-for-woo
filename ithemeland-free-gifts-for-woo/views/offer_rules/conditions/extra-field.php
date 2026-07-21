@@ -2,20 +2,20 @@
 
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
 
-use wgb\classes\helpers\Sanitizer;
-use wgb\classes\services\render\Condition_Render;
+use ITFreeGift\classes\helpers\Sanitizer;
+use ITFreeGift\classes\services\render\Condition_Render;
 
-$html = '';
-if (!empty($condition_item) && !empty($condition_item['type']) && isset($condition_id) && isset($rule_id)) {
-    $condition_render_service = Condition_Render::get_instance();
-    $condition_render_service->set_data([
-        'condition_item' => $condition_item,
-        'condition_id' => $condition_id,
-        'rule_id' => $rule_id,
+$itfreegift_html = '';
+if (!empty($itfreegift_condition_item) && !empty($itfreegift_condition_item['type']) && isset($itfreegift_condition_id) && isset($itfreegift_rule_id)) {
+    $itfreegift_condition_render_service = Condition_Render::get_instance();
+    $itfreegift_condition_render_service->set_data([
+        'condition_item' => $itfreegift_condition_item,
+        'condition_id' => $itfreegift_condition_id,
+        'rule_id' => $itfreegift_rule_id,
         'option_values' => (!empty($option_values) && is_array($option_values)) ? $option_values : [],
         'field_status' => ''
     ]);
-    $html = $condition_render_service->extra_fields_render();
+    $itfreegift_html = $itfreegift_condition_render_service->extra_fields_render();
 }
 
-echo wp_kses($html, Sanitizer::allowed_html());
+echo wp_kses($itfreegift_html, Sanitizer::allowed_html());

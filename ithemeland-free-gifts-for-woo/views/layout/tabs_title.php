@@ -1,3 +1,8 @@
+<?php
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+?>
 <li>
     <a class="<?php echo (isset($_GET['tab']) && $_GET['tab'] == 'rules') ? 'selected' : ''; //phpcs:ignore 
                 ?>" data-content="rules" data-type="main-tab" href="<?php echo esc_url(WGBL_MAIN_PAGE . '&tab=rules'); ?>">

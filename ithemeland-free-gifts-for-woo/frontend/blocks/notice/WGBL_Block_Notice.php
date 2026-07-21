@@ -1,8 +1,12 @@
 <?php
 
-namespace wgb\frontend\blocks\notice;
+namespace ITFreeGift\frontend\blocks\notice;
 
-use wgb\classes\helpers\Notice;
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
+use ITFreeGift\classes\helpers\Notice;
 
 class WGBL_Block_Notice
 {

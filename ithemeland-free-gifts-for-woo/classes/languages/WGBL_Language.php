@@ -1,11 +1,11 @@
 <?php
 
-namespace wgb\classes\languages;
+namespace ITFreeGift\classes\languages;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\languages\handlers\WGBL_Polylang_Handler;
-use wgb\classes\languages\handlers\WGBL_Wpml_Handler;
+use ITFreeGift\classes\languages\handlers\WGBL_Polylang_Handler;
+use ITFreeGift\classes\languages\handlers\WGBL_Wpml_Handler;
 
 class WGBL_Language
 {

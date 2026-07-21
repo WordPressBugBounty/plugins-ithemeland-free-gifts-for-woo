@@ -1,3 +1,8 @@
+<?php
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+?>
 <div class="adv-gift-section wgb-product-cnt wgb-frontend-gifts wgb-item-layout2">
     <div class="wgb-header-cnt">
         <h2 class="wgb-title text-capitalize font-weight-bold">Our Gift</h2>

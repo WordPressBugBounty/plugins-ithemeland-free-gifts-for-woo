@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\frontend\blocks;
+namespace ITFreeGift\frontend\blocks;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
@@ -16,7 +16,7 @@ class WGBL_Blocks_Store_API
             woocommerce_store_api_register_update_callback(
                 array(
                     'namespace' => self::IDENTIFIER,
-                    'callback' => array('\wgb\frontend\blocks\WGBL_Blocks_Store_API', 'rest_handle_endpoint'),
+                    'callback' => array('\ITFreeGift\frontend\blocks\WGBL_Blocks_Store_API', 'rest_handle_endpoint'),
                 )
             );
         }

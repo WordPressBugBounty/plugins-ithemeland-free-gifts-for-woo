@@ -1,6 +1,10 @@
 <?php
 
-// use wgb\classes\repositories\Rule;
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
+// use ITFreeGift\classes\repositories\Rule;
 
 // if (!defined('ABSPATH')) {
 //     exit;

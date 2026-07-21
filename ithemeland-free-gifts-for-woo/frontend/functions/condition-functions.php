@@ -1,7 +1,9 @@
 <?php
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
-
-function get_wc_product_absolute_id($product)
+function itfreegift_get_wc_product_absolute_id($product)
 {
     // Load product object
     if (! is_a($product, 'WC_Product')) {
@@ -12,7 +14,7 @@ function get_wc_product_absolute_id($product)
     return $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
 }
 
-function user_roles($user_id)
+function itfreegift_user_roles($user_id)
 {
 
     // Get user
@@ -22,8 +24,7 @@ function user_roles($user_id)
     return $user ? (array) $user->roles : array();
 }
 
-
-function user_capabilities($user_id)
+function itfreegift_user_capabilities($user_id)
 {
     // Groups plugin active?
     if (class_exists('Groups_User') && class_exists('Groups_Wordpress')) {
@@ -55,7 +56,7 @@ function user_capabilities($user_id)
 }
 
 
-function get_datetime_object($date = null, $date_is_timestamp = true)
+function itfreegift_get_datetime_object($date = null, $date_is_timestamp = true)
 {
     if ($date !== null && $date_is_timestamp) {
         $date = '@' . $date;
@@ -70,7 +71,7 @@ function get_datetime_object($date = null, $date_is_timestamp = true)
     }
 
     // Set correct time zone
-    $time_zone = get_time_zone();
+    $time_zone = itfreegift_get_time_zone();
     $date_time->setTimezone($time_zone);
 
     // Set date if passed in
@@ -81,33 +82,32 @@ function get_datetime_object($date = null, $date_is_timestamp = true)
     return $date_time;
 }
 
-function get_time_zone()
+function itfreegift_get_time_zone()
 {
-    return new DateTimeZone(get_time_zone_string());
+    return new DateTimeZone(itfreegift_get_time_zone_string());
 }
 
-function php_version_gte($version)
+function itfreegift_php_version_gte($version)
 {
     return version_compare(PHP_VERSION, $version, '>=');
 }
 
 
 
-function order_get_meta($order, $key, $single = true, $context = 'view')
+function itfreegift_order_get_meta($order, $key, $single = true, $context = 'view')
 {
-    return get_meta($order, $key, $single, $context, 'order', 'post');
+    return itfreegift_get_meta($order, $key, $single, $context, 'order', 'post');
 }
 
-
-function get_meta($object, $key, $single, $context, $store, $legacy_store)
+function itfreegift_get_meta($object, $key, $single, $context, $store, $legacy_store)
 {
     // Load object
     if (! is_object($object)) {
-        $object = load_object($object, $store);
+        $object = itfreegift_load_object($object, $store);
     }
 
     // Internal meta is not supported
-    if (is_internal_meta($object, $key)) {
+    if (itfreegift_is_internal_meta($object, $key)) {
         return $single ? '' : array();
     }
 
@@ -116,7 +116,7 @@ function get_meta($object, $key, $single, $context, $store, $legacy_store)
 }
 
 
-function load_object($object_id, $store)
+function itfreegift_load_object($object_id, $store)
 {
     $method = 'wc_get_' . $store;
 
@@ -139,7 +139,7 @@ function load_object($object_id, $store)
     }
 }
 
-function is_internal_meta($object, $key, $suppress_warning = false)
+function itfreegift_is_internal_meta($object, $key, $suppress_warning = false)
 {
     // Get data store
     if (is_callable(array($object, 'get_data_store'))) {
@@ -154,7 +154,7 @@ function is_internal_meta($object, $key, $suppress_warning = false)
 
                         // Maybe add warning
                         // if (! $suppress_warning) {
-                            // error_log('methods must not be used to interact with WooCommerce internal meta (used key "' . $key . '").');
+                        // error_log('methods must not be used to interact with WooCommerce internal meta (used key "' . $key . '").');
                         // }
 
                         return true;
@@ -170,7 +170,7 @@ function is_internal_meta($object, $key, $suppress_warning = false)
     return false;
 }
 
-function get_timeframes()
+function itfreegift_get_timeframes()
 {
     // Define timeframes
     $timeframes = array(
@@ -258,14 +258,14 @@ function get_timeframes()
     return $timeframes;
 }
 
-function get_wc_order_is_paid_statuses($include_prefix = false)
+function itfreegift_get_wc_order_is_paid_statuses($include_prefix = false)
 {
     $statuses = wc_get_is_paid_statuses();
 
     return $include_prefix ? preg_filter('/^/', 'wc-', $statuses) : $statuses;
 }
 
-function get_checkout_billing_email()
+function itfreegift_get_checkout_billing_email()
 {
     // Check for specific ajax requests
     if (!empty($_GET['wc-ajax']) && in_array($_GET['wc-ajax'], array('update_order_review', 'checkout'), true)) { //phpcs:ignore
@@ -293,15 +293,15 @@ function get_checkout_billing_email()
     return null;
 }
 
-function date_create_from_format_finction($format, $value)
+function itfreegift_date_create_from_format_fUnction($format, $value)
 {
-    $timezone_string = get_time_zone_string();
+    $timezone_string = itfreegift_get_time_zone_string();
     $timezone        = new DateTimeZone($timezone_string);
 
     return DateTime::createFromFormat($format, $value, $timezone);
 }
 
-function get_time_zone_string()
+function itfreegift_get_time_zone_string()
 {
     // Timezone string
     if ($time_zone = get_option('timezone_string')) {
@@ -312,7 +312,7 @@ function get_time_zone_string()
     if ($utc_offset = get_option('gmt_offset')) {
 
         // Offsets supported
-        if (php_version_gte('5.5.10')) {
+        if (itfreegift_php_version_gte('5.5.10')) {
             return ($utc_offset < 0 ? '-' : '+') . gmdate('Hi', floor(abs($utc_offset) * 3600));
         } // Offsets not supported
         else {
@@ -339,23 +339,23 @@ function get_time_zone_string()
     return 'UTC';
 }
 
-function get_current_week_value()
+function itfreegift_get_current_week_value()
 {
     // Today is first day of week
-    if ((int) get_adjusted_datetime(null, 'w') === get_start_of_week()) {
+    if ((int) itfreegift_get_adjusted_datetime(null, 'w') === itfreegift_get_start_of_week()) {
         return 'midnight';
     } else {
-        return 'midnight last ' . get_literal_start_of_week();
+        return 'midnight last ' . itfreegift_get_literal_start_of_week();
     }
 }
 
-function get_adjusted_datetime($timestamp = null, $format = null)
+function itfreegift_get_adjusted_datetime($timestamp = null, $format = null)
 {
     // Get timestamp
     $timestamp = ($timestamp !== null ? $timestamp : time());
 
     // Get datetime object
-    $date_time = get_datetime_object($timestamp);
+    $date_time = itfreegift_get_datetime_object($timestamp);
 
     // Get datetime as string in ISO format
     $date_time_iso = $date_time->format('Y-m-d H:i:s');
@@ -372,12 +372,12 @@ function get_adjusted_datetime($timestamp = null, $format = null)
     return date_i18n($format, $date_time_utc->format('U'));
 }
 
-function get_start_of_week()
+function itfreegift_get_start_of_week()
 {
     return intval(get_option('start_of_week', 0));
 }
 
-function get_literal_start_of_week()
+function itfreegift_get_literal_start_of_week()
 {
     $weekdays = array(
         0 => 'sunday',
@@ -389,37 +389,37 @@ function get_literal_start_of_week()
         6 => 'saturday',
     );
 
-    $start_of_week = get_start_of_week();
+    $start_of_week = itfreegift_get_start_of_week();
 
     return $weekdays[$start_of_week];
 }
 
-function it_date_time()
+function itfreegift_it_date_time()
 {
-    $date = get_datetime_object();
+    $date = itfreegift_get_datetime_object();
     $date->setTime(0, 0, 0);
 
     return $date;
 }
 
-function it_date_time_weekend()
+function itfreegift_date_time_weekend()
 {
-    $date = get_datetime_object();
+    $date = itfreegift_get_datetime_object();
 
     return $date->format('w');
 }
 
-function it_date_time_time()
+function itfreegift_date_time_time()
 {
-    return get_datetime_object();
+    return itfreegift_get_datetime_object();
     //	return $date->format( 'H:i' );
 }
 
-function get_datetime($option_key, $condition_value)
+function itfreegift_get_datetime($option_key, $condition_value)
 {
     // Get condition date
     try {
-        $condition_date = get_datetime_object($condition_value, false);
+        $condition_date = itfreegift_get_datetime_object($condition_value, false);
         $condition_date->setTime(0, 0, 0);
 
         return $condition_date;
@@ -428,13 +428,12 @@ function get_datetime($option_key, $condition_value)
     }
 }
 
-function array_is_multidimensional($array)
+function itfreegift_array_is_multidimensional($array)
 {
     return count($array) !== count($array, COUNT_RECURSIVE);
 }
 
-
-function group_quantities($filter_items_by_rules, $quantities_based_on)
+function itfreegift_group_quantities($filter_items_by_rules, $quantities_based_on)
 {
 
     $quantities = array();
@@ -445,16 +444,15 @@ function group_quantities($filter_items_by_rules, $quantities_based_on)
         $quantity = $cart_item['quantity'];
 
         // Get absolute product id (i.e. parent product id for variations)
-        $product_id = get_wc_product_absolute_id($cart_item['data']);
+        $product_id = itfreegift_get_wc_product_absolute_id($cart_item['data']);
 
         $quantities[$product_id][$cart_item_key] = $quantity;
-
     }
     // Return quantities
     return $quantities;
 }
 
-function group_prices($filter_items_by_rules, $quantities_based_on)
+function itfreegift_group_prices($filter_items_by_rules, $quantities_based_on)
 {
 
     $prices = array();
@@ -474,7 +472,7 @@ function group_prices($filter_items_by_rules, $quantities_based_on)
         }
 
         // Get absolute product id (i.e. parent product id for variations)
-        $product_id = get_wc_product_absolute_id($cart_item['data']);
+        $product_id = itfreegift_get_wc_product_absolute_id($cart_item['data']);
 
         $prices[$product_id][$cart_item_key] = $item_price;
     }
@@ -483,9 +481,7 @@ function group_prices($filter_items_by_rules, $quantities_based_on)
     return $prices;
 }
 
-
-
-function it_get_cart_subtotal($item_cart)
+function itfreegift_get_cart_subtotal($item_cart)
 {
     $items_count = array(
         'flag'                                     => false,
@@ -530,23 +526,23 @@ function it_get_cart_subtotal($item_cart)
     }
     //	$items_count['subtotal']= WC()->cart->cart_contents_total;
     /*
-	add_filter('it_gift_cart_subtotal','it_gift_cart_subtotal');
-	function it_gift_cart_subtotal($items_cart_subtotal){
+	add_filter('itfreegift_gift_cart_subtotal','itfreegift_gift_cart_subtotal');
+	function itfreegift_gift_cart_subtotal($items_cart_subtotal){
 		  $items_cart_subtotal['subtotal']= WC()->cart->cart_contents_total;
 		  return $items_cart_subtotal;
 	}
 	*/
-    return apply_filters('it_gift_cart_subtotal', $items_count);
+    return apply_filters('itfreegift_gift_cart_subtotal', $items_count);
 }
 
 
-if (!function_exists('itg_get_cart_contents')) {
+if (!function_exists('itfreegift_get_cart_contents')) {
     /**
      * Check if the resource is array.
      *
      * @return bool
      */
-    function itg_get_cart_contents()
+    function itfreegift_get_cart_contents()
     {
         if (! is_object(WC()->cart)) {
             return '';

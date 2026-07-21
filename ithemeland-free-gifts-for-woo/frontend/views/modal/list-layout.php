@@ -1,3 +1,8 @@
+<?php
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+?>
 <div id="wgb-modal" class="wgb-popup wgb-popup-list">
     <div class="wgb-popup-loading">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40px" height="40px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">

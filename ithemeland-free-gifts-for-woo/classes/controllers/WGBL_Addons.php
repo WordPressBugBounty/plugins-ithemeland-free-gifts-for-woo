@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\controllers;
+namespace ITFreeGift\classes\controllers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\presenters\addons\Addons_Presenter;
+use ITFreeGift\classes\presenters\addons\Addons_Presenter;
 
 class WGBL_Addons
 {

@@ -1,5 +1,12 @@
 <?php
-function itg_check_quantity_gift_in_session($session_content, $get_cart_item_quantities_gift_stock = '')
+
+use ITFreeGift\classes\repositories\Setting;
+
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+
+function itfreegift_check_quantity_gift_in_session($session_content, $get_cart_item_quantities_gift_stock = '')
 {
     $count_gift         = 0;
     $subtotal_price         = 0;
@@ -38,8 +45,8 @@ function itg_check_quantity_gift_in_session($session_content, $get_cart_item_qua
     return $count_infoa;
 }
 
-if (!function_exists('itg_get_cart_item_stock_quantities')) {
-    function itg_get_cart_item_stock_quantities($item_cart)
+if (!function_exists('itfreegift_get_cart_item_stock_quantities')) {
+    function itfreegift_get_cart_item_stock_quantities($item_cart)
     {
         $quantities = array();
         foreach ($item_cart as $cart_item_key => $values) {
@@ -50,8 +57,9 @@ if (!function_exists('itg_get_cart_item_stock_quantities')) {
         return $quantities;
     }
 }
-if (!function_exists('itg_get_cart_items_gift_quantities')) {
-    function itg_get_cart_items_gift_quantities()
+
+if (!function_exists('itfreegift_get_cart_items_gift_quantities')) {
+    function itfreegift_get_cart_items_gift_quantities()
     {
         if (!is_object(WC()->cart)) {
             return '';
@@ -70,9 +78,9 @@ if (!function_exists('itg_get_cart_items_gift_quantities')) {
     }
 }
 
-if (!function_exists('deprecated_itg_quantities_gift_stock')) {
+if (!function_exists('itfreegift_deprecated_quantities_gift_stock')) {
 
-    function deprecated_itg_quantities_gift_stock($product, $product_qty_in_cart, $gift_id, $product_type, $settings, $item_hover, $pw_number_gift_allowed, $rule_id, $count_info, $some_gift)
+    function itfreegift_deprecated_quantities_gift_stock($product, $product_qty_in_cart, $gift_id, $product_type, $settings, $item_hover, $pw_number_gift_allowed, $rule_id, $count_info, $some_gift)
     {
         $text_stock_qty = '';
         $stock_status = '';
@@ -87,7 +95,7 @@ if (!function_exists('deprecated_itg_quantities_gift_stock')) {
             $stock_status = 'out_of_stock';
         } else {
 
-            $get_cart_item_quantities_gift_stock = itg_get_cart_items_gift_quantities();
+            $get_cart_item_quantities_gift_stock = itfreegift_get_cart_items_gift_quantities();
 
             $count_gift_in_gift = isset($get_cart_item_quantities_gift_stock[$gift_id]) ? $get_cart_item_quantities_gift_stock[$gift_id] : 0;
 
@@ -136,7 +144,7 @@ if (!function_exists('deprecated_itg_quantities_gift_stock')) {
         }
         /*else{
 			$qty='unlimited';
-			$count_product_gift_in_cart_as_gift = itg_get_cart_items_gift_quantities();
+			$count_product_gift_in_cart_as_gift = itfreegift_get_cart_items_gift_quantities();
 			$required_stock_in_cart_gift = isset($count_product_gift_in_cart_as_gift[$gift_id]) ? $count_product_gift_in_cart_as_gift[$gift_id] : 0;
 			$qty = $pw_number_gift_allowed - $required_stock_in_cart_gift;	
 			
@@ -160,10 +168,9 @@ if (!function_exists('deprecated_itg_quantities_gift_stock')) {
     }
 }
 
-function itg_get_settings()
+function itfreegift_get_settings()
 {
-
-    $settings = wgb\classes\repositories\Setting::get_instance();
+    $settings = Setting::get_instance();
     $settings = $settings->get();
 
     $settings['position']                             = isset($settings['position']) ? $settings['position'] : 'bottom_cart';
@@ -192,8 +199,8 @@ function itg_get_settings()
     return $settings;
 }
 
-if (!function_exists('itg_render_product_image')) {
-    function itg_render_product_image($product, $size = 'woocommerce_thumbnail', $echo = true)
+if (!function_exists('itfreegift_render_product_image')) {
+    function itfreegift_render_product_image($product, $size = 'woocommerce_thumbnail', $echo = true)
     {
 
         if ($echo) {
@@ -205,7 +212,7 @@ if (!function_exists('itg_render_product_image')) {
         /* For Duplicate Image
 		<?php
 		if ( has_post_thumbnail( $post-&gt;ID) ) {		
-			$product_image_url = wp_get_attachment_url( get_post_thumbnail_id( $gift_product[ 'product_id' ]) );
+			$product_image_url = wp_get_attachment_url( get_post_thumbnail_id( $itfreegift_gift_product[ 'product_id' ]) );
 		}
 		 ?>
 		<img decoding="async" width="293" height="291" src="<?php echo  $product_image_url; ?>" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail ls-is-cached lazyloaded">		
@@ -213,8 +220,8 @@ if (!function_exists('itg_render_product_image')) {
     }
 }
 
-if (!function_exists('itg_render_title_product_gift')) {
-    function itg_render_title_product_gift($title, $gift_id, $settings, $echo = true)
+if (!function_exists('itfreegift_render_title_product_gift')) {
+    function itfreegift_render_title_product_gift($title, $gift_id, $settings, $echo = true)
     {
         $return = '';
         $return = '<a href="' . get_permalink($gift_id) . '">' . sprintf("%s", $title) . '</a>';
@@ -227,8 +234,8 @@ if (!function_exists('itg_render_title_product_gift')) {
     }
 }
 
-if (!function_exists('itg_render_product_name')) {
-    function itg_render_product_name($product, $settings, $echo = true)
+if (!function_exists('itfreegift_render_product_name')) {
+    function itfreegift_render_product_name($product, $settings, $echo = true)
     {
         if (!is_object($product))
             return;
@@ -247,7 +254,7 @@ if (!function_exists('itg_render_product_name')) {
 
         $product_name = '<a href="' . get_permalink($product->get_id()) . '" title="' . esc_attr($full_name) . '">' . esc_html($product_name) . '</a>';
 
-        $product_name = apply_filters('itg_gift_product_name', $product_name, $product);
+        $product_name = apply_filters('itfreegift_gift_product_name', $product_name, $product);
 
         if ($echo) {
             echo wp_kses_post($product_name);
@@ -257,14 +264,14 @@ if (!function_exists('itg_render_product_name')) {
     }
 }
 
-if (!function_exists('itg_check_gift_available')) {
-    function itg_check_gift_available($show_gift_item_for_cart, $gift_item_variable, $gift_rule_exclude)
+if (!function_exists('itfreegift_check_gift_available')) {
+    function itfreegift_check_gift_available($show_gift_item_for_cart, $gift_item_variable, $gift_rule_exclude)
     {
         $retun['av_gifts'] = [];
 
         $retrieved_group_input_value = WC()->cart->get_cart();
 
-        $count_info = itg_check_quantity_gift_in_session($retrieved_group_input_value);
+        $count_info = itfreegift_check_quantity_gift_in_session($retrieved_group_input_value);
 
         if (!isset($show_gift_item_for_cart['gifts'])) {
             return $retun;
@@ -296,14 +303,14 @@ if (!function_exists('itg_check_gift_available')) {
                 continue;
             }
             $product_type = $product->get_type();
-            if ($product_type == 'variable') {
+            if ($product_type == 'variable' && method_exists($product, 'get_visible_children')) {
                 $variation_ids = version_compare(
                     WC()->version,
                     '2.7.0',
                     '>='
                 ) ? $product->get_visible_children() : $product->get_children(true);
                 foreach ($variation_ids as $product_id) {
-                    $_product = wc_get_product($product_id);
+                    $itfreegift__product = wc_get_product($product_id);
                     $gift_id  = $gift['uid'] . '-' . $product_id;
                     //For exclude in select variations
                     if (isset($gift_rule_exclude[$gift['uid']]) && in_array(
@@ -313,19 +320,19 @@ if (!function_exists('itg_check_gift_available')) {
                         continue;
                     }
                     $item_hover = 'hovering';
-                    $flag_count = false;
+                    $itfreegift_flag_count = false;
 
                     if (in_array($gift['method'], array('buy_x_get_x_repeat',), true) && $gift['base_q'] == 'ind') {
 
                         if (array_key_exists($gift_item_key, $count_info['count_rule_product']) && $count_info['count_rule_product'][$gift_item_key]['q'] >= $pw_number_gift_allowed) {
-                            $flag_count = true;
+                            $itfreegift_flag_count = true;
                         }
                     } elseif (array_key_exists($gift['uid'], $count_info['count_rule_gift']) && $count_info['count_rule_gift'][$gift['uid']]['q'] >= $pw_number_gift_allowed) {
-                        $flag_count = true;
+                        $itfreegift_flag_count = true;
                     }
 
                     if (
-                        $flag_count ||
+                        $itfreegift_flag_count ||
                         (in_array($gift_id, $count_info['gifts_set']) && $gift['can_several_gift'] == 'no')
                         ||
                         (in_array($gift_id, $count_info['gifts_set']) && $gift_item_variable[$gift['uid']]['can_several_gift'] == 'no')
@@ -337,18 +344,18 @@ if (!function_exists('itg_check_gift_available')) {
                 }
             } //End Variable
             else {
-                $flag_count = false;
+                $itfreegift_flag_count = false;
                 if (in_array($gift['method'], array('buy_x_get_x_repeat',), true) && $gift['base_q'] == 'ind') {
 
                     if (array_key_exists($gift_item_key, $count_info['count_rule_product']) && $count_info['count_rule_product'][$gift_item_key]['q'] >= $pw_number_gift_allowed) {
-                        $flag_count = true;
+                        $itfreegift_flag_count = true;
                     }
                 } elseif (array_key_exists($gift['uid'], $count_info['count_rule_gift']) && $count_info['count_rule_gift'][$gift['uid']]['q'] >= $pw_number_gift_allowed) {
-                    $flag_count = true;
+                    $itfreegift_flag_count = true;
                 }
 
 
-                if ($flag_count || (in_array($gift_item_key, $count_info['gifts_set']) && $gift['can_several_gift'] == 'no')) {
+                if ($itfreegift_flag_count || (in_array($gift_item_key, $count_info['gifts_set']) && $gift['can_several_gift'] == 'no')) {
                     continue;
                     //$item_hover = 'disable-hover';
                 }
@@ -359,7 +366,7 @@ if (!function_exists('itg_check_gift_available')) {
     }
 }
 
-function it_get_cart_gift_contents()
+function itfreegift_get_cart_gift_contents()
 {
     if (!is_object(WC()->cart)) {
         return '';
@@ -376,32 +383,32 @@ function it_get_cart_gift_contents()
 }
 
 
-function it_sort_by_price($cart_item_a, $cart_item_b)
+function itfreegift_sort_by_price($cart_item_a, $cart_item_b)
 {
     return $cart_item_a['data']->get_price() > $cart_item_b['data']->get_price();
 }
 
-if (!function_exists('itg_get_template')) {
-    function itg_get_template($template_name, $args = array(), $path = '')
+if (!function_exists('itfreegift_get_template')) {
+    function itfreegift_get_template($template_name, $args = array(), $path = '')
     {
         //wc_get_template('/views/'.$template_name, $args, 'ithemeland-free-gifts-for-woo/', plugin_dir_path_wc_adv_gift );
         wc_get_template($template_name, $args, 'ithemeland-free-gifts-for-woo/', plugin_dir_path_wc_adv_gift . 'views/');
     }
 }
 
-if (!function_exists('itg_get_gift_products_data_multilevel')) {
-    function itg_get_gift_products_data_multilevel($args = array())
+if (!function_exists('itfreegift_get_gift_products_data_multilevel')) {
+    function itfreegift_get_gift_products_data_multilevel($args = array())
     {
         $rule_products = ['items' => [], 'settings' => $args['settings'], 'is_child' => $args['is_child']];
 
-        $quantity_in_session = itg_check_quantity_gift_in_session(WC()->cart->get_cart());
+        $quantity_in_session = itfreegift_check_quantity_gift_in_session(WC()->cart->get_cart());
 
-        $gift_quantity_in_cart = itg_get_cart_items_gift_quantities();
+        $gift_quantity_in_cart = itfreegift_get_cart_items_gift_quantities();
 
         foreach ($args['gifts_items_cart']['gifts'] as $gift_item_key => $gifts_items_cart) {
 
             $get_parent_id = $gifts_items_cart['item'];
-            $product = itg_get_product($get_parent_id);
+            $product = itfreegift_get_product($get_parent_id);
             //$product = get_product( $get_parent_id );
             //$type = WC_Product_Factory::get_product_type($get_parent_id);
             if (!$product) {
@@ -444,9 +451,9 @@ if (!function_exists('itg_get_gift_products_data_multilevel')) {
                     'all_gift_items' => $args['all_gift_items'],
                 ];
 
-                $stock_status = itg_get_product_stock_status($args_data);
+                $stock_status = itfreegift_get_product_stock_status($args_data);
 
-                if (!itg_check_is_array($eligible_product)) {
+                if (!itfreegift_check_is_array($eligible_product)) {
                     $eligible_product = array(
                         'parent_id' => $get_parent_id,
                         'product_id' => $get_product_id,
@@ -473,8 +480,8 @@ if (!function_exists('itg_get_gift_products_data_multilevel')) {
                     $flag_parent_status = true;
                 }
             }
-            if (itg_check_is_array($eligible_product)) {
-                if ($flag_parent_status && 'variable' == $product->get_type() && itg_check_is_array($eligible_product['variation_ids'])) {
+            if (itfreegift_check_is_array($eligible_product)) {
+                if ($flag_parent_status && 'variable' == $product->get_type() && itfreegift_check_is_array($eligible_product['variation_ids'])) {
                     $eligible_product['hide_add_to_cart'] = false;
                 }
 
@@ -483,7 +490,7 @@ if (!function_exists('itg_get_gift_products_data_multilevel')) {
         }
 
         if (!$args['multi_level'])
-            $rule_products = itg_get_gift_products_data_one_level($rule_products);
+            $rule_products = itfreegift_get_gift_products_data_one_level($rule_products);
 
         //echo '<pre>';print_r($rule_products);die;
 
@@ -491,25 +498,25 @@ if (!function_exists('itg_get_gift_products_data_multilevel')) {
     }
 }
 
-if (!function_exists('itg_get_gift_products_data_one_level')) {
-    function itg_get_gift_products_data_one_level($item_array)
+if (!function_exists('itfreegift_get_gift_products_data_one_level')) {
+    function itfreegift_get_gift_products_data_one_level($item_array)
     {
         $eligible_product = array();
         $rule_products = [];
-        foreach ($item_array['items'] as $key => $gift_product) {
+        foreach ($item_array['items'] as $key => $itfreegift_gift_product) {
             $eligible_product = array(
-                'product_id' => $gift_product['parent_id'],
-                'rule_id' => $gift_product['rule_id'],
+                'product_id' => $itfreegift_gift_product['parent_id'],
+                'rule_id' => $itfreegift_gift_product['rule_id'],
                 'add_or_select' => 'add',
-                'stock_qty' => $gift_product['stock_qty'],
-                'hide_add_to_cart' => $gift_product['hide_add_to_cart'],
+                'stock_qty' => $itfreegift_gift_product['stock_qty'],
+                'hide_add_to_cart' => $itfreegift_gift_product['hide_add_to_cart'],
             );
-            if (itg_check_is_array($gift_product['variation_ids'])) {
+            if (itfreegift_check_is_array($itfreegift_gift_product['variation_ids'])) {
                 if ($item_array['is_child']) {
-                    foreach ($gift_product['variation_ids'] as $variation_id) {
+                    foreach ($itfreegift_gift_product['variation_ids'] as $variation_id) {
                         $eligible_product = array(
                             'product_id' => $variation_id['id'],
-                            'rule_id' => $gift_product['rule_id'],
+                            'rule_id' => $itfreegift_gift_product['rule_id'],
                             'add_or_select' => 'add',
                             'stock_qty' => $variation_id['stock_qty'],
                             'hide_add_to_cart' => $variation_id['hide_add_to_cart'],
@@ -531,21 +538,21 @@ if (!function_exists('itg_get_gift_products_data_one_level')) {
     }
 }
 
-if (!function_exists('itg_get_product')) {
+if (!function_exists('itfreegift_get_product')) {
 
     /**
      * Get the product object by product id.
      *
      * @return object/bool
      */
-    function itg_get_product($product_id)
+    function itfreegift_get_product($product_id)
     {
         /**
          * This hook is used to validate the product.
          * 
          * @since 2.0.0
          */
-        if (!apply_filters('itg_is_valid_product', true, $product_id)) {
+        if (!apply_filters('itfreegift_is_valid_product', true, $product_id)) {
             return false;
         }
         /**
@@ -553,24 +560,24 @@ if (!function_exists('itg_get_product')) {
          * 
          * @since 2.0.0
          */
-        return apply_filters('itg_get_product', wc_get_product($product_id), $product_id);
+        return apply_filters('itfreegift_get_product', wc_get_product($product_id), $product_id);
     }
 }
 
-if (!function_exists('itg_check_is_array')) {
+if (!function_exists('itfreegift_check_is_array')) {
     /**
      * Check if the resource is array.
      *
      * @return bool
      */
-    function itg_check_is_array($data)
+    function itfreegift_check_is_array($data)
     {
         return (is_array($data) && !empty($data));
     }
 }
 
-if (!function_exists('itg_get_product_stock_status')) {
-    function itg_get_product_stock_status($args_data)
+if (!function_exists('itfreegift_get_product_stock_status')) {
+    function itfreegift_get_product_stock_status($args_data)
     {
         $qty = 0;
         $hide_add_to_cart     = false;
@@ -580,7 +587,7 @@ if (!function_exists('itg_get_product_stock_status')) {
         $quantities_in_session = $args_data['quantities_in_session'];
         $product_gift_allowed = $args_data['gift_allowed'];
 
-        $product = itg_get_product($product_id);
+        $product = itfreegift_get_product($product_id);
         $gift_id = $rule['uid'] . '-' . $product_id;
 
         //Return if stock is out of stock.
@@ -607,7 +614,7 @@ if (!function_exists('itg_get_product_stock_status')) {
         if (!$product->managing_stock() || $product->is_on_backorder()) {
             $qty =  $product_gift_allowed - $any_rule_gift_count_in_cart;
         } else {
-            $product_count_in_cart = itg_get_product_count_in_cart($product_id);
+            $product_count_in_cart = itfreegift_get_product_count_in_cart($product_id);
             $stock_mines_in_cart = $get_stock_quantity - $product_count_in_cart;
 
             if ($product_gift_allowed > $stock_mines_in_cart) {
@@ -633,10 +640,10 @@ if (!function_exists('itg_get_product_stock_status')) {
     }
 }
 
-if (!function_exists('itg_render_stock_status')) {
-    function itg_render_stock_status($stock_qty, $settings, $gift_product, $echo = true)
+if (!function_exists('itfreegift_render_stock_status')) {
+    function itfreegift_render_stock_status($stock_qty, $settings, $itfreegift_gift_product, $echo = true)
     {
-        if ($gift_product['add_or_select'] == 'select') {
+        if ($itfreegift_gift_product['add_or_select'] == 'select') {
             $stack_status =  esc_html__('Available Gift', 'ithemeland-free-gifts-for-woo');
         } else if ($stock_qty <= 0) {
             $stack_status = esc_html__('Gift Unavailable', 'ithemeland-free-gifts-for-woo');
@@ -652,14 +659,14 @@ if (!function_exists('itg_render_stock_status')) {
     }
 }
 
-if (!function_exists('itg_render_price_gift')) {
-    function itg_render_price_gift($product, $gift_product, $echo = true)
+if (!function_exists('itfreegift_render_price_gift')) {
+    function itfreegift_render_price_gift($product, $itfreegift_gift_product, $echo = true)
     {
 
         if (!is_object($product))
             return;
 
-        //if ( itg_check_is_array( $gift_product[ 'variation_ids' ] ))
+        //if ( itfreegift_check_is_array( $itfreegift_gift_product[ 'variation_ids' ] ))
         //			return ;
 
         $text_temp = '';
@@ -682,61 +689,59 @@ if (!function_exists('itg_render_price_gift')) {
     }
 }
 
-if (!function_exists('itg_get_removed_automatic_free_gift_products_from_session')) {
+if (!function_exists('itfreegift_get_removed_automatic_free_gift_products_from_session')) {
 
     /**
      * Get removed automatic free gift products from session
      * @since 2.1.1
      */
-    function itg_get_removed_automatic_free_gift_products_from_session()
+    function itfreegift_get_removed_automatic_free_gift_products_from_session()
     {
         return array_filter(WC()->session->get('itg_removed_automatic_free_gift_products', array()));
     }
 }
 
-if (!function_exists('itg_unset_removed_automatic_free_gift_products_from_session')) {
+if (!function_exists('itfreegift_unset_removed_automatic_free_gift_products_from_session')) {
 
     /**
      * @since 2.1.1
      */
-    function itg_unset_removed_automatic_free_gift_products_from_session()
+    function itfreegift_unset_removed_automatic_free_gift_products_from_session()
     {
         WC()->session->__unset('itg_removed_automatic_free_gift_products');
     }
 }
 
-if (!function_exists('itg_get_current_applicable_free_gift_rules_from_session')) {
+if (!function_exists('itfreegift_get_current_applicable_free_gift_rules_from_session')) {
 
     /**
      * @since 2.1.1
      */
-    function itg_get_current_applicable_free_gift_rules_from_session()
+    function itfreegift_get_current_applicable_free_gift_rules_from_session()
     {
         return array_filter(WC()->session->get('itg_free_gift_current_applicable_rules', array()));
     }
 }
 
-
-
-if (!function_exists('validate_automatic_gift_product_before_add_to_cart')) {
+if (!function_exists('itfreegift_validate_automatic_gift_product_before_add_to_cart')) {
 
     /**
      * Check automatic free gift products before Add to cart
      * @since 2.1.1
      */
-    function validate_automatic_gift_product_before_add_to_cart($gift_product_id, $rule_id)
+    function itfreegift_validate_automatic_gift_product_before_add_to_cart($itfreegift_gift_product_id, $rule_id)
     {
         return true;
     }
 }
 
-if (!function_exists('itg_get_gift_product_add_to_cart_classes')) {
+if (!function_exists('itfreegift_get_gift_product_add_to_cart_classes')) {
     /**
      * Get the gift product add to cart classes.
      *
      *  @return array
      */
-    function itg_get_gift_product_add_to_cart_classes($settings)
+    function itfreegift_get_gift_product_add_to_cart_classes($settings)
     {
 
         $classes = array('wgb-add-gift-btn');
@@ -749,40 +754,40 @@ if (!function_exists('itg_get_gift_product_add_to_cart_classes')) {
          * 
          * @since 1.0
          */
-        return apply_filters('itg_gift_product_add_to_cart_classes', $classes);
+        return apply_filters('itfreegift_gift_product_add_to_cart_classes', $classes);
     }
 }
 
-if (!function_exists('itg_get_gift_product_add_to_cart_url')) {
+if (!function_exists('itfreegift_get_gift_product_add_to_cart_url')) {
     /**
      * Get the gift product add to cart URL.
      *
      *  @return array
      */
-    function itg_get_gift_product_add_to_cart_url($gift_product, $permalink = '')
+    function itfreegift_get_gift_product_add_to_cart_url($itfreegift_gift_product, $permalink = '')
     {
 
-        $settings = itg_get_settings();
+        $settings = itfreegift_get_settings();
 
-        if ('true' == $settings['enable_ajax_add_to_cart'] || itg_is_block_checkout() || itg_is_block_cart()) {
+        if ('true' == $settings['enable_ajax_add_to_cart'] || itfreegift_is_block_checkout() || itfreegift_is_block_cart()) {
             $url = '#';
         } else {
             $args = array(
-                'pw_add_gift' => $gift_product['gift_id'],
-                'itg_rule_id' => $gift_product['rule_id'],
+                'pw_add_gift' => $itfreegift_gift_product['gift_id'],
+                'itg_rule_id' => $itfreegift_gift_product['rule_id'],
             );
 
-            $permalink = apply_filters('itgift_permalink_add_to_cart_url', $permalink);
+            $permalink = apply_filters('itfreegift_permalink_add_to_cart_url', $permalink);
 
             $url = esc_url(add_query_arg($args, $permalink));
         }
 
-        return apply_filters('itgift_product_add_to_cart_url', $url);
+        return apply_filters('itfreegift_product_add_to_cart_url', $url);
     }
 }
 
 
-if (!function_exists('itg_is_block_cart')) {
+if (!function_exists('itfreegift_is_block_cart')) {
 
     /**
      * Is a block cart page?.
@@ -790,7 +795,7 @@ if (!function_exists('itg_is_block_cart')) {
      * @since 2.0.0
      * @return boolean
      */
-    function itg_is_block_cart()
+    function itfreegift_is_block_cart()
     {
         static $is_block_cart;
         if (isset($is_block_cart)) {
@@ -814,7 +819,7 @@ if (!function_exists('itg_is_block_cart')) {
     }
 }
 
-if (!function_exists('itg_is_block_checkout')) {
+if (!function_exists('itfreegift_is_block_checkout')) {
 
     /**
      * Is a block checkout page?.
@@ -822,7 +827,7 @@ if (!function_exists('itg_is_block_checkout')) {
      * @since 2.0.0
      * @return boolean
      */
-    function itg_is_block_checkout()
+    function itfreegift_is_block_checkout()
     {
         static $is_block_checkout;
         if (isset($is_block_checkout)) {
@@ -846,8 +851,8 @@ if (!function_exists('itg_is_block_checkout')) {
     }
 }
 
-if (!function_exists('wgb_get_active_layout_popup_items')) {
-    function wgb_get_active_layout_popup_items($layout = 'carousel')
+if (!function_exists('itfreegift_get_active_layout_popup_items')) {
+    function itfreegift_get_active_layout_popup_items($layout = 'carousel')
     {
         switch ($layout) {
             case 'carousel':
@@ -864,8 +869,8 @@ if (!function_exists('wgb_get_active_layout_popup_items')) {
     }
 }
 
-if (!function_exists('wgb_is_cart_page')) {
-    function wgb_is_cart_page()
+if (!function_exists('itfreegift_is_cart_page')) {
+    function itfreegift_is_cart_page()
     {
         if (is_cart()) {
             return true;
@@ -878,8 +883,8 @@ if (!function_exists('wgb_is_cart_page')) {
     }
 }
 
-if (!function_exists('wgb_is_checkout_page')) {
-    function wgb_is_checkout_page()
+if (!function_exists('itfreegift_is_checkout_page')) {
+    function itfreegift_is_checkout_page()
     {
         if (is_checkout()) {
             return true;
@@ -893,8 +898,8 @@ if (!function_exists('wgb_is_checkout_page')) {
     }
 }
 
-if (!function_exists('wgb_is_block_cart')) {
-    function wgb_is_block_cart()
+if (!function_exists('itfreegift_is_block_cart')) {
+    function itfreegift_is_block_cart()
     {
         static $is_block_cart;
         if (isset($is_block_cart)) {
@@ -917,8 +922,8 @@ if (!function_exists('wgb_is_block_cart')) {
     }
 }
 
-if (!function_exists('wgb_is_block_checkout')) {
-    function wgb_is_block_checkout()
+if (!function_exists('itfreegift_is_block_checkout')) {
+    function itfreegift_is_block_checkout()
     {
         static $is_block_checkout;
         if (isset($is_block_checkout)) {
@@ -940,8 +945,8 @@ if (!function_exists('wgb_is_block_checkout')) {
         return $is_block_checkout;
     }
 }
-if (!function_exists('itg_get_rate_instance_id')) {
-    function itg_get_rate_instance_id($rate)
+if (!function_exists('itfreegift_get_rate_instance_id')) {
+    function itfreegift_get_rate_instance_id($rate)
     {
         $instance_id = false;
 
@@ -959,13 +964,14 @@ if (!function_exists('itg_get_rate_instance_id')) {
             }
         }
 
-        $instance_id = apply_filters('itg_shipping_get_instance_id', $instance_id, $rate);
+        $instance_id = apply_filters('itfreegift_shipping_get_instance_id', $instance_id, $rate);
 
         return $instance_id;
     }
 }
-if (!function_exists('itg_shipping_method_selected')) {
-    function itg_shipping_method_selected($instance_id, $shipping_rules)
+
+if (!function_exists('itfreegift_shipping_method_selected')) {
+    function itfreegift_shipping_method_selected($instance_id, $shipping_rules)
     {
         $shipping_method_ids = isset($shipping_rules) ? (array) $shipping_rules : [];
 
@@ -980,14 +986,14 @@ if (!function_exists('itg_shipping_method_selected')) {
     }
 }
 
-if (!function_exists('itg_get_product_count_in_cart')) {
+if (!function_exists('itfreegift_get_product_count_in_cart')) {
 
     /**
      * Get the product count in the cart.
      *
      * @return int
      */
-    function itg_get_product_count_in_cart($product_id)
+    function itfreegift_get_product_count_in_cart($product_id)
     {
         $product_count = 0;
         if (!is_object(WC()->cart)) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\languages\handlers;
+namespace ITFreeGift\classes\languages\handlers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\languages\Handler_Interface;
+use ITFreeGift\classes\languages\Handler_Interface;
 
 class WGBL_Polylang_Handler implements Handler_Interface
 {

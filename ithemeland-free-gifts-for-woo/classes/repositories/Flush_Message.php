@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\classes\repositories;
+namespace ITFreeGift\classes\repositories;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 

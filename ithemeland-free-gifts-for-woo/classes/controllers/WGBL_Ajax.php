@@ -1,14 +1,14 @@
 <?php
 
-namespace wgb\classes\controllers;
+namespace ITFreeGift\classes\controllers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\helpers\Sanitizer;
-use wgb\classes\presenters\reports\Report_Presenter;
-use wgb\classes\repositories\Product;
-use wgb\classes\repositories\Rule;
-use wgb\classes\repositories\User;
+use ITFreeGift\classes\helpers\Sanitizer;
+use ITFreeGift\classes\presenters\reports\Report_Presenter;
+use ITFreeGift\classes\repositories\Product;
+use ITFreeGift\classes\repositories\Rule;
+use ITFreeGift\classes\repositories\User;
 
 class WGBL_Ajax
 {
@@ -543,13 +543,13 @@ class WGBL_Ajax
             return false;
         }
 
-        $rule_item = [
+        $itfreegift_rule_item = [
             'rule_name' => 'New Rule',
             'uid' => sanitize_text_field(wp_unslash($_POST['uid'])),
             'method' => 'simple',
             'status' => 'enable',
         ];
-        $rule_id = (!empty($_POST['rule_id'])) ? sanitize_text_field(wp_unslash($_POST['rule_id'])) : '';
+        $itfreegift_rule_id = (!empty($_POST['rule_id'])) ? sanitize_text_field(wp_unslash($_POST['rule_id'])) : '';
 
         $rule_repository = Rule::get_instance();
         $rule_methods = $rule_repository->get_rule_methods();
@@ -574,13 +574,13 @@ class WGBL_Ajax
             return false;
         }
 
-        $condition_item = [
+        $itfreegift_condition_item = [
             'type' => 'date',
             'method_option' => 'from',
             'value' => '',
         ];
-        $condition_id = sanitize_text_field(wp_unslash($_POST['condition_id']));
-        $rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
+        $itfreegift_condition_id = sanitize_text_field(wp_unslash($_POST['condition_id']));
+        $itfreegift_rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
 
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/conditions/row.php';
@@ -602,13 +602,13 @@ class WGBL_Ajax
             return false;
         }
 
-        $condition_item = [
+        $itfreegift_condition_item = [
             'type' => sanitize_text_field(wp_unslash($_POST['condition_type'])),
             'method_option' => '',
             'value' => '',
         ];
-        $condition_id = sanitize_text_field(wp_unslash($_POST['condition_id']));
-        $rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
+        $itfreegift_condition_id = sanitize_text_field(wp_unslash($_POST['condition_id']));
+        $itfreegift_rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
 
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/conditions/extra-field.php';
@@ -630,13 +630,13 @@ class WGBL_Ajax
             return false;
         }
 
-        $product_buy_item = [
+        $itfreegift_product_buy_item = [
             'type' => 'product',
             'method_option' => 'in_list',
             'value' => '',
         ];
         $product_buy_id = sanitize_text_field(wp_unslash($_POST['product_buy_id']));
-        $rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
+        $itfreegift_rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
 
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/product-buy/row.php';
@@ -658,13 +658,13 @@ class WGBL_Ajax
             return false;
         }
 
-        $product_buy_item = [
+        $itfreegift_product_buy_item = [
             'type' => sanitize_text_field(wp_unslash($_POST['product_buy_type'])),
             'method_option' => '',
             'value' => '',
         ];
         $product_buy_id = sanitize_text_field(wp_unslash($_POST['product_buy_id']));
-        $rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
+        $itfreegift_rule_id = sanitize_text_field(wp_unslash($_POST['rule_id']));
 
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/product-buy/extra-field.php';

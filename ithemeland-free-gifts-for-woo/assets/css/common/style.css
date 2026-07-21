@@ -65,6 +65,15 @@ textarea {
     font-size: 1em !important;
 }
 
+select,
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="number"] {
+    min-height: 28px !important;
+    line-height: 1 !important;
+}
+
 #dolly,
 .notice,
 .update-nag {

@@ -18,7 +18,7 @@ class iThemeland_enqueue_css_js
 
     public function woo_advanced_gift_js_css()
     {
-        $this->settings = itg_get_settings();
+        $this->settings = itfreegift_get_settings();
 
         if (is_cart() || is_checkout() || is_singular() || is_shop()) {
             wp_register_style('it-gift-owl-carousel-style', plugin_dir_url_wc_advanced_gift . 'assets/css/owl-carousel/owl.carousel.min.css', [], WGBL_VERSION);
@@ -65,10 +65,10 @@ class iThemeland_enqueue_css_js
             }*/
             //$permalink = get_permalink();
 
-            $permalink = apply_filters('itg_redirect_after_click_gift_item',  get_permalink());
+            $permalink = apply_filters('itfreegift_redirect_after_click_gift_item',  get_permalink());
             $add_to_cart_link = esc_url(add_query_arg(array('pw_add_gift' => '%s', 'qty' => '%q'), $permalink));
 
-            $select_gift = get_option('itg_localization_select_gift', 'Select Gift');
+            $itfreegift_select_gift = get_option('itg_localization_select_gift', 'Select Gift');
 
             wp_register_script('pw-gift-add-jquery-adv', plugin_dir_url_wc_advanced_gift . 'assets/js/custom-jquery-gift.js', array('jquery', 'owl-carousel', 'react', 'wc-blocks-checkout', 'wc-settings', 'wp-data', 'wp-element'), WGBL_VERSION, true); //phpcs:ignore
             wp_localize_script('pw-gift-add-jquery-adv', 'pw_wc_gift_adv_ajax', array(
@@ -85,11 +85,11 @@ class iThemeland_enqueue_css_js
                 'language_previous'                    => esc_html__('previous', 'ithemeland-free-gifts-for-woo'),
                 'language_next'                        => esc_html__('next', 'ithemeland-free-gifts-for-woo'),
                 'language_last'                        => esc_html__('last', 'ithemeland-free-gifts-for-woo'),
-                'language_select_gift'                => $select_gift,
-                'language_select_your_gift'                => $select_gift,
+                'language_select_gift'                => $itfreegift_select_gift,
+                'language_select_your_gift'                => $itfreegift_select_gift,
                 'add_gift_ajax_manual'                => $this->settings['enable_ajax_add_to_cart'],
-                'is_block_cart' => wgb_is_block_cart(),
-                'is_block_checkout' => wgb_is_block_checkout(),
+                'is_block_cart' => itfreegift_is_block_cart(),
+                'is_block_checkout' => itfreegift_is_block_checkout(),
                 'loop' => $this->settings['carousel']['loop'],
                 'rtl' => $this->settings['carousel']['rtl'],
                 'dots' => $this->settings['carousel']['dots'],

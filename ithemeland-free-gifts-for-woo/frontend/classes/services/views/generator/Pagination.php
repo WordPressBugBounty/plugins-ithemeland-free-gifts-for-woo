@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\frontend\classes\services\views\generator;
+namespace ITFreeGift\frontend\classes\services\views\generator;
 
 if (!defined('ABSPATH')) {
     exit;

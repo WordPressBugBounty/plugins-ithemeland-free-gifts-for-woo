@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\classes\api;
+namespace ITFreeGift\classes\api;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
@@ -22,7 +22,7 @@ class Api_Handler
 
     public function register_rest_routes()
     {
-        $controllers = apply_filters('wgb_api_controllers', $this->get_controllers());
+        $controllers = apply_filters('itfreegift_api_controllers', $this->get_controllers());
 
         if (!empty($controllers)) {
             foreach ($controllers as $controller) {

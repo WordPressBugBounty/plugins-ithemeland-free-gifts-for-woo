@@ -1,8 +1,8 @@
 <?php
 
-namespace wgb\classes\repositories;
+namespace ITFreeGift\classes\repositories;
 
-use wgb\classes\helpers\Sanitizer;
+use ITFreeGift\classes\helpers\Sanitizer;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 

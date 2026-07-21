@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\repositories;
+namespace ITFreeGift\classes\repositories;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\helpers\Sanitizer;
+use ITFreeGift\classes\helpers\Sanitizer;
 
 class OfferRule
 {
@@ -73,7 +73,7 @@ class OfferRule
             });
         }
 
-        $this->offer_bar_rules = apply_filters('wgb_active_offer_bar_rules', $this->offer_bar_rules);
+        $this->offer_bar_rules = apply_filters('itfreegift_active_offer_bar_rules', $this->offer_bar_rules);
         return $this->offer_bar_rules;
     }
 }

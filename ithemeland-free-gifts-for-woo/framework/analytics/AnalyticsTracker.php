@@ -1,8 +1,8 @@
 <?php
 
-namespace wgb\framework\analytics;
+namespace ITFreeGift\framework\analytics;
 
-use wgb\framework\onboarding\Onboarding;
+use ITFreeGift\framework\onboarding\Onboarding;
 
 defined('ABSPATH') || exit();
 

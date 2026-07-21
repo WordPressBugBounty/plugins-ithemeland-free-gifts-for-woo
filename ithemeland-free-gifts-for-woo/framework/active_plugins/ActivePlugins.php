@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\framework\active_plugins;
+namespace ITFreeGift\framework\active_plugins;
 
 defined('ABSPATH') || exit();
 

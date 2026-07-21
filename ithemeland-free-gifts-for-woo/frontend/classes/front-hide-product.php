@@ -1,10 +1,11 @@
 <?php
 
-use wgb\classes\repositories\Rule;
-
 /**
  *  Handles the frontend.
  * */
+
+use ITFreeGift\classes\repositories\Rule;
+
 if (! defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -180,7 +181,7 @@ if (! class_exists('It_front_hide_gift')) {
 
         public static function get_all_gift_hide()
         {
-            $rules = wgb\classes\repositories\Rule::get_instance();
+            $rules = Rule::get_instance();
             $rules_item = $rules->get();
             $final_arrray = [];
             $array_merge = [];

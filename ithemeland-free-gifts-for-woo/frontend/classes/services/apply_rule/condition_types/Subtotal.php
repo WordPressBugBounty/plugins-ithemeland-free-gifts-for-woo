@@ -1,8 +1,8 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule\condition_types;
+namespace ITFreeGift\frontend\classes\services\apply_rule\condition_types;
 
-use wgb\frontend\classes\services\apply_rule\helpers\RuleHandler;
+use ITFreeGift\frontend\classes\services\apply_rule\helpers\RuleHandler;
 
 class Subtotal
 {
@@ -61,7 +61,7 @@ class Subtotal
     ): void {
 
         // apply filters to the cart subtotal based on the rule values
-        $cart_subtotal = apply_filters('wgb_rule_appending_cart_subtotal', $cart_subtotal, $rule_values);
+        $cart_subtotal = apply_filters('itfreegift_rule_appending_cart_subtotal', $cart_subtotal, $rule_values);
         // Check if the condition is met
         if (self::checkCondition($cart_subtotal, $rule_values)) {
             // Calculate the quantity of gifts

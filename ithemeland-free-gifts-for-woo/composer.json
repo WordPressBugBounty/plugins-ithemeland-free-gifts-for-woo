@@ -10,10 +10,10 @@
     "version": "1.0.0",
     "autoload": {
         "psr-4": {
-            "wgb\\classes\\": "classes/",
-            "wgb\\blocks\\": "blocks/",
-            "wgb\\framework\\": "framework/",
-            "wgb\\frontend\\": "frontend/"
+            "ITFreeGift\\classes\\": "classes/",
+            "ITFreeGift\\blocks\\": "blocks/",
+            "ITFreeGift\\framework\\": "framework/",
+            "ITFreeGift\\frontend\\": "frontend/"
             
         }
     },

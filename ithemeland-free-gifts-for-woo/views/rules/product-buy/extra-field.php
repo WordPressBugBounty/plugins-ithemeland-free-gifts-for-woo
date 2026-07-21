@@ -1,21 +1,21 @@
 <?php
 if (!defined('ABSPATH')) exit; // Exit if accessed directly 
 
-use wgb\classes\helpers\Sanitizer;
-use wgb\classes\services\render\Product_Buy_Render;
+use ITFreeGift\classes\helpers\Sanitizer;
+use ITFreeGift\classes\services\render\Product_Buy_Render;
 
-$html = '';
+$itfreegift_html = '';
 
-if (!empty($product_buy_item) && !empty($product_buy_item['type']) && isset($product_buy_id) && isset($rule_id)) {
-    $product_buy_render_service = Product_Buy_Render::get_instance();
-    $product_buy_render_service->set_data([
-        'product_buy_item' => $product_buy_item,
+if (!empty($itfreegift_product_buy_item) && !empty($itfreegift_product_buy_item['type']) && isset($product_buy_id) && isset($itfreegift_rule_id)) {
+    $itfreegift_product_buy_render_service = Product_Buy_Render::get_instance();
+    $itfreegift_product_buy_render_service->set_data([
+        'product_buy_item' => $itfreegift_product_buy_item,
         'product_buy_id' => $product_buy_id,
-        'rule_id' => $rule_id,
+        'rule_id' => $itfreegift_rule_id,
         'option_values' => (!empty($option_values) && is_array($option_values)) ? $option_values : [],
-        'field_status' => ((!empty($rule_item)) && in_array($rule_item['method'], ['simple', 'subtotal', 'subtotal_repeat', 'get_group_of_products'])) ? 'disabled' : ''
+        'field_status' => ((!empty($itfreegift_rule_item)) && in_array($itfreegift_rule_item['method'], ['simple', 'subtotal', 'subtotal_repeat', 'get_group_of_products'])) ? 'disabled' : ''
     ]);
-    $html = $product_buy_render_service->extra_fields_render();
+    $itfreegift_html = $itfreegift_product_buy_render_service->extra_fields_render();
 }
 
-echo wp_kses($html, Sanitizer::allowed_html());
+echo wp_kses($itfreegift_html, Sanitizer::allowed_html());

@@ -1,3 +1,8 @@
+<?php
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
+?>
 <div class="itg_shortcode_gift_products_wrapper">
     <div class="wgb-mt30 wgb-mb30">
         <h3>Our Gift</h3>

@@ -18,7 +18,7 @@ if (! defined('ABSPATH')) {
      * 
      * @since 2.0.0
      */
-    do_action('itg_before_shortcode_gift_products_content');
+    do_action('itfreegift_before_shortcode_gift_products_content');
 
     if ($data_args) {
         switch ($template) {
@@ -26,13 +26,13 @@ if (! defined('ABSPATH')) {
                 wp_enqueue_style('it-gift-datatables-style');
                 wp_enqueue_script('it-gift-datatables-js');
 
-                $template_file = 'datatable-layout.php';
+                $itfreegift_template_file = 'datatable-layout.php';
                 break;
 
             case 'grid':
                 wp_enqueue_script('it-gift-grid-jquery');
 
-                $template_file = 'grid-layout.php';
+                $itfreegift_template_file = 'grid-layout.php';
                 break;
 
             case 'carousel':
@@ -40,18 +40,18 @@ if (! defined('ABSPATH')) {
                 wp_enqueue_style('it-gift-owl-carousel-style');
                 wp_enqueue_script('it-gift-owl-carousel-jquery');
 
-                $template_file = 'carousel-layout.php';
+                $itfreegift_template_file = 'carousel-layout.php';
                 break;
 
             case 'dropdown':
                 wp_enqueue_style('it-gift-dropdown-css');
                 wp_enqueue_script('it-gift-dropdown-js');
 
-                $template_file = 'dropdown-layout.php';
+                $itfreegift_template_file = 'dropdown-layout.php';
                 break;
         }
 
-        itg_get_template($template_file, $data_args);
+        itfreegift_get_template($itfreegift_template_file, $data_args);
     } else {
         echo wp_kses_post(get_option('itg_localization_free_gift_empty_message'));
     }
@@ -61,7 +61,7 @@ if (! defined('ABSPATH')) {
      * 
      * @since 2.0.0
      */
-    do_action('itg_after_shortcode_gift_products_content');
+    do_action('itfreegift_after_shortcode_gift_products_content');
     ?>
 </div>
 <?php

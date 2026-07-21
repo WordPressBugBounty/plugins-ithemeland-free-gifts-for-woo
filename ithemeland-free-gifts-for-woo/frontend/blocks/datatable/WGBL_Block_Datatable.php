@@ -1,6 +1,10 @@
 <?php
 
-namespace wgb\frontend\blocks\datatable;
+namespace ITFreeGift\frontend\blocks\datatable;
+
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class WGBL_Block_Datatable
 {

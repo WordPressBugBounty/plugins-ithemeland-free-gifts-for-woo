@@ -1,8 +1,8 @@
 <?php
 
-namespace wgb\classes\services\render;
+namespace ITFreeGift\classes\services\render;
 
-use wgb\classes\repositories\Product;
+use ITFreeGift\classes\repositories\Product;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 

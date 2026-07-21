@@ -1,12 +1,11 @@
 <?php
 
-namespace wgb\classes\helpers;
+namespace ITFreeGift\classes\helpers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
 class Array_Helper
 {
-
     public static function flatten($array, $sanitize = null)
     {
         if (!is_array($array)) {

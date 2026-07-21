@@ -1,8 +1,8 @@
 <?php
 
-namespace WGB\classes\bootstrap;
+namespace ITFreeGift\classes\bootstrap;
 
-use wgb\classes\helpers\Sanitizer;
+use ITFreeGift\classes\helpers\Sanitizer;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
@@ -153,7 +153,7 @@ class WGBL_Top_Banners
     {
         if (isset($_POST['activation_core']) && file_exists(WP_PLUGIN_DIR . '/' . WGBL_LITE_PLUGIN)) { //phpcs:ignore
             activate_plugin(WGBL_LITE_PLUGIN);
-            wp_redirect(WGBL_MAIN_PAGE);
+            wp_safe_redirect(WGBL_MAIN_PAGE);
             exit;
         }
     }

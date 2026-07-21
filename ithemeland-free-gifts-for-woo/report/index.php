@@ -2,7 +2,7 @@
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-class WC_Customer_History
+class ITFreeGift_WC_Customer_History
 {
     public function __construct()
     {

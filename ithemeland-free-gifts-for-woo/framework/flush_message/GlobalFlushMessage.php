@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\framework\flush_message;
+namespace ITFreeGift\framework\flush_message;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 

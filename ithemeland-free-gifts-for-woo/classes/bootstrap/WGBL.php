@@ -1,23 +1,23 @@
 <?php
 
-namespace wgb\classes\bootstrap;
+namespace ITFreeGift\classes\bootstrap;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\frontend\blocks\WGBL_Blocks;
-use wgb\classes\api\Api_Handler;
-use wgb\classes\controllers\Rules_Controller;
-use wgb\classes\controllers\WGBL_Ajax;
-use wgb\classes\controllers\WGBL_Post;
-use wgb\classes\languages\WGBL_Language;
-use wgb\classes\repositories\OfferRule;
-use wgb\classes\repositories\Order;
-use wgb\classes\repositories\Rule;
-use wgb\classes\repositories\Setting;
-use wgb\classes\services\render\Condition_Render;
-use wgb\classes\services\render\Product_Buy_Render;
-use wgb\framework\analytics\AnalyticsTracker;
-use wgb\framework\onboarding\Onboarding;
+use ITFreeGift\frontend\blocks\WGBL_Blocks;
+use ITFreeGift\classes\api\Api_Handler;
+use ITFreeGift\classes\controllers\Rules_Controller;
+use ITFreeGift\classes\controllers\WGBL_Ajax;
+use ITFreeGift\classes\controllers\WGBL_Post;
+use ITFreeGift\classes\languages\WGBL_Language;
+use ITFreeGift\classes\repositories\OfferRule;
+use ITFreeGift\classes\repositories\Order;
+use ITFreeGift\classes\repositories\Rule;
+use ITFreeGift\classes\repositories\Setting;
+use ITFreeGift\classes\services\render\Condition_Render;
+use ITFreeGift\classes\services\render\Product_Buy_Render;
+use ITFreeGift\framework\analytics\AnalyticsTracker;
+use ITFreeGift\framework\onboarding\Onboarding;
 
 class WGBL
 {
@@ -55,7 +55,7 @@ class WGBL
         Api_Handler::init();
         WGBL_Ajax::register_callback();
         WGBL_Post::register_callback();
-        (new WGBL_Custom_Queries())->init();
+        // (new WGBL_Custom_Queries())->init();
 
         $settings_repository = Setting::get_instance();
         if (!$settings_repository->has_settings()) {
@@ -103,7 +103,7 @@ class WGBL
          * 
          * @since 1.0
          */
-        $locale = apply_filters('plugin_locale', $locale, 'ithemeland-free-gifts-for-woo');
+        $locale = apply_filters('plugin_locale', $locale, 'ithemeland-free-gifts-for-woo'); //phpcs:ignore
 
         // Unload the text domain if other plugins/themes loaded the same text domain by mistake.
         unload_textdomain('ithemeland-free-gifts-for-woo');
@@ -268,11 +268,17 @@ class WGBL
                 if (strpos($post->post_content, 'wp-block-wgb-wc-gift') === false && strpos($post->post_content, '<!-- wp:woocommerce/cart -->') !== false) {
                     $pattern = '/(<\/div>\s*<!--\s*\/wp:woocommerce\/cart-items-block\s*-->)/i';
 
-                    $wgb_block = <<<HTML
-                        \n<!-- wp:wgb/wc-gift -->
+                    // $wgb_block = <<<HTML
+                    //     \n<!-- wp:wgb/wc-gift -->
+                    //     <div class="wp-block-wgb-wc-gift"></div>
+                    //     <!-- /wp:wgb/wc-gift -->\n
+                    // HTML;
+
+                    $wgb_block = '
+                        <!-- wp:wgb/wc-gift -->
                         <div class="wp-block-wgb-wc-gift"></div>
-                        <!-- /wp:wgb/wc-gift -->\n
-                    HTML;
+                        <!-- /wp:wgb/wc-gift -->
+                    ';
 
                     if (preg_match($pattern, $post->post_content)) {
                         $new_content = preg_replace($pattern, $wgb_block . '$1', $post->post_content, 1);
@@ -340,21 +346,21 @@ class WGBL
         $settings = $setting_repository->get();
 
         // get product buy fields
-        $product_buy_item = [
+        $itfreegift_product_buy_item = [
             'type' => 'product',
             'method_option' => 'in_list',
             'value' => '',
         ];
         $product_buy_id = 'set_product_buy_id_here';
-        $rule_id = 'set_rule_id_here';
+        $itfreegift_rule_id = 'set_rule_id_here';
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/product-buy/row.php';
         $product_buy_row = ob_get_clean();
 
         $product_buy_render = Product_Buy_Render::get_instance();
         $product_buy_render->set_data([
-            'product_buy_item' => $product_buy_item,
-            'rule_id' => $rule_id,
+            'product_buy_item' => $itfreegift_product_buy_item,
+            'rule_id' => $itfreegift_rule_id,
             'product_buy_id' => $product_buy_id,
             'option_values' => '',
             'field_status' => '',
@@ -362,28 +368,28 @@ class WGBL
         $product_buy_extra_fields = $product_buy_render->get_all_extra_fields();
 
         // get condition fields
-        $condition_item = [
+        $itfreegift_condition_item = [
             'type' => 'date',
             'method_option' => 'from',
             'value' => '',
         ];
-        $condition_id = 'set_condition_id_here';
+        $itfreegift_condition_id = 'set_condition_id_here';
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/conditions/row.php';
         $condition_row = ob_get_clean();
 
         $condition_render = Condition_Render::get_instance();
         $condition_render->set_data([
-            'condition_item' => $condition_item,
-            'rule_id' => $rule_id,
-            'condition_id' => $condition_id,
+            'condition_item' => $itfreegift_condition_item,
+            'rule_id' => $itfreegift_rule_id,
+            'condition_id' => $itfreegift_condition_id,
             'option_values' => '',
             'field_status' => '',
         ]);
         $condition_extra_fields = $condition_render->get_all_extra_fields();
 
         // new rule item
-        $rule_item = [
+        $itfreegift_rule_item = [
             'rule_name' => 'New Rule',
             'uid' => 'set_uid_here',
             'method' => 'simple',
@@ -400,8 +406,8 @@ class WGBL
         $new_rule = ob_get_clean();
 
         // quantities row
-        $rule_item = null;
-        $i = "set_row_counter_here";
+        $itfreegift_rule_item = null;
+        $itfreegift_i = "set_row_counter_here";
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/quantities/bulk-quantity/row.php';
         $bulk_quantity_row = ob_get_clean();
@@ -422,8 +428,8 @@ class WGBL
         include WGBL_VIEWS_DIR . 'rules/get_products_group/row.php';
         $get_products_group_row = ob_get_clean();
 
-        $group_item['type'] = 'set_type_here';
-        $class_name = 'set_class_here';
+        $itfreegift_group_item['type'] = 'set_type_here';
+        $itfreegift_class_name = 'set_class_here';
         ob_start();
         include WGBL_VIEWS_DIR . 'rules/get_products_group/value.php';
         $get_products_group_value_field = ob_get_clean();
@@ -459,31 +465,31 @@ class WGBL
 
     private function get_offer_rules_js_data()
     {
-        $rule_id = 'set_rule_id_here';
+        $itfreegift_rule_id = 'set_rule_id_here';
 
         // get condition fields
-        $condition_item = [
+        $itfreegift_condition_item = [
             'type' => 'date',
             'method_option' => 'from',
             'value' => '',
         ];
-        $condition_id = 'set_condition_id_here';
+        $itfreegift_condition_id = 'set_condition_id_here';
         ob_start();
         include WGBL_VIEWS_DIR . 'offer_rules/conditions/row.php';
         $condition_row = ob_get_clean();
 
         $condition_render = Condition_Render::get_instance();
         $condition_render->set_data([
-            'condition_item' => $condition_item,
-            'rule_id' => $rule_id,
-            'condition_id' => $condition_id,
+            'condition_item' => $itfreegift_condition_item,
+            'rule_id' => $itfreegift_rule_id,
+            'condition_id' => $itfreegift_condition_id,
             'option_values' => '',
             'field_status' => '',
         ]);
         $condition_extra_fields = $condition_render->get_all_extra_fields();
 
         // new rule item
-        $rule_item = [
+        $itfreegift_rule_item = [
             'rule_name' => 'New Offer',
             'uid' => 'set_uid_here',
             'method' => 'simple',

@@ -1,24 +1,24 @@
 <?php
 /*
-	Plugin Name: iThemeland Free Gifts For Woo Lite
+	Plugin Name: GIFTiT - Free Gifts for WooCommerce
 	Plugin URI: https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy
 	Description: Free Gifts for WooCommerce allows you to offer Free Gifts to your customers whenever they make a purchase on your site.
 	Author: iThemelandco
-	Version: 4.0.0
+	Version: 4.1.0
 	Tags: woocommerce,woocommerce gift
 	Text Domain: ithemeland-free-gifts-for-woo
 	Domain Path: /languages
 	Author URI: https://www.ithemelandco.com
 	Requires Plugins: woocommerce
-	Tested up to: WP 6.9
+	Tested up to: 7.0
 	Requires PHP: 7.0	
 	WC requires at least: 3.9
-	WC tested up to: 10.5.2
-	Requires at least: 4.6.1
+	WC tested up to: 10.9.4
+	Requires at least: 5.0
 	License: GPLv2
 */
 
-use wgb\classes\bootstrap\WGBL;
+use ITFreeGift\classes\bootstrap\WGBL;
 
 defined('ABSPATH') || exit();
 
@@ -27,7 +27,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 //define('WGBL_PRICE_ISSUE', 1 );
 define('WGBL_NAME', 'ithemeland-free-gifts-for-woo');
 define('WGBL_PLUGIN', WGBL_NAME . '/' . WGBL_NAME . '.php');
-define('WGBL_LABEL', 'iThemeland Free Gifts For Woo Lite');
+define('WGBL_LABEL', 'GIFTiT - Free Gifts for WooCommerce');
 define('WGBL_PLUGINS_DIR', trailingslashit(ABSPATH . 'wp-content/plugins'));
 define('WGBL_LITE_PLUGIN', 'ithemeland-free-gifts-for-woo/ithemeland-free-gifts-for-woo.php');
 define('WGBL_ADDONS_URL', admin_url('admin.php?page=wgb-addons'));
@@ -52,17 +52,17 @@ define('WGBL_UPGRADE_URL', 'https://ithemelandco.com/plugins/free-gifts-for-wooc
 define('WGBL_UPGRADE_TEXT', 'Download Pro Version');
 //define('WGBL_WP_TESTED', '6.6');
 define('WGBL_WP_REQUIRE', '5.0.0');
-define('WGBL_VERSION', '4.0.0');
+define('WGBL_VERSION', '4.1.0');
 define('WGBL_LITE_VERSION', '2.7.1');
 
-register_activation_hook(__FILE__, ['wgb\classes\bootstrap\WGBL', 'activate']);
-register_deactivation_hook(__FILE__, ['wgb\classes\bootstrap\WGBL', 'deactivate']);
+register_activation_hook(__FILE__, ['ITFreeGift\classes\bootstrap\WGBL', 'activate']);
+register_deactivation_hook(__FILE__, ['ITFreeGift\classes\bootstrap\WGBL', 'deactivate']);
 
-add_action('init', ['wgb\classes\bootstrap\WGBL', 'wgb_wp_init']);
-add_action('wp_loaded', ['wgb\classes\bootstrap\WGBL', 'wp_loaded']);
+add_action('init', ['ITFreeGift\classes\bootstrap\WGBL', 'wgb_wp_init']);
+add_action('wp_loaded', ['ITFreeGift\classes\bootstrap\WGBL', 'wp_loaded']);
 
 add_action('plugins_loaded', function () {
-    if (!isitProPluginActive()) {
+    if (!itfreegift_isitProPluginActive()) {
         if (WGBL::is_initable()) {
             require_once __DIR__ . '/frontend/main.php';
             WGBL::init();
@@ -84,13 +84,13 @@ add_action('before_woocommerce_init', function () {
     }
 });
 
-if (!function_exists('isitProPluginActive')) {
-    function isitProPluginActive()
+if (!function_exists('itfreegift_isitProPluginActive')) {
+    function itfreegift_isitProPluginActive()
     {
-        $active_plugins = apply_filters('active_plugins', get_option('active_plugins', array()));
+        $itfreegift_active_plugins = apply_filters('active_plugins', get_option('active_plugins', array())); //phpcs:ignore
         if (is_multisite()) {
-            $active_plugins = array_merge($active_plugins, get_site_option('active_sitewide_plugins', array()));
+            $itfreegift_active_plugins = array_merge($itfreegift_active_plugins, get_site_option('active_sitewide_plugins', array()));
         }
-        return in_array('ithemeland-free-gifts-for-woocommerce/ithemeland-free-gifts-for-woocommerce.php', $active_plugins, false) || array_key_exists('ithemeland-free-gifts-for-woocommerce/ithemeland-free-gifts-for-woocommerce.php', $active_plugins);
+        return in_array('ithemeland-free-gifts-for-woocommerce/ithemeland-free-gifts-for-woocommerce.php', $itfreegift_active_plugins, false) || array_key_exists('ithemeland-free-gifts-for-woocommerce/ithemeland-free-gifts-for-woocommerce.php', $itfreegift_active_plugins);
     }
 }

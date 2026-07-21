@@ -1,13 +1,13 @@
 <?php
 
-namespace wgb\classes\controllers;
+namespace ITFreeGift\classes\controllers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\helpers\Plugin_Helper;
-use wgb\classes\repositories\Rule;
-use wgb\classes\repositories\Setting;
-use wgb\framework\onboarding\Onboarding;
+use ITFreeGift\classes\helpers\Plugin_Helper;
+use ITFreeGift\classes\repositories\Rule;
+use ITFreeGift\classes\repositories\Setting;
+use ITFreeGift\framework\onboarding\Onboarding;
 
 class Reports_Controller
 {
@@ -21,7 +21,7 @@ class Reports_Controller
         $this->rule_repository = Rule::get_instance();
         $this->rule_methods = $this->rule_repository->get_rule_methods();
 
-        $this->page_title = esc_html__('GIFTiT – iThemeland Free Gifts for Woo Lite', 'ithemeland-free-gifts-for-woo');
+        $this->page_title = esc_html__('GIFTiT - Free Gifts for WooCommerce', 'ithemeland-free-gifts-for-woo');
         $this->doc_link = "https://ithemelandco.com/support-center";
     }
 

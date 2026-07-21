@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\classes\presenters\addons;
+namespace ITFreeGift\classes\presenters\addons;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 

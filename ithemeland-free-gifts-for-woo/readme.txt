@@ -2,9 +2,9 @@
 Contributors: ithemelandco
 Donate link: https://ithemelandco.com/
 Tags: woocommerce gift, boost sale, free gift, buy one get one , Gift Product Woocommerce
-Requires at least: 4.6.1
-Tested up to: 6.9
-Stable tag: 4.0.0
+Requires at least: 5.0
+Tested up to: 7.0
+Stable tag: 4.1.0
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -236,6 +236,14 @@ You can easily translate the plugin into the desired languages by using translat
 11. free gifts for woocommerce carousel layout
 
 12. free gifts for woocommerce datatable layout
+
+== Changelog ==
+= 4.1 =
+* Fixed : Fixed Passed the Check Plugin issues
+* Fixed : compatible with pro version 4.1.0
+* Fixed : warning issue Critical Error
+Tested up to: WP 7.0.x
+Tested up to: WC 10.9.x
 
 == Changelog ==
 = 4.0 =

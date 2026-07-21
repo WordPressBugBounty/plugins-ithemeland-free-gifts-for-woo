@@ -7,41 +7,41 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use wgb\classes\helpers\Sanitizer;
+use ITFreeGift\classes\helpers\Sanitizer;
 
-$add_gift = esc_html(get_option('itg_localization_add_gift'));
-$select_gift = esc_html(get_option('itg_localization_select_gift'));
+$itfreegift_add_gift = esc_html(get_option('itg_localization_add_gift'));
+$itfreegift_select_gift = esc_html(get_option('itg_localization_select_gift'));
 
 if (empty($items)) {
     return;
 }
 
-$product_items = '';
-foreach ($items as $key => $gift_product) {
-    $_product       = wc_get_product($gift_product['product_id']);
-    if ($gift_product['hide_add_to_cart']) {
+$itfreegift_product_items = '';
+foreach ($items as $itfreegift_key => $itfreegift_gift_product) {
+    $itfreegift__product       = wc_get_product($itfreegift_gift_product['product_id']);
+    if ($itfreegift_gift_product['hide_add_to_cart']) {
         continue;
     }
 
 
-    $data_id = $gift_product['rule_id'] . '-' . $gift_product['product_id'];
+    $itfreegift_data_id = $itfreegift_gift_product['rule_id'] . '-' . $itfreegift_gift_product['product_id'];
 
-    //$img_url = itg_render_product_image( $_product , [50, 50] , false );
+    //$itfreegift_img_url = itfreegift_render_product_image( $itfreegift__product , [50, 50] , false );
 
-    $img_url = (!empty($_product->get_image_id())) ? wp_get_attachment_image_src($_product->get_image_id(), [50, 50]) : wc_placeholder_img_src([50, 50]);
-    $img_url = (is_array($img_url) && !empty($img_url[0])) ? $img_url[0] : $img_url;
+    $itfreegift_img_url = (!empty($itfreegift__product->get_image_id())) ? wp_get_attachment_image_src($itfreegift__product->get_image_id(), [50, 50]) : wc_placeholder_img_src([50, 50]);
+    $itfreegift_img_url = (is_array($itfreegift_img_url) && !empty($itfreegift_img_url[0])) ? $itfreegift_img_url[0] : $itfreegift_img_url;
 
 
-    $title = $_product->get_title();
-    if ($_product->post_type == 'product_variation') {
-        $title = $_product->get_name();
+    $title = $itfreegift__product->get_title();
+    if ($itfreegift__product->post_type == 'product_variation') {
+        $title = $itfreegift__product->get_name();
     }
 
-    $product_items .= '<option value="' . esc_attr($data_id) . '" data-imagesrc="' . esc_url($img_url) . '"
+    $itfreegift_product_items .= '<option value="' . esc_attr($itfreegift_data_id) . '" data-imagesrc="' . esc_url($itfreegift_img_url) . '"
 				data-description="' . esc_attr($title) . '">' . esc_html($title) . '
 		</option>';
 }
-if ($product_items == '') {
+if ($itfreegift_product_items == '') {
     return;
 }
 ?>
@@ -53,10 +53,10 @@ if ($product_items == '') {
      * @since 2.0.0
      */
 
-    do_action('itg_before_gift_products_content');
+    do_action('itfreegift_before_gift_products_content');
     ?>
     <div class="wgb-gift-products-dropdown">
-        <?php echo wp_kses($product_items, Sanitizer::allowed_html()); ?>
+        <?php echo wp_kses($itfreegift_product_items, Sanitizer::allowed_html()); ?>
     </div>
     <?php
     /**
@@ -64,6 +64,6 @@ if ($product_items == '') {
      * 
      * @since 2.0.0
      */
-    do_action('itg_after_gift_products_content');
+    do_action('itfreegift_after_gift_products_content');
     ?>
 </div>

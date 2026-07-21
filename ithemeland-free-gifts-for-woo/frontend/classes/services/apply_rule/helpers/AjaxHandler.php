@@ -1,8 +1,10 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule\helpers;
+namespace ITFreeGift\frontend\classes\services\apply_rule\helpers;
 
-use wgb\frontend\classes\services\views\generator\Pagination;
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class AjaxHandler
 {

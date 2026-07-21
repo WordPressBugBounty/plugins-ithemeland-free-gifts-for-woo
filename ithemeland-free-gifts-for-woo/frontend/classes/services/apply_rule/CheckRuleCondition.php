@@ -1,12 +1,12 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule;
+namespace ITFreeGift\frontend\classes\services\apply_rule;
 
-use wgb\classes\repositories\Rule;
-use wgb\frontend\classes\services\apply_rule\ApplyRuleService;
-use wgb\frontend\classes\services\apply_rule\CartHandlerService;
-use wgb\frontend\classes\services\apply_rule\CheckConditionsBuyProduct;
-use wgb\frontend\classes\services\apply_rule\helpers\RulesDataBridge;
+use ITFreeGift\classes\repositories\Rule;
+use ITFreeGift\frontend\classes\services\apply_rule\ApplyRuleService;
+use ITFreeGift\frontend\classes\services\apply_rule\CartHandlerService;
+use ITFreeGift\frontend\classes\services\apply_rule\CheckConditionsBuyProduct;
+use ITFreeGift\frontend\classes\services\apply_rule\helpers\RulesDataBridge;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -103,12 +103,12 @@ class CheckRuleCondition
 
     private function get_cart_subtotal()
     {
-        return it_get_cart_subtotal($this->item_cart);
+        return itfreegift_get_cart_subtotal($this->item_cart);
     }
 
     private function get_cart_item_stock_quantities()
     {
-        return itg_get_cart_item_stock_quantities($this->item_cart);
+        return itfreegift_get_cart_item_stock_quantities($this->item_cart);
     }
 
     private function filter_applicable_rules($rules)
@@ -251,8 +251,8 @@ class CheckRuleCondition
             $this->item_cart,
             $this->free_shipping_exists,
             $rule_value,
-            group_quantities($filter_items_by_rules, $quantities_based_on),
-            group_prices($filter_items_by_rules, $quantities_based_on),
+            itfreegift_group_quantities($filter_items_by_rules, $quantities_based_on),
+            itfreegift_group_prices($filter_items_by_rules, $quantities_based_on),
             $cheapest_item_id,
             $cart_subtotal['subtotal']
         );
@@ -311,7 +311,7 @@ class CheckRuleCondition
         //     WC()->session->set('itg_free_gift_current_applicable_rules', $current_session_gift_rules);
         //     return $this->gift_item_variable;
         // }
-        itg_unset_removed_automatic_free_gift_products_from_session();
+        itfreegift_unset_removed_automatic_free_gift_products_from_session();
         return false;
     }
 
@@ -335,7 +335,7 @@ class CheckRuleCondition
     public function is_wpml_current_language($language)
     {
         if (defined('WCML_VERSION')) {
-            $current_lang = apply_filters('wpml_current_language', null); // Get current language code
+            $current_lang = apply_filters('wpml_current_language', null); // phpcs:ignore
 
             // Return true if language matches or if 'all' is passed
             return $language === 'all' || $language === $current_lang;
@@ -377,29 +377,29 @@ class CheckRuleCondition
     {
         switch ($condition['type']) {
             case 'date':
-                $value           = it_date_time();
+                $value           = itfreegift_it_date_time();
                 $condition_value = $condition['value'];
-                $condition_value = get_datetime_object($condition_value, false);
+                $condition_value = itfreegift_get_datetime_object($condition_value, false);
                 $condition_value->setTime(0, 0, 0);
                 break;
             case 'time':
             case 'date_time':
-                $value           = it_date_time_time();
+                $value           = itfreegift_date_time_time();
                 $condition_value = $condition['value'];
-                $condition_value = get_datetime_object($condition_value, false);
+                $condition_value = itfreegift_get_datetime_object($condition_value, false);
                 break;
             case 'days_of_week':
-                $value           = it_date_time_weekend();
+                $value           = itfreegift_date_time_weekend();
                 $condition_value = $condition['value'];
 
-                return check_simple_operations($condition['method_option'], $value, $condition_value);
+                return itfreegift_check_simple_operations($condition['method_option'], $value, $condition_value);
                 break;
 
             default:
                 return true;
         }
 
-        return check_datetime_operations($condition['method_option'], $value, $condition_value);
+        return itfreegift_check_datetime_operations($condition['method_option'], $value, $condition_value);
     }
 
     public function status_check($status, $rule_values)
@@ -408,7 +408,7 @@ class CheckRuleCondition
             return false;
         } else if ($status == 'other_applied') {
 
-            $gifts_in_cart = it_get_cart_gift_contents();
+            $gifts_in_cart = itfreegift_get_cart_gift_contents();
 
             foreach ($gifts_in_cart as $gift_item_key => $gift) {
                 if ($gift['it_free_gift']['rule_id'] == $rule_values['uid']) {

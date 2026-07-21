@@ -1,6 +1,6 @@
 <?php
 
-namespace wgb\classes\helpers;
+namespace ITFreeGift\classes\helpers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 

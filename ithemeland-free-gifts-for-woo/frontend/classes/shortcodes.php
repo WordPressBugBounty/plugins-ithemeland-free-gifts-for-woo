@@ -7,8 +7,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use wgb\classes\helpers\Sanitizer;
-use wgb\frontend\classes\services\apply_rule\CheckRuleCondition;
+use ITFreeGift\classes\helpers\Sanitizer;
+use ITFreeGift\frontend\classes\services\apply_rule\CheckRuleCondition;
 
 class iThemeland_front_shortcodes
 {
@@ -19,7 +19,7 @@ class iThemeland_front_shortcodes
     public function __construct()
     {
         $this->gift_item_key = array();
-        $this->settings = itg_get_settings();
+        $this->settings = itfreegift_get_settings();
 
         $this->check_rule_condition = new CheckRuleCondition($this->getCheckRuleConditionData());
 
@@ -33,8 +33,8 @@ class iThemeland_front_shortcodes
         $shortcodes = apply_filters(
             'itg_load_shortcodes',
             [
-                'itg_gift_products',
-                'itg_gift_notice',
+                'itg_gift_products', 
+                'itg_gift_notice', 
             ]
         );
 
@@ -46,7 +46,7 @@ class iThemeland_front_shortcodes
     private function getCheckRuleConditionData(): array
     {
         return [
-            'cart_contents'           => itg_get_cart_contents(),
+            'cart_contents'           => itfreegift_get_cart_contents(),
             'gift_rule_exclude'       => [],
             'product_qty_in_cart'     => 0,
             'show_gift_item_for_cart' => [],
@@ -75,7 +75,7 @@ class iThemeland_front_shortcodes
                  * 
                  * @since 1.0
                  */
-                do_action("itg_shortcode_{$shortcode_name}_content");
+                do_action("itg_shortcode_{$shortcode_name}_content"); //phpcs:ignore
                 $content = ob_get_contents();
                 ob_end_clean();
                 break;
@@ -98,8 +98,8 @@ class iThemeland_front_shortcodes
             'itg_gift_notice'
         );
         if ($atts['type'] == 'cart_price') {
-            $cart_items = itg_get_cart_contents();
-            $cart_subtotal = it_get_cart_subtotal($cart_items);
+            $cart_items = itfreegift_get_cart_contents();
+            $cart_subtotal = itfreegift_get_cart_subtotal($cart_items);
             $cart_subtotal = $cart_subtotal['subtotal_with_tax'];
             if ($cart_subtotal < $atts['value']) {
                 echo esc_html(wc_price($atts['value'] - $cart_subtotal));
@@ -108,7 +108,7 @@ class iThemeland_front_shortcodes
 
 
         if ($atts['type'] == 'cart_count') {
-            $cart_items = itg_get_cart_contents();
+            $cart_items = itfreegift_get_cart_contents();
             $sum_value       = itg_get_wc_cart_sum_of_item_quantities($cart_items);
             if ($sum_value < $atts['value']) {
                 echo esc_html($atts['value'] - $sum_value);
@@ -145,7 +145,7 @@ class iThemeland_front_shortcodes
         $gift_items = $this->check_rule_condition->pw_get_gift_for_cart_checkout();
 
         if (empty($gift_items)) {
-            itg_get_template('shortcode-layout.php', ['data_args' => []]);
+            itfreegift_get_template('shortcode-layout.php', ['data_args' => []]);
             $flag = false;
         } else {
             $this->gift_item_key = $gift_items;
@@ -162,8 +162,8 @@ class iThemeland_front_shortcodes
         // Add gifts from gift_items
         if (!empty($gift_items['all_gifts'])) {
             foreach ($gift_items['all_gifts'] as $gift_key => $gift) {
-                $rule_id = $gift['uid'];
-                $rule_data = $gift_items[$rule_id] ?? [];
+                $itfreegift_rule_id = $gift['uid'];
+                $rule_data = $gift_items[$itfreegift_rule_id] ?? [];
 
                 $gifts_data['gifts'][$gift_key] = [
                     'uid' => $gift['uid'],
@@ -191,11 +191,11 @@ class iThemeland_front_shortcodes
             ];
 
             $rule_products = [
-                'data_args' => itg_get_gift_products_data_multilevel($args_data),
+                'data_args' => itfreegift_get_gift_products_data_multilevel($args_data),
                 'template' => $atts['type']
             ];
 
-            itg_get_template('shortcode-layout.php', $rule_products);
+            itfreegift_get_template('shortcode-layout.php', $rule_products);
         }
         echo '</span>';
         return;

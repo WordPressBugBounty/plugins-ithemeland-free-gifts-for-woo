@@ -1,6 +1,10 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule;
+namespace ITFreeGift\frontend\classes\services\apply_rule;
+
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class CartHandlerService
 {
@@ -30,7 +34,7 @@ class CartHandlerService
     {
         $condition_value = $condition['value'];
         $get_total    = WC()->cart->total;
-        return check_basic_operations($condition['method_option'], $get_total, $condition_value);
+        return itfreegift_check_basic_operations($condition['method_option'], $get_total, $condition_value);
     }
 
     public static function cart_subtotal($condition)
@@ -38,9 +42,9 @@ class CartHandlerService
         if ($condition['type'] == 'cart_subtotal') {
 
             $condition_value = $condition['value'];
-            $subtotal_value    = it_get_cart_subtotal(self::get_cart_contents());
+            $subtotal_value    = itfreegift_get_cart_subtotal(self::get_cart_contents());
 
-            return check_basic_operations($condition['method_option'], $subtotal_value['subtotal'], $condition_value);
+            return itfreegift_check_basic_operations($condition['method_option'], $subtotal_value['subtotal'], $condition_value);
         }
 
         return true;
@@ -48,6 +52,6 @@ class CartHandlerService
 
     public static function cart_items($condition, $rule_values)
     {
-         return true;
+        return true;
     }
 }

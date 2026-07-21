@@ -1,11 +1,11 @@
 <?php
 
-namespace wgb\classes\repositories;
+namespace ITFreeGift\classes\repositories;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\helpers\Array_Helper;
-use wgb\classes\languages\WGBL_Language;
+use ITFreeGift\classes\helpers\Array_Helper;
+use ITFreeGift\classes\languages\WGBL_Language;
 
 class Product
 {
@@ -58,7 +58,7 @@ class Product
             'variable' => esc_html__('Variable product', 'ithemeland-free-gifts-for-woo'),
             'variation' => esc_html__('Variation', 'ithemeland-free-gifts-for-woo'),
         ];
-        $types = apply_filters('product_type_selector', $default_types);
+        $types = apply_filters('product_type_selector', $default_types); //phpcs:ignore
 
         $products = wc_get_products([
             'type' => (!empty($types)) ? array_keys($types) : array_keys($default_types),

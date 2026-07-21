@@ -1,16 +1,16 @@
 <?php
 
-namespace wgb\classes\controllers;
+namespace ITFreeGift\classes\controllers;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\languages\WGBL_Language;
-use wgb\classes\repositories\Flush_Message;
-use wgb\classes\repositories\OfferRule;
-use wgb\classes\repositories\Rule;
-use wgb\classes\repositories\Setting;
-use wgb\classes\repositories\User;
-use wgb\framework\onboarding\Onboarding;
+use ITFreeGift\classes\languages\WGBL_Language;
+use ITFreeGift\classes\repositories\Flush_Message;
+use ITFreeGift\classes\repositories\OfferRule;
+use ITFreeGift\classes\repositories\Rule;
+use ITFreeGift\classes\repositories\Setting;
+use ITFreeGift\classes\repositories\User;
+use ITFreeGift\framework\onboarding\Onboarding;
 
 class Rules_Controller
 {
@@ -19,7 +19,7 @@ class Rules_Controller
 
     public function __construct()
     {
-        $this->page_title = esc_html__('GIFTiT – iThemeland Free Gifts for Woo Lite', 'ithemeland-free-gifts-for-woo');
+        $this->page_title = esc_html__('GIFTiT - Free Gifts for WooCommerce', 'ithemeland-free-gifts-for-woo');
         $this->doc_link = "https://ithemelandco.com/support-center";
     }
 
@@ -29,13 +29,13 @@ class Rules_Controller
             $_GET['tab'] = 'rules'; //phpcs:ignore
         }
 
-        $tabs_title = apply_filters('wgb_rules_main_tabs_title', [
+        $tabs_title = apply_filters('itfreegift_rules_main_tabs_title', [
             'rules' => esc_html__('Rules', 'ithemeland-free-gifts-for-woo'),
             'settings' => esc_html__('Settings', 'ithemeland-free-gifts-for-woo'),
             'shortcodes' => esc_html__('Shortcodes', 'ithemeland-free-gifts-for-woo'),
             'reports' => esc_html__('Reports', 'ithemeland-free-gifts-for-woo'),
         ]);
-        $tabs_content = apply_filters('wgb_rules_main_tabs_content', [
+        $tabs_content = apply_filters('itfreegift_rules_main_tabs_content', [
             'rules' => WGBL_VIEWS_DIR . "rules/main.php",
             'settings' => $this->get_setting_view(),
             'shortcodes' => WGBL_VIEWS_DIR . "rules/shortcodes.php",
@@ -79,9 +79,9 @@ class Rules_Controller
         $option_values['user_capabilities'] = $user_repository->get_user_capabilities();
         // Populate brands for selected brand IDs in all rules/conditions
         if (!empty($rules['items'])) {
-            foreach ($rules['items'] as $rule_item) {
-                if (!empty($rule_item['condition']) && is_array($rule_item['condition'])) {
-                    foreach ($rule_item['condition'] as $condition) {
+            foreach ($rules['items'] as $itfreegift_rule_item) {
+                if (!empty($itfreegift_rule_item['condition']) && is_array($itfreegift_rule_item['condition'])) {
+                    foreach ($itfreegift_rule_item['condition'] as $condition) {
                         if (!empty($condition['brands']) && is_array($condition['brands'])) {
                             if (!isset($option_values['brands'])) {
                                 $option_values['brands'] = [];
@@ -121,7 +121,7 @@ class Rules_Controller
             $_GET['sub-tab'] = 'general'; //phpcs:ignore
         }
 
-        $settings_tabs_title = apply_filters('wgb_rules_settings_tabs_title', [
+        $settings_tabs_title = apply_filters('itfreegift_rules_settings_tabs_title', [
             'general' => esc_html__('General', 'ithemeland-free-gifts-for-woo'),
             'display' => esc_html__('Display', 'ithemeland-free-gifts-for-woo'),
             'localization' => esc_html__('Localization', 'ithemeland-free-gifts-for-woo'),
@@ -185,7 +185,7 @@ class Rules_Controller
 
     private function get_setting_pages()
     {
-        return apply_filters('wgb_rules_settings_tabs_content', [
+        return apply_filters('itfreegift_rules_settings_tabs_content', [
             'general' => WGBL_VIEWS_DIR . 'setting/general.php',
             'notification' => WGBL_VIEWS_DIR . 'setting/display.php',
             'localization' => WGBL_VIEWS_DIR . 'setting/localization.php',

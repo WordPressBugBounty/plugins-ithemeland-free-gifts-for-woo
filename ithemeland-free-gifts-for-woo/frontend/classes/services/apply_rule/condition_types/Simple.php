@@ -1,8 +1,8 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule\condition_types;
+namespace ITFreeGift\frontend\classes\services\apply_rule\condition_types;
 
-use wgb\frontend\classes\services\apply_rule\helpers\RuleHandler;
+use ITFreeGift\frontend\classes\services\apply_rule\helpers\RuleHandler;
 
 class Simple
 {

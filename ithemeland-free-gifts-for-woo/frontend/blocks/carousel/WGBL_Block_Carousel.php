@@ -1,6 +1,10 @@
 <?php
 
-namespace wgb\frontend\blocks\carousel;
+namespace ITFreeGift\frontend\blocks\carousel;
+
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class WGBL_Block_Carousel
 {

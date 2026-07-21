@@ -1,10 +1,10 @@
 <?php
 
-namespace wgb\classes\repositories;
+namespace ITFreeGift\classes\repositories;
 
 defined('ABSPATH') || exit(); // Exit if accessed directly
 
-use wgb\classes\helpers\Sanitizer;
+use ITFreeGift\classes\helpers\Sanitizer;
 
 class Rule
 {
@@ -43,7 +43,7 @@ class Rule
     public function get()
     {
         $validated_rules = get_option($this->option_name);
-        $validated_rules = apply_filters('itfg_validated_rules_filtered', $validated_rules);
+        $validated_rules = apply_filters('itfreegift_validated_rules_filtered', $validated_rules);
         return $validated_rules;
     }
 

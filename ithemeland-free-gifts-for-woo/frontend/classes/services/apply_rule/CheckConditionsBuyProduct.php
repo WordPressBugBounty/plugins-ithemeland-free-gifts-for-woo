@@ -1,6 +1,10 @@
 <?php
 
-namespace wgb\frontend\classes\services\apply_rule;
+namespace ITFreeGift\frontend\classes\services\apply_rule;
+
+if (! defined('ABSPATH')) {
+    exit; // Exit if accessed directly.
+}
 
 class CheckConditionsBuyProduct
 {
@@ -29,7 +33,7 @@ class CheckConditionsBuyProduct
     {
         $vales = $cart_item['product_id'];
         $condition_value = $condition['products'];
-        return check_simple_operations($condition['method_option'], $vales, $condition_value);
+        return itfreegift_check_simple_operations($condition['method_option'], $vales, $condition_value);
     }
 
     /**

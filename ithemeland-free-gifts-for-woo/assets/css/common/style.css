@@ -76,8 +76,14 @@ input[type="number"] {
 
 #dolly,
 .notice,
+.wgb-wp-notice,
 .update-nag {
     display: none !important;
+}
+
+.php-error #adminmenuback,
+.php-error #adminmenuwrap {
+    margin-top: 0 !important;
 }
 
 .wgb-ta-center {

@@ -1,0 +1,395 @@
+:root {
+    --wgb-bg: #f4f7fb;
+    --wgb-panel: #fff;
+    --wgb-text: #172033;
+    --wgb-muted: #6b7280;
+    --wgb-line: #e5e7eb;
+    --wgb-purple: #6d3ce7;
+    --wgb-green: #16a34a;
+    --wgb-orange: #f97316;
+    --wgb-red: #dc2626;
+    --wgb-shadow: 0 10px 30px rgba(20, 30, 55, .08);
+    --wgb-radius: 16px;
+}
+
+.wgb-license-page * {
+    box-sizing: border-box
+}
+
+.wgb-license-page body {
+    margin: 0;
+    background: var(--wgb-bg);
+    color: var(--wgb-text);
+    font: 14px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.wgb-license-page a {
+    text-decoration: none;
+}
+
+.wgb-license-page button {
+    font: inherit
+}
+
+.wgb-license-page {
+    max-width: 100%;
+    margin: 20px auto 40px;
+    padding: 0 18px 0 0;
+}
+
+.wgb-license-page .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.wgb-license-shell {
+    background: #fff;
+    border: 1px solid var(--wgb-line);
+    border-radius: 20px;
+    box-shadow: var(--wgb-shadow);
+    padding: 26px
+}
+
+.wgb-license-page-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px
+}
+
+.wgb-license-page-head h1 {
+    margin: 0;
+    font-size: 24px
+}
+
+.wgb-license-page-head p {
+    margin: 3px 0 0;
+    color: var(--wgb-muted)
+}
+
+.wgb-license-product-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #ede9fe, #fff);
+    display: grid;
+    place-items: center;
+    border: 1px solid #ddd6fe;
+    font-size: 28px
+}
+
+.wgb-license-card {
+    max-width: 100%;
+    background: #fff;
+    border: 1px solid var(--wgb-line);
+    border-radius: var(--wgb-radius);
+    padding: 20px;
+    box-shadow: 0 5px 18px rgba(20, 30, 55, .04);
+    margin-bottom: 16px
+}
+
+.wgb-license-btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap
+}
+
+.wgb-license-btn {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px
+}
+
+.wgb-license-btn-primary {
+    background: var(--wgb-purple);
+    color: #fff
+}
+
+.wgb-license-btn-success {
+    background: var(--wgb-green);
+    color: #fff
+}
+
+.wgb-license-btn-orange {
+    background: var(--wgb-orange);
+    color: #fff
+}
+
+.wgb-license-btn-outline {
+    background: #fff;
+    color: var(--wgb-text);
+    border: 1px solid #d1d5db
+}
+
+.wgb-license-btn-danger {
+    background: var(--wgb-red);
+    color: #fff
+}
+
+.wgb-license-btn-sm {
+    padding: 8px 12px;
+    font-size: 13px
+}
+
+h2,
+h3 {
+    margin-top: 0
+}
+
+.wgb-license-comparison {
+    width: 100%;
+    border-collapse: collapse
+}
+
+.wgb-license-comparison th,
+.wgb-license-comparison td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--wgb-line);
+    text-align: left
+}
+
+.wgb-license-comparison th {
+    background: #f8fafc
+}
+
+.wgb-license-yes {
+    color: var(--wgb-green);
+    font-weight: 900
+}
+
+.wgb-license-no {
+    color: var(--wgb-red);
+    font-weight: 900
+}
+
+.wgb-license-benefit-grid,
+.wgb-license-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px
+}
+
+.wgb-license-mini-card {
+    border: 1px solid var(--wgb-line);
+    border-radius: 13px;
+    padding: 16px;
+    text-align: center;
+    background: #fff
+}
+
+.wgb-license-mini-card .wgb-license-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 10px;
+    background: #f3f4f6;
+    font-size: 21px
+}
+
+.wgb-license-mini-card strong {
+    display: block;
+    font-size: 16px
+}
+
+.wgb-license-mini-card span {
+    display: block;
+    color: var(--wgb-muted);
+    font-size: 13px;
+    margin-top: 4px
+}
+
+.wgb-license-demo-banner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: center;
+    background: linear-gradient(135deg, #faf5ff, #fff);
+    border-color: #ddd6fe
+}
+
+.wgb-license-demo-visual {
+    width: 180px;
+    height: 96px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #d8b4fe, #6d3ce7);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 34px;
+    font-weight: 900
+}
+
+.wgb-license-license-meta {
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(120px, 1fr));
+    gap: 12px
+}
+
+.wgb-license-license-meta div {
+    padding: 12px;
+    border: 1px solid #dcfce7;
+    border-radius: 10px;
+    background: #fff
+}
+
+.wgb-license-license-meta small {
+    display: block;
+    color: var(--wgb-muted)
+}
+
+.wgb-license-license-meta strong {
+    display: block;
+    margin-top: 3px
+}
+
+.wgb-license-stat-value {
+    font-size: 24px!important
+}
+
+.wgb-license-positive-note {
+    margin-top: 14px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    color: #5b21b6;
+    font-weight: 700
+}
+
+.wgb-license-new-list {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 20px;
+    align-items: center
+}
+
+.wgb-license-gift-art {
+    height: 130px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ede9fe, #c4b5fd);
+    display: grid;
+    place-items: center;
+    font-size: 70px
+}
+
+.wgb-license-new-list ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 9px
+}
+
+.wgb-license-new-list li::before {
+    content: "✓";
+    color: var(--wgb-green);
+    font-weight: 900;
+    margin-right: 8px
+}
+
+.wgb-license-urgent {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    background: #fff7ed;
+    border-color: #fdba74
+}
+
+.wgb-license-urgent-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: #fee2e2;
+    color: var(--wgb-red);
+    display: grid;
+    place-items: center;
+    font-size: 25px;
+    font-weight: 900
+}
+
+.wgb-license-urgent h3 {
+    margin: 0 0 4px
+}
+
+.wgb-license-urgent p {
+    margin: 0;
+    color: #7c2d12
+}
+
+@media(max-width:760px) {
+    .wgb-license-page {
+        padding: 0 10px
+    }
+    .wgb-license-shell {
+        padding: 16px
+    }
+    .wgb-license--wgb-notice {
+        align-items: flex-start;
+        flex-wrap: wrap
+    }
+    .wgb-license-notice-actions {
+        margin-left: 0
+    }
+    .wgb-license-benefit-grid,
+    .wgb-license-stats-grid {
+        grid-template-columns: repeat(2, 1fr)
+    }
+    .wgb-license-demo-banner,
+    .wgb-license-new-list,
+    .wgb-license-urgent {
+        grid-template-columns: 1fr
+    }
+}
+
+.wgb-license-hero-free {
+    display: grid;
+    grid-template-columns: 86px 1fr auto;
+    gap: 18px;
+    align-items: center
+}
+
+.wgb-license-hero-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 36px;
+    background: #fff7ed
+}
+
+.wgb-license-hero-free h2 {
+    margin: 0 0 6px
+}
+
+.wgb-license-hero-free p {
+    margin: 0;
+    color: var(--wgb-muted)
+}
+
+.wgb-license-limit-box {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    color: #9a3412;
+    font-weight: 800
+}
+
+@media(max-width:760px) {
+    .wgb-license-hero-free {
+        grid-template-columns: 1fr
+    }
+}

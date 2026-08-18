@@ -4,7 +4,7 @@
 	Plugin URI: https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy
 	Description: Free Gifts for WooCommerce allows you to offer Free Gifts to your customers whenever they make a purchase on your site.
 	Author: iThemelandco
-	Version: 4.1.0
+	Version: 4.2.0
 	Tags: woocommerce,woocommerce gift
 	Text Domain: ithemeland-free-gifts-for-woo
 	Domain Path: /languages
@@ -13,12 +13,14 @@
 	Tested up to: 7.0
 	Requires PHP: 7.0	
 	WC requires at least: 3.9
-	WC tested up to: 10.9.4
+	WC tested up to: 11.0.1
 	Requires at least: 5.0
 	License: GPLv2
 */
 
 use ITFreeGift\classes\bootstrap\WGBL;
+use ITFreeGift\classes\bootstrap\WGBL_Prepare_Gifts;
+use ITFreeGift\framework\renew_license_alert\RenewLicenseAlert;
 
 defined('ABSPATH') || exit();
 
@@ -52,7 +54,7 @@ define('WGBL_UPGRADE_URL', 'https://ithemelandco.com/plugins/free-gifts-for-wooc
 define('WGBL_UPGRADE_TEXT', 'Download Pro Version');
 //define('WGBL_WP_TESTED', '6.6');
 define('WGBL_WP_REQUIRE', '5.0.0');
-define('WGBL_VERSION', '4.1.0');
+define('WGBL_VERSION', '4.2.0');
 define('WGBL_LITE_VERSION', '2.7.1');
 
 register_activation_hook(__FILE__, ['ITFreeGift\classes\bootstrap\WGBL', 'activate']);
@@ -69,6 +71,21 @@ add_action('plugins_loaded', function () {
         }
     }
 });
+
+add_action('plugins_loaded', function () {
+    if (itfreegift_isitProPluginActive()) {
+        $el_data = get_option('wgb-el-data');
+        if (!empty($el_data) && !empty($el_data['expire_date'])) {
+            if (time() > strtotime($el_data['expire_date'])) {
+                RenewLicenseAlert::init();
+            } else {
+                RenewLicenseAlert::remove();
+            }
+        }
+
+        WGBL_Prepare_Gifts::init();
+    }
+}, PHP_INT_MAX);
 
 // HPOS compatibility to the plugin.
 add_action('before_woocommerce_init', function () {

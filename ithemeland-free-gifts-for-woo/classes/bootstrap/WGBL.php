@@ -6,6 +6,7 @@ defined('ABSPATH') || exit(); // Exit if accessed directly
 
 use ITFreeGift\frontend\blocks\WGBL_Blocks;
 use ITFreeGift\classes\api\Api_Handler;
+use ITFreeGift\classes\controllers\License_Controller;
 use ITFreeGift\classes\controllers\Rules_Controller;
 use ITFreeGift\classes\controllers\WGBL_Ajax;
 use ITFreeGift\classes\controllers\WGBL_Post;
@@ -18,6 +19,7 @@ use ITFreeGift\classes\services\render\Condition_Render;
 use ITFreeGift\classes\services\render\Product_Buy_Render;
 use ITFreeGift\framework\analytics\AnalyticsTracker;
 use ITFreeGift\framework\onboarding\Onboarding;
+use ITFreeGift\framework\pro_version_alert\ProVersionAlert;
 
 class WGBL
 {
@@ -50,6 +52,7 @@ class WGBL
             add_action('admin_menu', [$this, 'add_menu']);
             AnalyticsTracker::register();
             Onboarding::register();
+            ProVersionAlert::init();
         }
 
         Api_Handler::init();
@@ -72,6 +75,7 @@ class WGBL
     {
         add_menu_page(esc_html__('GIFTiT', 'ithemeland-free-gifts-for-woo'), esc_html__('GIFTiT', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgb', [new Rules_Controller, 'index'], WGBL_IMAGES_URL . 'giftit-icon-wh20.svg', 59);
         add_submenu_page('wgb', esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), esc_html__('Rules | Settings', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgb');
+        add_submenu_page('wgb', esc_html__('License', 'ithemeland-free-gifts-for-woo'), esc_html__('License', 'ithemeland-free-gifts-for-woo'), 'manage_woocommerce', 'wgb-license', [new License_Controller, 'index']);
     }
 
     public static function wgb_wp_init()
@@ -82,6 +86,7 @@ class WGBL
 
         $version = get_option('wgbl-version');
         if (empty($version) || $version != WGBL_VERSION) {
+            delete_option('wgb_pro_version_alert_dismissed');
 
             $rule_repository = Rule::get_instance();
             $rule_repository->maybe_sync();
@@ -220,11 +225,15 @@ class WGBL
 
             wp_enqueue_style('wgb-responsive', WGBL_CSS_URL . 'common/responsive.css', [], WGBL_VERSION);
         }
+
+        if (!empty($_GET['page']) && $_GET['page'] == 'wgb-license') {
+            wp_enqueue_style('wgb-license', WGBL_CSS_URL . 'license.css', [], WGBL_VERSION);
+        }
     }
 
     public function load_assets($page)
     {
-        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgb', 'wgb-reports'])) { //phpcs:ignore
+        if (!empty($_GET['page']) && in_array($_GET['page'], ['wgb', 'wgb-reports', 'wgb-license'])) { //phpcs:ignore
             if (Onboarding::is_completed()) {
                 $this->main_load_assets();
             } else {
@@ -512,7 +521,6 @@ class WGBL
             ]
         ];
     }
-
 
     public static function is_initable()
     {

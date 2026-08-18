@@ -1,0 +1,139 @@
+:root {
+    --wgb-bg: #f4f7fb;
+    --wgb-panel: #fff;
+    --wgb-text: #172033;
+    --wgb-muted: #6b7280;
+    --wgb-line: #e5e7eb;
+    --wgb-purple: #6d3ce7;
+    --wgb-green: #16a34a;
+    --wgb-orange: #f97316;
+    --wgb-red: #dc2626;
+    --wgb-shadow: 0 10px 30px rgba(20, 30, 55, .08);
+    --wgb-radius: 16px
+}
+
+.wgb-license-notice-lite {
+    width: 100%;
+    display: flex;
+    gap: 14px;
+    position: relative;
+    padding: 14px 48px 14px 16px;
+    background: #fff;
+    border: 1px solid var(--wgb-line);
+    border-left: 4px solid var(--wgb-red);
+    border-radius: 8px;
+    box-shadow: var(--wgb-shadow);
+    align-items: center;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.wgb-license-notice-lite * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.wgb-license-notice-lite .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-top: -4px;
+}
+
+.wgb-license-notice-lite a {
+    text-decoration: none;
+}
+
+.wgb-license-notice-lite button {
+    font: inherit
+}
+
+.wgb-license-notice-lite strong {
+    display: block;
+    font-size: 15px
+}
+
+.wgb-license-notice-lite p {
+    margin: 2px 0 0;
+    color: var(--wgb-muted)
+}
+
+.wgb-license-notice-lite-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    white-space: nowrap
+}
+
+.wgb-license-notice-lite-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--wgb-line);
+    background: #fff;
+    color: #6b7280;
+    cursor: pointer;
+    display: inline-table;
+    font-size: 16px;
+    font-weight: 900
+}
+
+.wgb-renew-license-alert-btn-lite {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px
+}
+
+.wgb-renew-license-alert-btn-lite-primary {
+    background: var(--wgb-purple);
+    color: #fff
+}
+
+.wgb-renew-license-alert-btn-lite-orange {
+    background: var(--wgb-orange);
+    color: #fff
+}
+
+.wgb-renew-license-alert-btn-lite-green {
+    background: var(--wgb-green);
+    color: #fff
+}
+
+.wgb-renew-license-alert-btn-lite-outline {
+    background: #fff;
+    color: var(--wgb-text);
+    border: 1px solid #d1d5db
+}
+
+.wgb-renew-license-alert-btn-lite-danger {
+    background: var(--wgb-red);
+    color: #fff
+}
+
+.wgb-renew-license-alert-btn-lite-sm {
+    padding: 8px 12px;
+    font-size: 13px
+}
+
+@media(max-width:760px) {
+    .wgb-license-notice-lite {
+        align-items: flex-start;
+        flex-wrap: wrap
+    }
+    .wgb-license-notice-lite-actions {
+        margin-left: 0
+    }
+}

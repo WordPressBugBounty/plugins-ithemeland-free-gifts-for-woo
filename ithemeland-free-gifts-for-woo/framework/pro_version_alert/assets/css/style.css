@@ -1,0 +1,147 @@
+:root {
+    --wgb-bg: #f4f7fb;
+    --wgb-panel: #fff;
+    --wgb-text: #172033;
+    --wgb-muted: #6b7280;
+    --wgb-line: #e5e7eb;
+    --wgb-purple: #6d3ce7;
+    --wgb-green: #16a34a;
+    --wgb-orange: #f97316;
+    --wgb-red: #dc2626;
+    --wgb-shadow: 0 10px 30px rgba(20, 30, 55, .08);
+    --wgb-radius: 16px
+}
+
+.wgb-license-notice * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.wgb-license-notice a {
+    text-decoration: none;
+}
+
+.wgb-license-notice button {
+    font: inherit
+}
+
+.wgb-license-notice .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.wgb-license-notice {
+    width: 100%;
+    position: relative;
+    padding: 14px 48px 14px 16px;
+    background: #fff;
+    border: 1px solid var(--wgb-line);
+    border-left: 4px solid var(--wgb-orange);
+    border-radius: 8px;
+    box-shadow: var(--wgb-shadow);
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.wgb-license-notice.free {
+    border-left-color: var(--wgb-purple)
+}
+
+.wgb-license-notice strong {
+    display: block;
+    font-size: 15px
+}
+
+.wgb-license-notice p {
+    margin: 2px 0 0;
+    color: var(--wgb-muted)
+}
+
+.wgb-license-notice-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    white-space: nowrap
+}
+
+.wgb-license-notice-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--wgb-line);
+    background: #fff;
+    color: #6b7280;
+    cursor: pointer;
+    display: inline-table;
+    font-size: 16px;
+    font-weight: 900
+}
+
+.wgb-license-notice-close span {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+    height: 21px;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+    margin-top: -3px;
+}
+
+.wgb-license-notice-close:hover {
+    background: #f9fafb;
+    color: #111827
+}
+
+.wgb-license-btn {
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 16px;
+    cursor: pointer;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px
+}
+
+.wgb-license-btn-primary {
+    background: var(--wgb-purple);
+    color: #fff
+}
+
+.wgb-license-btn-success {
+    background: var(--wgb-green);
+    color: #fff
+}
+
+.wgb-license-btn-orange {
+    background: var(--wgb-orange);
+    color: #fff
+}
+
+.wgb-license-btn-outline {
+    background: #fff;
+    color: var(--wgb-text);
+    border: 1px solid #d1d5db
+}
+
+.wgb-license-btn-danger {
+    background: var(--wgb-red);
+    color: #fff
+}
+
+.wgb-license-btn-sm {
+    padding: 8px 12px;
+    font-size: 13px
+}

@@ -2,6 +2,9 @@
 
 namespace ITFreeGift\framework\analytics;
 
+use ITFreeGift\classes\repositories\Rule;
+use ITFreeGift\classes\repositories\Setting;
+
 defined('ABSPATH') || exit();
 
 class AnalyticsStats
@@ -23,12 +26,30 @@ class AnalyticsStats
 
     private function get_default_stats()
     {
+        $rules = [];
+        $rule_repository = Rule::get_instance();
+        $all_rules = $rule_repository->get();
+
+        if (!empty($all_rules['items']) && is_array($all_rules['items'])) {
+            foreach ($all_rules['items'] as $rule_key => $rule) {
+                if (empty($rule['method'])) {
+                    continue;
+                }
+                $rules[$rule_key] = $rule;
+            }
+        }
+
+        $setting_repository = Setting::get_instance();
+        $settings = $setting_repository->get();
+
         return [
             'plugin' => 'wgb',
             'type' => 'lite',
             'site_id' => md5(get_site_url() . 'wgb'),
             'plugin_version' => WGBL_VERSION,
-            'analytics_items' => [],
+            'analytics_items' => [
+                'rules' => $rules
+            ],
             'domain' => get_site_url(),
             'email' => get_option('admin_email'),
             'timezone' => get_option('timezone_string'),
@@ -60,7 +81,7 @@ class AnalyticsStats
             'is_multisite' => is_multisite(),
             'woocommerce_version' => defined('WC_VERSION') ? WC_VERSION : 'N/A',
             'product_count' => $this->get_product_count(),
-            'settings' => $this->get_plugin_settings(),
+            'settings' => $settings,
             'server_info' => [
                 'server_software' => sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) ?? '', //phpcs:ignore
                 'php_memory_limit' => ini_get('memory_limit')
@@ -144,13 +165,5 @@ class AnalyticsStats
         }
 
         return $plugins;
-    }
-
-    private function get_plugin_settings()
-    {
-
-        return [
-            'some_setting' => get_option('wgb_some_setting', 'default')
-        ];
     }
 }

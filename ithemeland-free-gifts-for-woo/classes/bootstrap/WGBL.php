@@ -35,6 +35,11 @@ class WGBL
 
     private function __construct()
     {
+        Rule::register_cache_invalidation_hooks();
+
+        // Store API and frontend blocks must also initialize for shoppers.
+        WGBL_Blocks::init();
+
         if (!current_user_can('manage_woocommerce')) {
             return;
         }
@@ -45,8 +50,6 @@ class WGBL
             $styles[] = 'display';
             return $styles;
         });
-
-        WGBL_Blocks::init();
 
         if (is_admin()) {
             add_action('admin_menu', [$this, 'add_menu']);
@@ -226,7 +229,7 @@ class WGBL
             wp_enqueue_style('wgb-responsive', WGBL_CSS_URL . 'common/responsive.css', [], WGBL_VERSION);
         }
 
-        if (!empty($_GET['page']) && $_GET['page'] == 'wgb-license') {
+        if (!empty($_GET['page']) && $_GET['page'] == 'wgb-license') { //phpcs:ignore
             wp_enqueue_style('wgb-license', WGBL_CSS_URL . 'license.css', [], WGBL_VERSION);
         }
     }

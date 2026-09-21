@@ -36,13 +36,15 @@ class WGBL_Block_Carousel
 
     public function register_callback()
     {
-        wp_register_style('wgb-blocks-front-carousel', WGBL_FRONTEND_URL . 'blocks/carousel/front-style.css', [], WGBL_VERSION);
+        wp_register_style('wgb-blocks-carousel', WGBL_FRONTEND_URL . 'blocks/carousel/editor-style.css', ['wgb-blocks-common-style'], WGBL_VERSION);
+        wp_register_style('wgb-blocks-front-carousel', WGBL_FRONTEND_URL . 'blocks/carousel/front-style.css', ['it-gift-owl-carousel-style'], WGBL_VERSION);
         wp_register_script('wgb-blocks-front-carousel', WGBL_FRONTEND_URL . 'blocks/carousel/front-js.js', [], WGBL_VERSION); //phpcs:ignore
 
         register_block_type('wgb/gift-carousel', [
             'render_callback' => [$this, 'callback'],
             'script' => 'wgb-blocks-front-carousel',
             'style' => 'wgb-blocks-front-carousel',
+            'editor_style' => 'wgb-blocks-carousel',
 
             'attributes' => [
                 'speed' => [

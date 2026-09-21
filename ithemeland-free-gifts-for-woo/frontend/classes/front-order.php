@@ -16,6 +16,7 @@ class iThemeland_front_order
     private $gift_item_key;
     private $settings;
     private $check_rule_condition;
+    private $rule_evaluation_in_progress = false;
 
 
     public function __construct()
@@ -48,10 +49,6 @@ class iThemeland_front_order
         add_action('wp_ajax_itg_reloaditempopup', [$this, 'reload_item_popup']);
         add_action('wp_ajax_nopriv_itg_reloaditempopup', [$this, 'reload_item_popup']);
 
-        // Test AJAX function for debugging
-        add_action('wp_ajax_itg_test_ajax', [$this, 'test_ajax_function']);
-        add_action('wp_ajax_nopriv_itg_test_ajax', [$this, 'test_ajax_function']);
-
         //add_action('woocommerce_new_order', array($this, 'add_gift_to_order_adv'), 99, 1);
 
         //If Change Change Payment Method Show Popup
@@ -73,6 +70,12 @@ class iThemeland_front_order
     public function check_session_gift_woocommerce_after_calculate_totals($cart = null)
     //public function check_session_gift($cart = null)
     {
+        if ($this->rule_evaluation_in_progress) {
+            return;
+        }
+
+        $this->rule_evaluation_in_progress = true;
+        try {
         global $woocommerce;
 
         // Return if cart object is not initialized.
@@ -96,7 +99,7 @@ class iThemeland_front_order
 
             if ($products_removed) {
                 if (WC()->cart->get_cart_contents_count() > 0) {
-                    Notice::add(get_option('itg_localization_free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
+                    Notice::add(itfreegift_get_localization('free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
                 }
             }
             itfreegift_unset_removed_automatic_free_gift_products_from_session();
@@ -205,7 +208,7 @@ class iThemeland_front_order
         }
 
         if ($show_notice) {
-            Notice::add(get_option('itg_localization_free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
+            Notice::add(itfreegift_get_localization('free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
         }
 
         if (isset($this->check_rule_condition->getShowGiftItemForCart()['gifts'])) {
@@ -220,6 +223,9 @@ class iThemeland_front_order
 
             //Show Popup
             add_action('wp_footer', array($this, 'layout_popup'));
+        }
+        } finally {
+            $this->rule_evaluation_in_progress = false;
         }
     }
 
@@ -270,6 +276,8 @@ class iThemeland_front_order
             return;
         }
 
+        iThemeland_enqueue_css_js::enqueue_layout($this->settings['layout_popup'] ?? 'carousel', true);
+
         switch ($this->settings['layout_popup']) {
             case 'carousel':
                 $layout = plugin_dir_path_wc_adv_gift . 'views/modal/carousel-layout.php';
@@ -292,22 +300,14 @@ class iThemeland_front_order
 
         switch ($this->settings['layout']) {
             case 'datatable':
-                wp_enqueue_style('it-gift-datatables-style');
-                wp_enqueue_script('it-gift-datatables-js');
-
                 $template = 'datatable-layout.php';
                 break;
 
             case 'grid':
-                wp_enqueue_script('it-gift-grid-jquery');
-
                 $template = 'grid-layout.php';
                 break;
 
             case 'carousel':
-                wp_enqueue_style('it-gift-owl-carousel-style');
-                wp_enqueue_script('it-gift-owl-carousel-jquery');
-
                 $template = 'carousel-layout.php';
                 break;
         }
@@ -336,6 +336,8 @@ class iThemeland_front_order
         if (count($atts['items']) <= 0) {
             return;
         }
+
+        iThemeland_enqueue_css_js::enqueue_layout($this->settings['layout']);
 
         if ($this->settings['show_description'] == 'true') {
             $description = '';
@@ -381,12 +383,12 @@ class iThemeland_front_order
             return;
         }
 
-        $notice = '<span class="itg-checkout-notice"></span>' . get_option('itg_localization_notice_checkout_message');
+        $notice = '<span class="itg-checkout-notice"></span>' . itfreegift_get_localization('notice_checkout_message', false);
 
-        $popup_link = sprintf('<a class="btn-select-gift-popup-button" href="">%s</a>', get_option('itg_localization_notice_checkout_message_link_here'));
+        $popup_link = sprintf('<a class="btn-select-gift-popup-button" href="">%s</a>', itfreegift_get_localization('notice_checkout_message_link_here', false));
         $notice        = str_replace('[popup_link]', $popup_link, $notice);
 
-        $cart_page_url = sprintf('<a href="%s">%s</a>', wc_get_cart_url(), get_option('itg_localization_notice_checkout_message_link_here'));
+        $cart_page_url = sprintf('<a href="%s">%s</a>', wc_get_cart_url(), itfreegift_get_localization('notice_checkout_message_link_here', false));
         $notice        = str_replace('[cart_link]', $cart_page_url, $notice);
         //echo $notice;
         Notice::add($notice, 'notice');
@@ -507,6 +509,11 @@ class iThemeland_front_order
         }
 
         $product = wc_get_product($id_product);
+        if (!itfreegift_is_product_available_for_gift($product)) {
+            Notice::add(__('This gift is currently unavailable.', 'ithemeland-free-gifts-for-woo'), 'error');
+            wp_safe_redirect(apply_filters('itfreegift_redirect_link', get_permalink()));
+            exit();
+        }
         $itfreegift_pr_price = $product->get_price();
         if (in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('simplea'), true)) {
             if ($itfreegift_pr_price == '') {
@@ -518,10 +525,6 @@ class iThemeland_front_order
             }
         }
 
-        // Return if product id is not proper product.
-        if (!$product) {
-            return;
-        }
         $_price_for_gift = 0;
         $_price_for_gift = get_post_meta($id_product, '_price_for_gift', true);
         $_price_for_gift = str_replace(",", ".", $_price_for_gift);
@@ -545,9 +548,15 @@ class iThemeland_front_order
 
         $cart_item_data = apply_filters('itfreegift_array_addtocart', $cart_item_data);
 
-        WC()->cart->add_to_cart($id_product, $qty, 0, array(), $cart_item_data);
+        $cart_item_key = WC()->cart->add_to_cart($id_product, $qty, 0, array(), $cart_item_data);
 
-        Notice::add(get_option('itg_localization_free_gift_added', 'Gift product added successfully'), 'success');
+        if (!$cart_item_key) {
+            Notice::add(__('This gift could not be added to the cart.', 'ithemeland-free-gifts-for-woo'), 'error');
+            wp_safe_redirect(apply_filters('itfreegift_redirect_link', get_permalink()));
+            exit();
+        }
+
+        Notice::add(itfreegift_get_localization('free_gift_added', 'Gift product added successfully'), 'success');
 
         wp_safe_redirect(apply_filters('itfreegift_redirect_link', get_permalink()));
 
@@ -655,11 +664,10 @@ class iThemeland_front_order
             }
 
             $product = wc_get_product($id_product);
-            $itfreegift_pr_price = $product->get_price();
-            // Return if product id is not proper product.
-            if (!$product) {
-                return;
+            if (!itfreegift_is_product_available_for_gift($product)) {
+                throw new \Exception(__('This gift is currently unavailable.', 'ithemeland-free-gifts-for-woo'));
             }
+            $itfreegift_pr_price = $product->get_price();
             $_price_for_gift = 0;
             $_price_for_gift = get_post_meta($id_product, '_price_for_gift', true);
             $_price_for_gift = str_replace(",", ".", $_price_for_gift);
@@ -691,7 +699,7 @@ class iThemeland_front_order
 
             // Create notice
             ob_start();
-            Notice::print(get_option('itg_localization_free_gift_added', 'Gift product added successfully'), 'success');
+            Notice::print(itfreegift_get_localization('free_gift_added', 'Gift product added successfully'), 'success');
             $notice = ob_get_clean();
 
             // Send success response
@@ -832,7 +840,7 @@ class iThemeland_front_order
             return;
         }
 
-        wp_enqueue_script('pw-gift-add-jquery-adv');
+        iThemeland_enqueue_css_js::enqueue_core();
         //$view = 'variations.php';
         //		switch ( $view ) {
         //			case 'carousel':
@@ -898,10 +906,6 @@ class iThemeland_front_order
         wp_send_json_success(array('gift_avilible' => $data));
     }
 
-    public function test_ajax_function()
-    {
-        wp_send_json_success(array('message' => 'AJAX test successful!'));
-    }
 }
 
 new iThemeland_front_order();

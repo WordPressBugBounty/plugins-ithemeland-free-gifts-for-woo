@@ -14,6 +14,10 @@ if (!defined('ABSPATH')) {
 
 class CheckRuleCondition
 {
+    private static $request_evaluation_cache = [];
+    private $all_rules_loaded = false;
+    private $all_rules_cache = false;
+
     protected $item_cart;
     protected $show_gift_item_for_cart = [];
     protected $product_qty_in_cart;
@@ -84,16 +88,140 @@ class CheckRuleCondition
 
         if (!$this->validate_cart()) return false;
 
+        $rules = $this->get_all_rules();
+        if (!$rules) return false;
+        if (!is_array($rules)) return false;
+
+        $fingerprint = $this->build_evaluation_fingerprint($rules);
+        $memoization_enabled = (bool) apply_filters('itfreegift_enable_rule_evaluation_memoization', true, $fingerprint, $rules);
+        if ($memoization_enabled && array_key_exists($fingerprint, self::$request_evaluation_cache)) {
+            return $this->restore_evaluation_snapshot(self::$request_evaluation_cache[$fingerprint]);
+        }
+
         $cart_subtotal = $this->get_cart_subtotal();
         $this->product_qty_in_cart = $this->get_cart_item_stock_quantities();
 
-        $rules = $this->get_all_rules();
-        if (!$rules) return false;
-
         $check_rules_condition = $this->filter_applicable_rules($rules);
-        if (empty($check_rules_condition)) return false;
+        if (empty($check_rules_condition)) {
+            return $memoization_enabled ? $this->cache_evaluation_snapshot($fingerprint, false, null) : false;
+        }
 
-        return $this->apply_rules($check_rules_condition, $cart_subtotal);
+        $result = $this->apply_rules($check_rules_condition, $cart_subtotal);
+        $applicable_rules = is_array(WC()->session ? WC()->session->get('itg_free_gift_current_applicable_rules', []) : null)
+            ? WC()->session->get('itg_free_gift_current_applicable_rules', [])
+            : [];
+        return $memoization_enabled ? $this->cache_evaluation_snapshot($fingerprint, $result, $applicable_rules) : $result;
+    }
+
+    private function build_evaluation_fingerprint(array $rules)
+    {
+        $cart_state = [];
+        foreach ($this->item_cart as $cart_item_key => $cart_item) {
+            $product = (!empty($cart_item['data']) && $cart_item['data'] instanceof \WC_Product) ? $cart_item['data'] : null;
+            $cart_state[] = [
+                'key' => (string) $cart_item_key,
+                'product_id' => (int) ($cart_item['product_id'] ?? 0),
+                'variation_id' => (int) ($cart_item['variation_id'] ?? 0),
+                'quantity' => (float) ($cart_item['quantity'] ?? 0),
+                'line_subtotal' => (string) ($cart_item['line_subtotal'] ?? ''),
+                'line_subtotal_tax' => (string) ($cart_item['line_subtotal_tax'] ?? ''),
+                'line_total' => (string) ($cart_item['line_total'] ?? ''),
+                'line_tax' => (string) ($cart_item['line_tax'] ?? ''),
+                'price' => $product ? (string) $product->get_price() : '',
+                'gift' => $cart_item['it_free_gift'] ?? null,
+            ];
+        }
+
+        $gift_cart_state = [];
+        if (function_exists('WC') && WC()->cart) {
+            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                if (empty($cart_item['it_free_gift'])) {
+                    continue;
+                }
+                $gift_cart_state[] = [
+                    'key' => (string) $cart_item_key,
+                    'product_id' => (int) ($cart_item['product_id'] ?? 0),
+                    'variation_id' => (int) ($cart_item['variation_id'] ?? 0),
+                    'quantity' => (float) ($cart_item['quantity'] ?? 0),
+                    'gift' => $cart_item['it_free_gift'],
+                ];
+            }
+        }
+
+        $customer = function_exists('WC') ? WC()->customer : null;
+        $customer_state = [];
+        foreach (['get_billing_country', 'get_billing_state', 'get_billing_postcode', 'get_billing_city', 'get_shipping_country', 'get_shipping_state', 'get_shipping_postcode', 'get_shipping_city'] as $getter) {
+            $customer_state[$getter] = ($customer && is_callable([$customer, $getter])) ? (string) $customer->{$getter}() : '';
+        }
+
+        $user = wp_get_current_user();
+        $session = function_exists('WC') ? WC()->session : null;
+        $checkout_state = [];
+        if (!empty($_POST['post_data']) && is_string($_POST['post_data'])) { // phpcs:ignore
+            parse_str(wp_unslash($_POST['post_data']), $posted_checkout); // phpcs:ignore
+            foreach ($posted_checkout as $key => $value) {
+                if (strpos($key, 'billing_') === 0 || strpos($key, 'shipping_') === 0 || in_array($key, ['payment_method', 'shipping_method'], true)) {
+                    $checkout_state[$key] = is_array($value) ? array_map('sanitize_text_field', $value) : sanitize_text_field($value);
+                }
+            }
+        }
+        if (function_exists('itfreegift_get_checkout_billing_email')) {
+            $checkout_state['resolved_billing_email'] = (string) itfreegift_get_checkout_billing_email();
+        }
+        $language = function_exists('determine_locale') ? determine_locale() : get_locale();
+        if (defined('WCML_VERSION')) {
+            $language = (string) apply_filters('wpml_current_language', $language); //phpcs:ignore
+        } elseif (defined('POLYLANG') && function_exists('pll_current_language')) {
+            $language = (string) pll_current_language();
+        }
+
+        $state = [
+            'cart' => $cart_state,
+            'gift_cart' => $gift_cart_state,
+            'coupons' => (function_exists('WC') && WC()->cart) ? array_values(WC()->cart->get_applied_coupons()) : [],
+            'cart_total' => (function_exists('WC') && WC()->cart) ? (string) WC()->cart->total : '',
+            'customer_id' => (int) $user->ID,
+            'roles' => array_values((array) $user->roles),
+            'customer' => $customer_state,
+            'checkout' => $checkout_state,
+            'shipping_methods' => $session ? (array) $session->get('chosen_shipping_methods', []) : [],
+            'payment_method' => $session ? (string) $session->get('chosen_payment_method', '') : '',
+            'language' => $language,
+            'rules' => md5(maybe_serialize($rules)),
+            // Date/time rules must not reuse a result after the current second changes.
+            'time' => time(),
+        ];
+
+        return md5(maybe_serialize($state));
+    }
+
+    private function cache_evaluation_snapshot($fingerprint, $result, $applicable_rules)
+    {
+        self::$request_evaluation_cache[$fingerprint] = [
+            'result' => $result,
+            'show_gift_item_for_cart' => $this->show_gift_item_for_cart,
+            'product_qty_in_cart' => $this->product_qty_in_cart,
+            'gift_item_variable' => $this->gift_item_variable,
+            'gift_rule_exclude' => $this->gift_rule_exclude,
+            'free_shipping_exists' => $this->free_shipping_exists,
+            'filter_items_by_rules' => $this->filter_items_by_rules,
+            'applicable_rules' => $applicable_rules,
+        ];
+        return $result;
+    }
+
+    private function restore_evaluation_snapshot(array $snapshot)
+    {
+        $this->show_gift_item_for_cart = $snapshot['show_gift_item_for_cart'];
+        $this->product_qty_in_cart = $snapshot['product_qty_in_cart'];
+        $this->gift_item_variable = $snapshot['gift_item_variable'];
+        $this->gift_rule_exclude = $snapshot['gift_rule_exclude'];
+        $this->free_shipping_exists = $snapshot['free_shipping_exists'];
+        $this->filter_items_by_rules = $snapshot['filter_items_by_rules'];
+        if (is_array($snapshot['applicable_rules'])) {
+            $this->sync_applicable_rules_session($snapshot['applicable_rules']);
+        }
+        return $snapshot['result'];
     }
 
     private function validate_cart()
@@ -177,7 +305,6 @@ class CheckRuleCondition
     private function apply_rules($check_rules_condition, $cart_subtotal)
     {
         $current_session_gift_rules = [];
-        WC()->session->__unset('itg_free_gift_current_applicable_rules');
 
         foreach ($check_rules_condition as $rule_value) {
             $this->set_gift_cache($rule_value);
@@ -303,7 +430,7 @@ class CheckRuleCondition
         if (is_array($this->gift_item_variable) && (count($this->gift_item_variable) > 0 || sizeof($this->gift_item_variable) > 0)) {
 
             $this->gift_item_variable['rule_time'] = $rules_time;
-            WC()->session->set('itg_free_gift_current_applicable_rules', $current_session_gift_rules);
+            $this->sync_applicable_rules_session($current_session_gift_rules);
             return $this->gift_item_variable;
         }
         // if (!empty($this->gift_item_variable)) {
@@ -311,8 +438,31 @@ class CheckRuleCondition
         //     WC()->session->set('itg_free_gift_current_applicable_rules', $current_session_gift_rules);
         //     return $this->gift_item_variable;
         // }
+        $this->sync_applicable_rules_session([]);
         itfreegift_unset_removed_automatic_free_gift_products_from_session();
         return false;
+    }
+
+    private function sync_applicable_rules_session(array $current_session_gift_rules)
+    {
+        if (!WC()->session) {
+            return;
+        }
+
+        $session_key = 'itg_free_gift_current_applicable_rules';
+        $stored_rules = WC()->session->get($session_key, []);
+        $stored_rules = is_array($stored_rules) ? $stored_rules : [];
+
+        if ($stored_rules === $current_session_gift_rules) {
+            return;
+        }
+
+        if (empty($current_session_gift_rules)) {
+            WC()->session->__unset($session_key);
+            return;
+        }
+
+        WC()->session->set($session_key, $current_session_gift_rules);
     }
 
     private function get_product_buy_conditions($rule_value)
@@ -357,13 +507,20 @@ class CheckRuleCondition
 
     public function get_all_rules()
     {
+        if ($this->all_rules_loaded) {
+            return $this->all_rules_cache;
+        }
+
+        $this->all_rules_loaded = true;
         $get_instance_rules = Rule::get_instance();
         $rules = $get_instance_rules->get();
         //Check Conditions
         if (!isset($rules['items']) || !is_array($rules['items']) || count($rules['items']) <= 0) {
-            return false;
+            $this->all_rules_cache = false;
+            return $this->all_rules_cache;
         }
-        return $rules;
+        $this->all_rules_cache = $rules;
+        return $this->all_rules_cache;
     }
 
     public function get_gift_rules_cache($rule_value)

@@ -36,13 +36,15 @@ class WGBL_Block_Datatable
 
     public function register_callback()
     {
-        wp_register_style('wgb-blocks-front-datatable', WGBL_FRONTEND_URL . 'blocks/datatable/front-style.css', [], WGBL_VERSION);
+        wp_register_style('wgb-blocks-datatable', WGBL_FRONTEND_URL . 'blocks/datatable/editor-style.css', ['wgb-blocks-common-style'], WGBL_VERSION);
+        wp_register_style('wgb-blocks-front-datatable', WGBL_FRONTEND_URL . 'blocks/datatable/front-style.css', ['it-gift-datatables-style'], WGBL_VERSION);
         wp_register_script('wgb-blocks-front-datatable', WGBL_FRONTEND_URL . 'blocks/datatable/front-js.js', [], WGBL_VERSION); //phpcs:ignore
 
         register_block_type('wgb/gift-datatable', [
             'render_callback' => [$this, 'callback'],
             'script' => 'wgb-blocks-front-datatable',
             'style' => 'wgb-blocks-front-datatable',
+            'editor_style' => 'wgb-blocks-datatable',
         ]);
     }
 

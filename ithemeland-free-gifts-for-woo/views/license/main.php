@@ -1,3 +1,7 @@
+<?php
+if (!defined('ABSPATH')) exit; // Exit if accessed directly 
+?>
+
 <div class="wgb-license-page">
     <main class="wgb-license-shell">
         <header class="wgb-license-page-head">

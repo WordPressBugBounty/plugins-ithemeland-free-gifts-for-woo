@@ -59,13 +59,16 @@ if (!function_exists('itfreegift_get_cart_item_stock_quantities')) {
 }
 
 if (!function_exists('itfreegift_get_cart_items_gift_quantities')) {
-    function itfreegift_get_cart_items_gift_quantities()
+    function itfreegift_get_cart_items_gift_quantities($cart_contents = null)
     {
         if (!is_object(WC()->cart)) {
             return '';
         }
+        if (!is_array($cart_contents)) {
+            $cart_contents = WC()->cart->get_cart();
+        }
         $filter_items = [];
-        foreach (WC()->cart->get_cart() as $key => $value) {
+        foreach ($cart_contents as $key => $value) {
 
             if (!isset($value['it_free_gift'])) {
                 continue;
@@ -75,6 +78,44 @@ if (!function_exists('itfreegift_get_cart_items_gift_quantities')) {
         }
 
         return $filter_items;
+    }
+}
+
+if (!function_exists('itfreegift_get_cart_product_quantity_map')) {
+    function itfreegift_get_cart_product_quantity_map($cart_contents = null)
+    {
+        if (!is_object(WC()->cart)) {
+            return [];
+        }
+        if (!is_array($cart_contents)) {
+            $cart_contents = WC()->cart->get_cart();
+        }
+
+        $quantities = [];
+        foreach ($cart_contents as $cart_item) {
+            $product_id = !empty($cart_item['variation_id']) ? (int) $cart_item['variation_id'] : (int) ($cart_item['product_id'] ?? 0);
+            if ($product_id <= 0) {
+                continue;
+            }
+            $quantities[$product_id] = ($quantities[$product_id] ?? 0) + (float) ($cart_item['quantity'] ?? 0);
+        }
+        return $quantities;
+    }
+}
+
+if (!function_exists('itfreegift_is_product_available_for_gift')) {
+    /**
+     * Check whether WooCommerce allows a product to be purchased as a gift.
+     *
+     * Stock alone is not enough: draft/private products, products without a
+     * price, and products disabled by WooCommerce filters are not purchasable.
+     */
+    function itfreegift_is_product_available_for_gift($product)
+    {
+        return $product instanceof \WC_Product
+            && $product->exists()
+            && $product->is_purchasable()
+            && $product->is_in_stock();
     }
 }
 
@@ -89,7 +130,7 @@ if (!function_exists('itfreegift_deprecated_quantities_gift_stock')) {
         $x = 0;
         $qty = 0;
         $count_rule_gift = 0;
-        if (!$product->is_in_stock() && $get_stock_quantity <= 0) {
+        if (!itfreegift_is_product_available_for_gift($product)) {
             $item_hover     = 'disable-hover';
             $text_stock_qty = 'out of stock';
             $stock_status = 'out_of_stock';
@@ -170,6 +211,10 @@ if (!function_exists('itfreegift_deprecated_quantities_gift_stock')) {
 
 function itfreegift_get_settings()
 {
+    if (isset($GLOBALS['itfreegift_normalized_settings_cache']) && is_array($GLOBALS['itfreegift_normalized_settings_cache'])) {
+        return $GLOBALS['itfreegift_normalized_settings_cache'];
+    }
+
     $settings = Setting::get_instance();
     $settings = $settings->get();
 
@@ -196,7 +241,42 @@ function itfreegift_get_settings()
     $settings['gift_title_Length'] = isset($settings['gift_title_Length']) ?  $settings['gift_title_Length'] : '20';
     $settings['enable_ajax_add_to_cart'] = isset($settings['enable_ajax_add_to_cart']) ?  $settings['enable_ajax_add_to_cart'] : 'false';
     $settings['layout_popup'] = isset($settings['layout_popup']) ?  $settings['layout_popup'] : 'carousel';
+    $GLOBALS['itfreegift_normalized_settings_cache'] = $settings;
     return $settings;
+}
+
+if (!function_exists('itfreegift_reset_settings_cache')) {
+    function itfreegift_reset_settings_cache()
+    {
+        unset($GLOBALS['itfreegift_normalized_settings_cache']);
+    }
+}
+
+if (!function_exists('itfreegift_get_localization')) {
+    function itfreegift_get_localization($key, $default = '')
+    {
+        $option_name = strpos((string) $key, 'itg_localization_') === 0
+            ? (string) $key
+            : 'itg_localization_' . (string) $key;
+
+        if (!isset($GLOBALS['itfreegift_localization_cache']) || !is_array($GLOBALS['itfreegift_localization_cache'])) {
+            $GLOBALS['itfreegift_localization_cache'] = [];
+        }
+        // Include the caller's default in the cache key. If an option is absent,
+        // get_option() must still return the exact default requested at each call.
+        $cache_key = $option_name . ':' . md5(maybe_serialize($default));
+        if (!array_key_exists($cache_key, $GLOBALS['itfreegift_localization_cache'])) {
+            $GLOBALS['itfreegift_localization_cache'][$cache_key] = get_option($option_name, $default);
+        }
+        return $GLOBALS['itfreegift_localization_cache'][$cache_key];
+    }
+}
+
+if (!function_exists('itfreegift_reset_localization_cache')) {
+    function itfreegift_reset_localization_cache()
+    {
+        unset($GLOBALS['itfreegift_localization_cache']);
+    }
 }
 
 if (!function_exists('itfreegift_render_product_image')) {
@@ -401,9 +481,11 @@ if (!function_exists('itfreegift_get_gift_products_data_multilevel')) {
     {
         $rule_products = ['items' => [], 'settings' => $args['settings'], 'is_child' => $args['is_child']];
 
-        $quantity_in_session = itfreegift_check_quantity_gift_in_session(WC()->cart->get_cart());
+        $cart_contents = WC()->cart->get_cart();
+        $quantity_in_session = itfreegift_check_quantity_gift_in_session($cart_contents);
 
-        $gift_quantity_in_cart = itfreegift_get_cart_items_gift_quantities();
+        $gift_quantity_in_cart = itfreegift_get_cart_items_gift_quantities($cart_contents);
+        $cart_product_quantities = itfreegift_get_cart_product_quantity_map($cart_contents);
 
         foreach ($args['gifts_items_cart']['gifts'] as $gift_item_key => $gifts_items_cart) {
 
@@ -441,14 +523,20 @@ if (!function_exists('itfreegift_get_gift_products_data_multilevel')) {
                     continue;
                 }
 
+                $stock_product = ((int) $get_product_id === (int) $get_parent_id)
+                    ? $product
+                    : itfreegift_get_product($get_product_id);
+
                 $args_data = [
                     'product_id' => $get_product_id,
+                    'product' => $stock_product,
                     'rule' => $gifts_items_cart,
                     'products_in_cart' => $args['quantity_products_in_cart'],
                     'gifts_in_cart' => $gift_quantity_in_cart,
                     'gift_allowed' => $gift_allowed,
                     'quantities_in_session' => $quantity_in_session,
                     'all_gift_items' => $args['all_gift_items'],
+                    'cart_product_quantities' => $cart_product_quantities,
                 ];
 
                 $stock_status = itfreegift_get_product_stock_status($args_data);
@@ -587,11 +675,13 @@ if (!function_exists('itfreegift_get_product_stock_status')) {
         $quantities_in_session = $args_data['quantities_in_session'];
         $product_gift_allowed = $args_data['gift_allowed'];
 
-        $product = itfreegift_get_product($product_id);
+        $product = (!empty($args_data['product']) && $args_data['product'] instanceof \WC_Product)
+            ? $args_data['product']
+            : itfreegift_get_product($product_id);
         $gift_id = $rule['uid'] . '-' . $product_id;
 
-        //Return if stock is out of stock.
-        if (!$product || (!$product->is_on_backorder() && !$product->is_in_stock())) {
+        // Return when WooCommerce does not allow this product to be purchased.
+        if (!itfreegift_is_product_available_for_gift($product)) {
             return [
                 'stock_qty' => 0,
                 'hide_add_to_cart' => true,
@@ -614,7 +704,7 @@ if (!function_exists('itfreegift_get_product_stock_status')) {
         if (!$product->managing_stock() || $product->is_on_backorder()) {
             $qty =  $product_gift_allowed - $any_rule_gift_count_in_cart;
         } else {
-            $product_count_in_cart = itfreegift_get_product_count_in_cart($product_id);
+            $product_count_in_cart = itfreegift_get_product_count_in_cart($product_id, $args_data['cart_product_quantities'] ?? null);
             $stock_mines_in_cart = $get_stock_quantity - $product_count_in_cart;
 
             if ($product_gift_allowed > $stock_mines_in_cart) {
@@ -676,7 +766,7 @@ if (!function_exists('itfreegift_render_price_gift')) {
         if ($price != '') {
             $text_temp = '<del>' . wc_price($product_price) . '</del> <ins>' . wc_price($price) . '</ins>';
         } else {
-            $free_txt = get_option('itg_localization_free', 'Free');
+            $free_txt = itfreegift_get_localization('free', 'Free');
             $text_temp = '<del>' . wc_price($product_price) . '</del> <ins>' . $free_txt . '</ins>';
         }
 
@@ -993,8 +1083,11 @@ if (!function_exists('itfreegift_get_product_count_in_cart')) {
      *
      * @return int
      */
-    function itfreegift_get_product_count_in_cart($product_id)
+    function itfreegift_get_product_count_in_cart($product_id, $quantity_map = null)
     {
+        if (is_array($quantity_map)) {
+            return $quantity_map[(int) $product_id] ?? 0;
+        }
         $product_count = 0;
         if (!is_object(WC()->cart)) {
             return $product_count;

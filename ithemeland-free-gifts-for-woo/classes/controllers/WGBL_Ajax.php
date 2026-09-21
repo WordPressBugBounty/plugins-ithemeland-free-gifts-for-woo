@@ -12,6 +12,8 @@ use ITFreeGift\classes\repositories\User;
 
 class WGBL_Ajax
 {
+    const SEARCH_PAGE_SIZE = 30;
+
     private static $instance;
     private $product_repository;
 
@@ -184,16 +186,22 @@ class WGBL_Ajax
             die();
         }
 
-        $list['results'] = [];
-        if (!empty($_POST['search'])) {
+        $list = ['results' => [], 'pagination' => ['more' => false]];
+        $search = $this->get_search_term();
+        $products = null;
+        if ($search !== '') {
+            $page = $this->get_search_page();
             $products = $this->product_repository->get_products([
-                'posts_per_page' => '-1',
+                'posts_per_page' => self::SEARCH_PAGE_SIZE + 1,
+                'offset' => ($page - 1) * self::SEARCH_PAGE_SIZE,
                 'post_status' => 'publish',
+                'fields' => 'ids',
+                'no_found_rows' => true,
                 'post_type' => ['product'],
                 'wgb_general_column_filter' => [
                     [
                         'field' => 'post_title',
-                        'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),
+                        'value' => strtolower($search),
                         'operator' => 'like'
                     ]
                 ]
@@ -201,10 +209,11 @@ class WGBL_Ajax
         }
 
         if (!empty($products->posts)) {
-            foreach ($products->posts as $product) {
+            $product_ids = $this->paginate_ids($products->posts, $list);
+            foreach ($product_ids as $product_id) {
                 $list['results'][] = [
-                    'id' => $product->ID,
-                    'text' => Product::get_product_label_for_rule_fields($product->ID),
+                    'id' => intval($product_id),
+                    'text' => Product::get_product_label_for_rule_fields(intval($product_id)),
                 ];
             }
         }
@@ -218,30 +227,32 @@ class WGBL_Ajax
             die();
         }
 
-        $list['results'] = [];
-        if (!empty($_POST['search'])) {
+        $list = ['results' => [], 'pagination' => ['more' => false]];
+        $search = $this->get_search_term();
+        if ($search !== '') {
+            $page = $this->get_search_page();
             $query = $this->product_repository->get_products([
-                'posts_per_page' => '-1',
+                'posts_per_page' => self::SEARCH_PAGE_SIZE + 1,
+                'offset' => ($page - 1) * self::SEARCH_PAGE_SIZE,
                 'post_status' => 'publish',
                 'fields' => 'ids',
+                'no_found_rows' => true,
                 'post_type' => ['product', 'product_variation'],
                 'wgb_general_column_filter' => [
                     [
                         'field' => 'post_title',
-                        'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),
+                        'value' => strtolower($search),
                         'operator' => 'like'
                     ]
                 ]
             ]);
 
             if (!empty($query->posts)) {
-                if (!empty($query->posts)) {
-                    foreach ($query->posts as $product_id) {
-                        $list['results'][] = [
-                            'id' => intval($product_id),
-                            'text' => Product::get_product_label_for_rule_fields(intval($product_id)),
-                        ];
-                    }
+                foreach ($this->paginate_ids($query->posts, $list) as $product_id) {
+                    $list['results'][] = [
+                        'id' => intval($product_id),
+                        'text' => Product::get_product_label_for_rule_fields(intval($product_id)),
+                    ];
                 }
             }
         }
@@ -308,24 +319,28 @@ class WGBL_Ajax
             die();
         }
 
-        $list['results'] = [];
-        if (!empty($_POST['search'])) {
+        $list = ['results' => [], 'pagination' => ['more' => false]];
+        $search = $this->get_search_term();
+        if ($search !== '') {
+            $page = $this->get_search_page();
             $products = $this->product_repository->get_products([
-                'posts_per_page' => '-1',
+                'posts_per_page' => self::SEARCH_PAGE_SIZE + 1,
+                'offset' => ($page - 1) * self::SEARCH_PAGE_SIZE,
                 'post_status' => 'publish',
                 'fields' => 'ids',
+                'no_found_rows' => true,
                 'post_type' => ['product_variation'],
                 'wgb_general_column_filter' => [
                     [
                         'field' => 'post_title',
-                        'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),
+                        'value' => strtolower($search),
                         'operator' => 'like'
                     ]
                 ]
             ]);
 
             if (!empty($products->posts)) {
-                foreach ($products->posts as $variation_id) {
+                foreach ($this->paginate_ids($products->posts, $list) as $variation_id) {
                     $list['results'][] = [
                         'id' => intval($variation_id),
                         'text' => Product::get_product_label_for_rule_fields(intval($variation_id)),
@@ -468,29 +483,32 @@ class WGBL_Ajax
             die();
         }
 
-        $list['results'] = [];
-        if (!empty($_POST['search'])) {
+        $list = ['results' => [], 'pagination' => ['more' => false]];
+        $search = $this->get_search_term();
+        if ($search !== '') {
+            $page = $this->get_search_page();
             $coupons = $this->product_repository->get_products([
-                'posts_per_page' => '-1',
+                'posts_per_page' => self::SEARCH_PAGE_SIZE + 1,
+                'offset' => ($page - 1) * self::SEARCH_PAGE_SIZE,
                 'post_status' => 'publish',
+                'fields' => 'ids',
+                'no_found_rows' => true,
                 'post_type' => ['shop_coupon'],
                 'wgb_general_column_filter' => [
                     [
                         'field' => 'post_title',
-                        'value' => strtolower(sanitize_text_field(wp_unslash($_POST['search']))),
+                        'value' => strtolower($search),
                         'operator' => 'like'
                     ]
                 ]
             ]);
 
             if (!empty($coupons->posts)) {
-                foreach ($coupons->posts as $coupon) {
-                    if ($coupon instanceof \WP_Post) {
-                        $list['results'][] = [
-                            'id' => $coupon->ID,
-                            'text' => $coupon->post_title
-                        ];
-                    }
+                foreach ($this->paginate_ids($coupons->posts, $list) as $coupon_id) {
+                    $list['results'][] = [
+                        'id' => intval($coupon_id),
+                        'text' => get_the_title(intval($coupon_id))
+                    ];
                 }
             }
         }
@@ -705,5 +723,25 @@ class WGBL_Ajax
     {
         echo (is_array($data)) ? json_encode($data) : wp_kses($data, Sanitizer::allowed_html());
         die();
+    }
+
+    private function get_search_term()
+    {
+        if (empty($_POST['search'])) { //phpcs:ignore
+            return '';
+        }
+        $search = sanitize_text_field(wp_unslash($_POST['search'])); //phpcs:ignore
+        return $search;
+    }
+
+    private function get_search_page()
+    {
+        return max(1, isset($_POST['page']) ? absint($_POST['page']) : 1); //phpcs:ignore
+    }
+
+    private function paginate_ids(array $ids, array &$list)
+    {
+        $list['pagination']['more'] = count($ids) > self::SEARCH_PAGE_SIZE;
+        return array_slice($ids, 0, self::SEARCH_PAGE_SIZE);
     }
 }

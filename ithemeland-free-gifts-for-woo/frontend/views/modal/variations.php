@@ -18,7 +18,7 @@ $itfreegift_retrieved_group_input_value = WC()->cart->get_cart();
 
 $itfreegift_count_info = itfreegift_check_quantity_gift_in_session($itfreegift_retrieved_group_input_value);
 
-$itfreegift_no_thanks = esc_html(get_option('itg_localization_no_thanks', 'No Thanks'));
+$itfreegift_no_thanks = esc_html(itfreegift_get_localization('no_thanks', 'No Thanks'));
 
 foreach ($products_ids as $itfreegift_product_id) :
     //For exclude in select variations
@@ -30,6 +30,10 @@ foreach ($products_ids as $itfreegift_product_id) :
     }
     $itfreegift_gift_id  = $uid . '-' . $itfreegift_product_id;
     $itfreegift__product = wc_get_product($itfreegift_product_id);
+
+    if (!$itfreegift__product instanceof \WC_Product) {
+        continue;
+    }
 
     if ($itfreegift__product->post_type == 'product_variation') {
         $title = $itfreegift__product->get_name();

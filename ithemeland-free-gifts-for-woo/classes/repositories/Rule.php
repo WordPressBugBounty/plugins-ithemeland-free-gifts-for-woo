@@ -8,10 +8,58 @@ use ITFreeGift\classes\helpers\Sanitizer;
 
 class Rule
 {
+    const ELIGIBILITY_CACHE_GROUP = 'itfreegift_eligibility';
+    const ELIGIBILITY_CACHE_TTL = 43200;
+    const ELIGIBILITY_CACHE_SCHEMA = 3;
+
     private static $instance;
+    private static $invalidation_hooks_registered = false;
 
     private $option_name;
     private $wpdb;
+    private $request_option_cache = [];
+
+    public static function register_cache_invalidation_hooks()
+    {
+        if (self::$invalidation_hooks_registered) {
+            return;
+        }
+        self::$invalidation_hooks_registered = true;
+
+        add_action('save_post_product', [__CLASS__, 'invalidate_for_product_change'], 10, 3);
+        add_action('save_post_product_variation', [__CLASS__, 'invalidate_for_product_change'], 10, 3);
+        add_action('deleted_post', [__CLASS__, 'invalidate_for_deleted_post'], 10, 2);
+        add_action('set_object_terms', [__CLASS__, 'invalidate_for_term_change'], 10, 6);
+    }
+
+    public static function invalidate_for_product_change($post_id, $post = null, $update = false)
+    {
+        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+            return;
+        }
+        self::bump_eligibility_cache_version();
+    }
+
+    public static function invalidate_for_deleted_post($post_id, $post = null)
+    {
+        $post_type = is_object($post) ? $post->post_type : get_post_type($post_id);
+        if (in_array($post_type, ['product', 'product_variation'], true)) {
+            self::bump_eligibility_cache_version();
+        }
+    }
+
+    public static function invalidate_for_term_change($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids)
+    {
+        if (strpos((string) $taxonomy, 'product_') === 0 || in_array($taxonomy, ['product_cat', 'product_tag'], true)) {
+            self::bump_eligibility_cache_version();
+        }
+    }
+
+    private static function bump_eligibility_cache_version()
+    {
+        $version = (int) get_option('itfreegift_eligibility_cache_version', 1);
+        update_option('itfreegift_eligibility_cache_version', $version + 1, false);
+    }
 
     public static function get_instance()
     {
@@ -36,8 +84,12 @@ class Rule
             $this->update_option_values(Sanitizer::array($rules['option_values']));
         }
 
-        $this->set_option_cache($rules);
-        return update_option($this->option_name, $rules);
+        // Clear IDs removed by this update as well as the newly saved IDs.
+        $this->invalidate_option_cache($this->get());
+        $updated = update_option($this->option_name, $rules);
+        $this->invalidate_option_cache($rules);
+        self::bump_eligibility_cache_version();
+        return $updated;
     }
 
     public function get()
@@ -226,8 +278,8 @@ class Rule
 
     public function call_set_option_cache()
     {
-        $rules = $this->get();
-        $this->set_option_cache($rules);
+        // Compatibility shim for older integrations and custom code.
+        $this->request_option_cache = [];
     }
 
     public function get_used_rules($from_date = null, $to_date = null)
@@ -293,13 +345,53 @@ class Rule
             return [];
         }
 
+        // The same rule can be evaluated by the cart engine and product
+        // visibility filters in one request. Preserve the exact output while
+        // avoiding duplicate database queries.
+        $request_cache_key = (string) $rule['uid'] . ':' . md5(maybe_serialize($rule));
+        $request_cache_enabled = (bool) apply_filters('itfreegift_enable_request_eligibility_cache', true, $rule);
+        if ($request_cache_enabled && array_key_exists($request_cache_key, $this->request_option_cache)) {
+            return $this->request_option_cache[$request_cache_key];
+        }
+
+        $persistent_cache_enabled = (bool) apply_filters('itfreegift_enable_persistent_eligibility_cache', true, $rule);
+        $persistent_cache_key = '';
+        $lock_key = '';
+        $has_lock = false;
+        if ($persistent_cache_enabled) {
+            $persistent_cache_key = $this->get_persistent_eligibility_cache_key($rule);
+            $cached = $this->read_persistent_eligibility_cache($persistent_cache_key);
+            if ($cached['found']) {
+                if ($request_cache_enabled) {
+                    $this->request_option_cache[$request_cache_key] = $cached['value'];
+                }
+                return $cached['value'];
+            }
+
+            $lock_key = 'itfreegift_eligibility_lock_' . md5($persistent_cache_key);
+            $has_lock = $this->acquire_cache_lock($lock_key);
+            if (!$has_lock) {
+                for ($attempt = 0; $attempt < 3; $attempt++) {
+                    usleep(50000);
+                    $cached = $this->read_persistent_eligibility_cache($persistent_cache_key);
+                    if ($cached['found']) {
+                        if ($request_cache_enabled) {
+                            $this->request_option_cache[$request_cache_key] = $cached['value'];
+                        }
+                        return $cached['value'];
+                    }
+                }
+            }
+        }
+
         $value_trans = 'gifts';
         $return_query = [];
         $id = $rule['uid'];
         //delete_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id);
         //delete_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id);
-        $include_product = isset($rule['include_products']) ? $rule['include_products'] : "";
-        $exclude_product = isset($rule['exclude_products']) ? $rule['exclude_products'] : "";
+        $include_product_is_array = isset($rule['include_products']) && is_array($rule['include_products']);
+        $include_product = $include_product_is_array ? $this->normalize_ids($rule['include_products']) : "";
+        $exclude_product = !empty($rule['exclude_products']) && is_array($rule['exclude_products']) ? $this->normalize_ids($rule['exclude_products']) : [];
         $include_taxonomy = isset($rule['include_taxonomy']) ? $rule['include_taxonomy'] : "";
         $exclude_taxonomy = isset($rule['exclude_taxonomy']) ? $rule['exclude_taxonomy'] : "";
 
@@ -315,48 +407,47 @@ class Rule
         $ex_tax_condition_1 = "";
         $ex_tax_condition_2 = "";
 
-        $product_ids = '';
-        if (is_array($include_product)) {
-            $product_ids = implode(",", $include_product);
-
-            $in_product_condition_1 = " AND pw_posts.ID IN ($product_ids) ";
-            $in_product_condition_2 = "  AND (pw_posts.ID IN ($product_ids) OR pw_products.ID IN ($product_ids)) ";
+        if ($include_product_is_array) {
+            if (empty($include_product)) {
+                // An explicitly selected product mode with no valid IDs matched
+                // no rows previously through invalid IN (). Keep that meaning.
+                $in_product_condition_1 = " AND 1 = 0 ";
+                $in_product_condition_2 = " AND 1 = 0 ";
+            } else {
+                $product_ids = $this->prepare_id_list($include_product);
+                $in_product_condition_1 = " AND pw_posts.ID IN ($product_ids) ";
+                $in_product_condition_2 = " AND (pw_posts.ID IN ($product_ids) OR pw_products.ID IN ($product_ids)) ";
+            }
         }
 
-        if ($exclude_product) {
-            $product_ids = implode(",", $exclude_product);
+        if (!empty($exclude_product)) {
+            $product_ids = $this->prepare_id_list($exclude_product);
 
             $ex_product_condition_1 = " AND pw_posts.ID NOT IN ($product_ids) ";
             $ex_product_condition_2 = "  AND (pw_posts.ID NOT IN ($product_ids) AND pw_products.ID NOT IN ($product_ids)) ";
         }
 
-        if ($include_taxonomy && !is_array($include_product)) {
-            $terms_id = [];
-            foreach ($include_taxonomy as $inc_tax) {
-                $tax = explode("__", $inc_tax);
-                $terms_id[] = $tax[1];
-            }
-            $terms_id = implode(",", $terms_id);
+        if ($include_taxonomy && !$include_product_is_array) {
+            $terms_id = $this->prepare_id_list($this->extract_taxonomy_ids($include_taxonomy));
 
-            $in_tax_condition_1 = " AND ( pw_posts.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-            $in_tax_condition_2 = " AND ( pw_posts.post_parent IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) OR pw_products.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
+            if ($terms_id !== '') {
+                $in_tax_condition_1 = " AND ( pw_posts.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
+                $in_tax_condition_2 = " AND ( pw_posts.post_parent IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) OR pw_products.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
+            }
         }
 
-        if ($exclude_taxonomy && !is_array($include_product)) {
+        if ($exclude_taxonomy && !$include_product_is_array) {
+            $terms_id = $this->prepare_id_list($this->extract_taxonomy_ids($exclude_taxonomy));
 
-            $terms_id = [];
-            foreach ($exclude_taxonomy as $ex_tax) {
-                $tax = explode("__", $ex_tax);
-                $terms_id[] = $tax[1];
+            if ($terms_id !== '') {
+                $ex_tax_condition_1 = " AND ( pw_posts.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
+                $ex_tax_condition_2 = " AND ( pw_posts.post_parent NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) AND pw_products.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) )) ";
             }
-
-            $terms_id = implode(",", $terms_id);
-
-            $ex_tax_condition_1 = " AND ( pw_posts.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-            $ex_tax_condition_2 = " AND ( pw_posts.post_parent NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) AND  pw_products.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) )) ";
         }
 
-        $simple_variation = "SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id";
+        // Only the product ID is consumed below. The query has no joins that
+        // can duplicate rows, so selecting unused columns and grouping adds work.
+        $simple_variation = "SELECT pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1";
 
         $result = $this->wpdb->get_results($simple_variation); //phpcs:ignore
 
@@ -365,7 +456,7 @@ class Rule
             $simple_variation_arrray[] = $items->product_id;
         }
 
-        if (is_array($include_product)) {
+        if ($include_product_is_array) {
             $simple_variation_arrray = array_merge($include_product, $simple_variation_arrray);
             $simple_variation_arrray = array_filter($simple_variation_arrray);
             $simple_variation_arrray = array_unique($simple_variation_arrray);
@@ -377,7 +468,9 @@ class Rule
             //set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
         }
 
-        $simple_childes = "SELECT pw_posts.ID as id ,pw_posts.post_title as variation_name	,pw_posts.ID as variation_id ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_products.ID as product_id ,pw_products.post_title as product_name ,pw_posts.post_parent AS variation_parent_id FROM {$this->wpdb->prefix}posts as pw_posts LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id  WHERE term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'variable' AND pw_posts.post_type='product_variation' AND pw_posts.post_status = 'publish' AND pw_products.post_type='product' AND pw_posts.post_parent > 0 $in_tax_condition_2 $in_product_condition_2  $ex_tax_condition_2 $ex_product_condition_2  GROUP BY pw_posts.ID ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC";
+        // Preserve the legacy joins, grouping and ordering until EXPLAIN/parity
+        // can run on a real catalog, but transfer only fields consumed below.
+        $simple_childes = "SELECT pw_posts.ID as id, pw_posts.post_parent AS variation_parent_id FROM {$this->wpdb->prefix}posts as pw_posts LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id WHERE term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'variable' AND pw_posts.post_type='product_variation' AND pw_posts.post_status = 'publish' AND pw_products.post_type='product' AND pw_posts.post_parent > 0 $in_tax_condition_2 $in_product_condition_2 $ex_tax_condition_2 $ex_product_condition_2 GROUP BY pw_posts.ID ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC";
 
         $result = $this->wpdb->get_results($simple_childes); //phpcs:ignore
         $simple_childes_arrray = [];
@@ -397,122 +490,116 @@ class Rule
         $simple_childes_final_arrray = array_unique($simple_childes_final_arrray);
         $return_query['pw_' . $value_trans . '_cache_simple_childes_'] = $simple_childes_final_arrray;
         //set_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id, $simple_childes_final_arrray);
+        if ($request_cache_enabled) {
+            $this->request_option_cache[$request_cache_key] = $return_query;
+        }
+        if ($persistent_cache_enabled) {
+            $this->write_persistent_eligibility_cache($persistent_cache_key, $return_query);
+            if ($has_lock) {
+                delete_option($lock_key);
+            }
+        }
         return $return_query;
     }
 
-    private function set_option_cache($rules)
+    private function normalize_ids($values)
     {
-        if (!is_array($rules['items']) || count($rules['items']) <= 0) {
-            return false;
+        if (!is_array($values)) {
+            return [];
         }
-        $value_trans = 'gifts';
+        return array_values(array_unique(array_filter(array_map('absint', $values))));
+    }
 
-        foreach ($rules['items'] as $rule) {
-            $id = $rule['uid'];
-            delete_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id);
-            delete_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id);
+    private function extract_taxonomy_ids($values)
+    {
+        $ids = [];
+        foreach ((array) $values as $value) {
+            $parts = explode('__', (string) $value);
+            if (isset($parts[1])) {
+                $ids[] = $parts[1];
+            }
+        }
+        return $this->normalize_ids($ids);
+    }
 
-            if ($rule['status'] == 'disable') {
+    private function prepare_id_list(array $ids)
+    {
+        if (empty($ids)) {
+            return '';
+        }
+        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+        return $this->wpdb->prepare($placeholders, $ids); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+    }
+
+    private function get_persistent_eligibility_cache_key(array $rule)
+    {
+        $global_version = (int) get_option('itfreegift_eligibility_cache_version', 1);
+        $rule_uid = sanitize_key((string) $rule['uid']);
+        $rule_hash = md5(maybe_serialize([
+            'include_products' => $rule['include_products'] ?? [],
+            'exclude_products' => $rule['exclude_products'] ?? [],
+            'include_taxonomy' => $rule['include_taxonomy'] ?? [],
+            'exclude_taxonomy' => $rule['exclude_taxonomy'] ?? [],
+        ]));
+
+        return 'itfg_e_' . self::ELIGIBILITY_CACHE_SCHEMA . '_' . $global_version . '_' . substr($rule_uid, 0, 32) . '_' . $rule_hash;
+    }
+
+    private function read_persistent_eligibility_cache($cache_key)
+    {
+        $found = false;
+        $cached = wp_cache_get($cache_key, self::ELIGIBILITY_CACHE_GROUP, false, $found);
+        if ($found && is_array($cached) && array_key_exists('value', $cached)) {
+            return ['found' => true, 'value' => $cached['value']];
+        }
+
+        $cached = get_transient($cache_key);
+        if (is_array($cached) && array_key_exists('value', $cached)) {
+            wp_cache_set($cache_key, $cached, self::ELIGIBILITY_CACHE_GROUP, self::ELIGIBILITY_CACHE_TTL);
+            return ['found' => true, 'value' => $cached['value']];
+        }
+
+        return ['found' => false, 'value' => null];
+    }
+
+    private function write_persistent_eligibility_cache($cache_key, array $value)
+    {
+        $payload = ['value' => $value];
+        wp_cache_set($cache_key, $payload, self::ELIGIBILITY_CACHE_GROUP, self::ELIGIBILITY_CACHE_TTL);
+        set_transient($cache_key, $payload, self::ELIGIBILITY_CACHE_TTL);
+    }
+
+    private function acquire_cache_lock($lock_key)
+    {
+        $now = time();
+        if (add_option($lock_key, $now, '', false)) {
+            return true;
+        }
+
+        $created_at = (int) get_option($lock_key, 0);
+        if ($created_at > 0 && ($now - $created_at) > 30) {
+            delete_option($lock_key);
+            return add_option($lock_key, $now, '', false);
+        }
+
+        return false;
+    }
+
+    private function invalidate_option_cache($rules = [])
+    {
+        $this->request_option_cache = [];
+
+        $rule_items = (!empty($rules['items']) && is_array($rules['items'])) ? $rules['items'] : [];
+        foreach ($rule_items as $rule) {
+            if (empty($rule['uid'])) {
                 continue;
             }
-            $args = $rule;
 
-            $include_product = isset($args['include_products']) ? $args['include_products'] : "";
-            $exclude_product = isset($args['exclude_products']) ? $args['exclude_products'] : "";
-            $include_taxonomy = isset($args['include_taxonomy']) ? $args['include_taxonomy'] : "";
-            $exclude_taxonomy = isset($args['exclude_taxonomy']) ? $args['exclude_taxonomy'] : "";
-
-            $ex_product_condition_1 = "";
-            $ex_product_condition_2 = "";
-
-            $in_product_condition_1 = '';
-            $in_product_condition_2 = '';
-
-            $in_tax_condition_1 = '';
-            $in_tax_condition_2 = '';
-
-            $ex_tax_condition_1 = "";
-            $ex_tax_condition_2 = "";
-
-            $product_ids = '';
-            if (is_array($include_product)) {
-                $product_ids = implode(",", $include_product);
-
-                $in_product_condition_1 = " AND pw_posts.ID IN ($product_ids) ";
-                $in_product_condition_2 = "  AND (pw_posts.ID IN ($product_ids) OR pw_products.ID IN ($product_ids)) ";
-            }
-
-            if ($exclude_product) {
-                $product_ids = implode(",", $exclude_product);
-
-                $ex_product_condition_1 = " AND pw_posts.ID NOT IN ($product_ids) ";
-                $ex_product_condition_2 = "  AND (pw_posts.ID NOT IN ($product_ids) AND pw_products.ID NOT IN ($product_ids)) ";
-            }
-
-            if ($include_taxonomy && !is_array($include_product)) {
-                $terms_id = [];
-                foreach ($include_taxonomy as $inc_tax) {
-                    $tax = explode("__", $inc_tax);
-                    $terms_id[] = $tax[1];
-                }
-                $terms_id = implode(",", $terms_id);
-
-                $in_tax_condition_1 = " AND ( pw_posts.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-                $in_tax_condition_2 = " AND ( pw_posts.post_parent IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) OR pw_products.ID IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-            }
-
-            if ($exclude_taxonomy && !is_array($include_product)) {
-
-                $terms_id = [];
-                foreach ($exclude_taxonomy as $ex_tax) {
-                    $tax = explode("__", $ex_tax);
-                    $terms_id[] = $tax[1];
-                }
-
-                $terms_id = implode(",", $terms_id);
-
-                $ex_tax_condition_1 = " AND ( pw_posts.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) ) ";
-                $ex_tax_condition_2 = " AND ( pw_posts.post_parent NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) ) AND  pw_products.ID NOT IN ( SELECT object_id FROM {$this->wpdb->prefix}term_relationships WHERE term_taxonomy_id IN ($terms_id) )) ";
-            }
-
-            $simple_variation = "SELECT pw_posts.post_title as product_name ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_posts.ID as product_id FROM {$this->wpdb->prefix}posts as pw_posts   WHERE pw_posts.post_type='product' AND pw_posts.post_status = 'publish' $in_tax_condition_1 $in_product_condition_1 $ex_tax_condition_1 $ex_product_condition_1 GROUP BY product_id";
-
-            $result = $this->wpdb->get_results($simple_variation); //phpcs:ignore
-
-            $simple_variation_arrray = [];
-            foreach ($result as $items) {
-                $simple_variation_arrray[] = $items->product_id;
-            }
-
-            if (is_array($include_product)) {
-                $simple_variation_arrray = array_merge($include_product, $simple_variation_arrray);
-                $simple_variation_arrray = array_filter($simple_variation_arrray);
-                $simple_variation_arrray = array_unique($simple_variation_arrray);
-                set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
-            } else {
-                $simple_variation_arrray = array_unique($simple_variation_arrray);
-                set_transient('pw_' . $value_trans . '_cache_simple_variation_' . $id, $simple_variation_arrray);
-            }
-
-            $simple_childes = "SELECT pw_posts.ID as id ,pw_posts.post_title as variation_name	,pw_posts.ID as variation_id ,pw_posts.post_date as product_date ,pw_posts.post_modified as modified_date ,pw_products.ID as product_id ,pw_products.post_title as product_name ,pw_posts.post_parent AS variation_parent_id FROM {$this->wpdb->prefix}posts as pw_posts LEFT JOIN {$this->wpdb->prefix}posts as pw_products ON pw_products.ID = pw_posts.post_parent LEFT JOIN {$this->wpdb->prefix}term_relationships AS term_relationships ON pw_products.ID = term_relationships.object_id LEFT JOIN {$this->wpdb->prefix}term_taxonomy AS term_taxonomy ON term_relationships.term_taxonomy_id = term_taxonomy.term_taxonomy_id LEFT JOIN {$this->wpdb->prefix}terms AS terms ON term_taxonomy.term_id = terms.term_id  WHERE term_taxonomy.taxonomy = 'product_type' AND terms.slug = 'variable' AND pw_posts.post_type='product_variation' AND pw_posts.post_status = 'publish' AND pw_products.post_type='product' AND pw_posts.post_parent > 0 $in_tax_condition_2 $in_product_condition_2  $ex_tax_condition_2 $ex_product_condition_2  GROUP BY pw_posts.ID ORDER BY pw_posts.post_parent ASC, pw_posts.post_title ASC";
-
-            $result = $this->wpdb->get_results($simple_childes); //phpcs:ignore
-            $simple_childes_arrray = [];
-            $simple_childes_final_arrray = [];
-            $simple_childes_parent_arrray = [];
-            $temp_simple = $simple_variation_arrray;
-            foreach ($result as $items) {
-                $simple_childes_arrray[] = $items->id;
-                $simple_childes_parent_arrray[] = $items->variation_parent_id;
-            }
-
-            if (is_array($simple_childes_parent_arrray)) {
-                $temp_simple = array_diff($temp_simple, $simple_childes_parent_arrray);
-            }
-
-            $simple_childes_final_arrray = array_merge($temp_simple, $simple_childes_arrray);
-            $simple_childes_final_arrray = array_unique($simple_childes_final_arrray);
-            set_transient('pw_' . $value_trans . '_cache_simple_childes_' . $id, $simple_childes_final_arrray);
+            // Remove values left by older releases; current runtime code has
+            // never read these transients.
+            delete_transient('pw_gifts_cache_simple_variation_' . $rule['uid']);
+            delete_transient('pw_gifts_cache_simple_childes_' . $rule['uid']);
         }
     }
+
 }

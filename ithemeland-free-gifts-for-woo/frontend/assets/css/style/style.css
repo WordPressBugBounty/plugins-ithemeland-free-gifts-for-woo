@@ -6591,4 +6591,15 @@ Fancy Card Items
   }
   
   */
+
+/* Unavailable gifts must look and behave like disabled controls. */
+.wgb-gift-disabled,
+.disable-hover .wgb-add-gift-btn,
+.disable-hover .btn-select-gift-button,
+.disable-hover .btn-select-gift-popup-button,
+.disable-hover .wgb-select-variation-gift-button {
+    opacity: 0.45 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
   

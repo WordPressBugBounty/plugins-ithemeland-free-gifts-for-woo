@@ -22,7 +22,7 @@ if (! defined('ABSPATH')) {
     </div>
     <div class="wgb-page wgb-popup-box">
         <div class="wgb-popup-header">
-            <h3 class="wgb-popup-title"><?php echo esc_html(get_option('itg_localization_select_gift', 'Select Gift')); ?></h3>
+            <h3 class="wgb-popup-title"><?php echo esc_html(itfreegift_get_localization('select_gift', 'Select Gift')); ?></h3>
             <div class="wgb-popup-close itg-popup-close">×</div>
         </div>
         <div class="wgb-popup-body">

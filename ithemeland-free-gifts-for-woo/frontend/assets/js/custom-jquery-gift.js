@@ -25,7 +25,7 @@ jQuery(document).ready(function ($) {
                 },
             },
         });
-        jQuery(".scrollbar-macosx").scrollbar();
+        if (jQuery.fn.scrollbar) jQuery(".scrollbar-macosx").scrollbar();
     }
 
     jQuery(document.body).on("updated_cart_totals", function () {
@@ -89,6 +89,18 @@ jQuery(document).ready(function ($) {
             },
         });
     }
+
+    // Block every gift action belonging to an unavailable item. Register this
+    // before the action handlers so no AJAX or reload request can start.
+    jQuery(document).on(
+        "click",
+        ".wgb-gift-disabled, .disable-hover .wgb-add-gift-btn, .disable-hover .btn-select-gift-button, .disable-hover .btn-select-gift-popup-button, .disable-hover .wgb-select-variation-gift-button",
+        function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    );
 
     //Add Gift Button
     jQuery(document).on("click", ".btn-click-add-gift-button", function (e) {
@@ -164,7 +176,7 @@ jQuery(document).ready(function ($) {
                             $("body").addClass("modal-opened");
                             $(".wgb-popup-box").addClass("wgb-page-current");
                             $(".wgb-popup").addClass("wgb-active-modal");
-                            jQuery(".scrollbar-macosx").scrollbar();
+                            if (jQuery.fn.scrollbar) jQuery(".scrollbar-macosx").scrollbar();
                         });
                 },
                 error: function () {
@@ -307,7 +319,7 @@ jQuery(document).ready(function ($) {
                             $(".wgb-popup-box").addClass("wgb-page-scaleUp");
                             $(".wgb-popup-box").addClass("wgb-page-current");
                             $(".wgb-popup").addClass("wgb-active-modal");
-                            jQuery(".scrollbar-macosx").scrollbar();
+                            if (jQuery.fn.scrollbar) jQuery(".scrollbar-macosx").scrollbar();
                             if (response.data.layout == "carousel") {
                                 $(document.body).trigger("it-enhanced-carousel");
                             }
@@ -408,7 +420,7 @@ jQuery(document).ready(function ($) {
                     $(".wgb-popup-posts").html(response.data.result);
                     $(".wgb-popup-box").addClass("wgb-page-scaleUp");
                     $(".wgb-popup-box").addClass("wgb-page-current");
-                    jQuery(".scrollbar-macosx").scrollbar();
+                    if (jQuery.fn.scrollbar) jQuery(".scrollbar-macosx").scrollbar();
                     $(document.body).trigger("it-enhanced-carousel");
                     $(".popup-inner-loader").addClass("wgb-d-none");
                 }
@@ -450,6 +462,15 @@ jQuery(document).ready(function ($) {
             if (response && response.success) {
                 updateCart(response.data.notice ? response.data.notice : "");
 
+                // WooCommerce refreshes checkout totals after an AJAX add, but it
+                // does not re-render third-party gift blocks/shortcodes. Refresh
+                // them from the current server-side cart so exhausted rules are
+                // hidden immediately (for example, after selecting the only
+                // allowed gift).
+                if (pw_wc_gift_adv_ajax.is_checkout) {
+                    await refreshCheckoutGiftDisplays();
+                }
+
                 // Handle the Woodmart update with a separate async function for clarity
                 if (typeof woodmartThemeModule !== "undefined") {
                     await woodmartUpdateGiftsTable();
@@ -473,6 +494,69 @@ jQuery(document).ready(function ($) {
 
             // const errorResponse = parseErrorResponse(xhr);
             // alert(errorResponse);
+        }
+    }
+
+    /**
+     * Re-render every inline gift shortcode/block shown on checkout.
+     *
+     * Blocks and shortcodes share the .itg-shortoces-products wrapper, so one
+     * refresh path keeps Gutenberg and classic checkout displays in sync.
+     */
+    async function refreshCheckoutGiftDisplays() {
+        const $giftDisplays = $(".itg-shortoces-products");
+        if (!$giftDisplays.length) {
+            return;
+        }
+
+        const displaysByType = {};
+        $giftDisplays.each(function () {
+            const type = $(this).data("type") || "dropdown";
+            if (!displaysByType[type]) {
+                displaysByType[type] = [];
+            }
+            displaysByType[type].push(this);
+        });
+
+        try {
+            await Promise.all(
+                Object.keys(displaysByType).map(async function (type) {
+                    const html = await $.ajax({
+                        url: pw_wc_gift_adv_ajax.ajaxurl,
+                        type: "POST",
+                        dataType: "html",
+                        data: {
+                            action: "itfreegift_refresh_checkout_gifts",
+                            type: type,
+                            itg_security: pw_wc_gift_adv_ajax.security,
+                        },
+                    });
+
+                    const $response = $("<div>").append($.parseHTML(html, document, true));
+                    const $freshDisplay = $response.find(".itg-shortoces-products").first();
+                    if (!$freshDisplay.length) {
+                        throw new Error("Gift display refresh returned invalid markup.");
+                    }
+
+                    displaysByType[type].forEach(function (display) {
+                        $(display).replaceWith($freshDisplay.clone());
+                    });
+                })
+            );
+
+            if ($.fn.DataTable) {
+                $(".it-gift-products-table").DataTable({
+                    ordering: false,
+                    bDestroy: true,
+                });
+            }
+
+            $(document.body).trigger("it-enhanced-carousel");
+            $(document.body).trigger("itfreegift_checkout_gifts_refreshed");
+        } catch (error) {
+            // A full reload is the safest fallback: it cannot leave selectable
+            // gifts on screen after the server has already accepted a gift.
+            window.location.reload();
         }
     }
 

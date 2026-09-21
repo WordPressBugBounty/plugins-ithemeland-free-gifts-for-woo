@@ -7,8 +7,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$itfreegift_add_gift_label = esc_html(get_option('itg_localization_add_gift', 'Add Gift'));
-$itfreegift_select_gift = esc_html(get_option('itg_localization_select_gift', 'Select Gift'));
+$itfreegift_add_gift_label = esc_html(itfreegift_get_localization('add_gift', 'Add Gift'));
+$itfreegift_select_gift = esc_html(itfreegift_get_localization('select_gift', 'Select Gift'));
 
 if (empty($items)) {
     return;
@@ -29,7 +29,7 @@ do_action('itfreegift_before_gift_products_content');
 
 <div class="wgb-mt30 wgb-mb30">
 
-    <h3><?php echo esc_html(get_option('itg_localization_our_gift', 'Our Gift')); ?></h3>
+    <h3><?php echo esc_html(itfreegift_get_localization('our_gift', 'Our Gift')); ?></h3>
     <?php
     if (isset($rule_description)) {
     ?>

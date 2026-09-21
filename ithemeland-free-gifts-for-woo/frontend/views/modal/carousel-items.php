@@ -7,9 +7,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$itfreegift_add_gift_label = esc_html(get_option('itg_localization_add_gift', 'Add Gift'));
-$itfreegift_select_gift = esc_html(get_option('itg_localization_select_gift', 'Select Gift'));
-$itfreegift_no_thanks = esc_html(get_option('itg_localization_no_thanks', 'No Thanks'));
+$itfreegift_add_gift_label = esc_html(itfreegift_get_localization('add_gift', 'Add Gift'));
+$itfreegift_select_gift = esc_html(itfreegift_get_localization('select_gift', 'Select Gift'));
+$itfreegift_no_thanks = esc_html(itfreegift_get_localization('no_thanks', 'No Thanks'));
 
 /**
  * This hook is used to display the extra content before gift products content.

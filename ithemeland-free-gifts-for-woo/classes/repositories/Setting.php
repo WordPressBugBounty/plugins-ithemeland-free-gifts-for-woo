@@ -28,7 +28,11 @@ class Setting
 
     public function update($settings)
     {
-        return update_option($this->option_name, Sanitizer::array($settings));
+        $updated = update_option($this->option_name, Sanitizer::array($settings));
+        if (function_exists('itfreegift_reset_settings_cache')) {
+            itfreegift_reset_settings_cache();
+        }
+        return $updated;
     }
 
     public function get()

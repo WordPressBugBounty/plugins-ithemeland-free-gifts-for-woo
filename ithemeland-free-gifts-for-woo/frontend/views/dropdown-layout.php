@@ -9,8 +9,8 @@ if (!defined('ABSPATH')) {
 
 use ITFreeGift\classes\helpers\Sanitizer;
 
-$itfreegift_add_gift = esc_html(get_option('itg_localization_add_gift'));
-$itfreegift_select_gift = esc_html(get_option('itg_localization_select_gift'));
+$itfreegift_add_gift = esc_html(itfreegift_get_localization('add_gift', false));
+$itfreegift_select_gift = esc_html(itfreegift_get_localization('select_gift', false));
 
 if (empty($items)) {
     return;

@@ -116,6 +116,9 @@ class WGBL_Post
             foreach ($_POST['localization'] as $field_name => $field_value) { //phpcs:ignore
                 update_option($prefix . sanitize_text_field($field_name), sanitize_text_field($field_value));
             }
+            if (function_exists('itfreegift_reset_localization_cache')) {
+                itfreegift_reset_localization_cache();
+            }
         }
 
         $this->redirect('settings&sub-tab=localization', [
@@ -140,6 +143,9 @@ class WGBL_Post
             foreach ($_POST['localization'] as $field_name => $field_value) { //phpcs:ignore
                 update_option($prefix . sanitize_text_field($field_name), sanitize_text_field($field_value));
             }
+            if (function_exists('itfreegift_reset_localization_cache')) {
+                itfreegift_reset_localization_cache();
+            }
         }
 
         $this->redirect('settings&sub-tab=display', [
@@ -163,6 +169,9 @@ class WGBL_Post
             $prefix = "itg_localization_";
             foreach ($_POST['localization'] as $field_name => $field_value) { //phpcs:ignore
                 update_option($prefix . sanitize_text_field($field_name), sanitize_text_field($field_value));
+            }
+            if (function_exists('itfreegift_reset_localization_cache')) {
+                itfreegift_reset_localization_cache();
             }
         }
 

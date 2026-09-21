@@ -75,7 +75,7 @@ class class_wc_advanced_gift_admin
 
     public function show_product_variation_price_rule($loop, $variation_data, $variation)
     {
-        $free_txt = get_option('itg_localization_free', 'Free');
+        $free_txt = itfreegift_get_localization('free', 'Free');
 ?>
         <div class='form-field form-row form-row-first'>
             <?php

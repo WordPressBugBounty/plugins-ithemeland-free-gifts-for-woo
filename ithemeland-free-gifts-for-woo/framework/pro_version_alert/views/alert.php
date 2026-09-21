@@ -1,3 +1,7 @@
+<?php
+if (!defined('ABSPATH')) exit; // Exit if accessed directly 
+?>
+
 <div class="wrap wgb-wp-notice">
     <div class="wgb-license-notice free" id="wgb-pro-version-alert">
         <button class="wgb-license-notice-close wgb-pro-version-alert-dismiss-button" type="button" aria-label="Dismiss notice" onclick="document.getElementById('wgb-pro-version-alert').style.display='none'"><span class="dashicons dashicons-no-alt"></span></button>

@@ -1,22 +1,47 @@
 jQuery(document).ready(function ($) {
-    let ajaxInProgress = false;
     let lastCartTotal = "";
+    let refreshTimer = null;
+    let pendingRequest = null;
+    let requestSequence = 0;
+    let lastRequestedFingerprint = "";
+
+    function getCartFingerprint() {
+        const cartBlock = document.querySelector(".wp-block-woocommerce-cart");
+        if (!cartBlock) return "";
+
+        const cartState = cartBlock.cloneNode(true);
+        cartState.querySelectorAll(".wp-block-wgb-wc-gift").forEach(function (giftBlock) {
+            giftBlock.remove();
+        });
+        return cartState.textContent.replace(/\s+/g, " ").trim();
+    }
 
     function refreshGiftBlocks() {
         // Get the main gift block container
         var $block = $(".wp-block-wgb-wc-gift").first();
 
-        // Get the type from the inner span
-        var $typeSpan = $block.find(".itg-shortoces-products");
-        var blockType = $typeSpan.data("type");
-
         if ($block.length === 0) {
             return;
         }
 
-        ajaxInProgress = true;
+        // Get the type from the inner span
+        var $typeSpan = $block.find(".itg-shortoces-products");
+        var blockType = $typeSpan.data("type");
 
-        $.ajax({
+        const fingerprint = getCartFingerprint();
+        if (fingerprint && fingerprint === lastRequestedFingerprint) {
+            return;
+        }
+        lastRequestedFingerprint = fingerprint;
+
+        if (pendingRequest && pendingRequest.readyState !== 4) {
+            pendingRequest.abort();
+        }
+
+        const currentSequence = ++requestSequence;
+        let requestSucceeded = false;
+
+        pendingRequest = $.ajax({
             url: wgb_vars.ajaxurl,
             data: {
                 action: "update_block_cart_content",
@@ -24,7 +49,9 @@ jQuery(document).ready(function ($) {
                 security: wgb_vars.nonce,
             },
             success: function (response) {
+                if (currentSequence !== requestSequence) return;
                 if (response && response.success && response.data && response.data.html) {
+                    requestSucceeded = true;
                     // Clean up duplicate blocks
                     var $newContent = $(response.data.html);
                     var $innerBlock = $newContent.find(".wp-block-wgb-wc-gift").first();
@@ -40,6 +67,7 @@ jQuery(document).ready(function ($) {
                 }
             },
             error: function (xhr, status, error) {
+                if (status === "abort") return;
                 console.error("AJAX Error:", {
                     status: status,
                     error: error,
@@ -47,16 +75,25 @@ jQuery(document).ready(function ($) {
                 });
             },
             complete: function () {
-                ajaxInProgress = false;
+                if (currentSequence === requestSequence) {
+                    if (!requestSucceeded) {
+                        lastRequestedFingerprint = "";
+                    }
+                    pendingRequest = null;
+                }
             },
         });
     }
 
     function refreshGiftBlock() {
-        // Add a small delay to ensure WooCommerce has finished processing
-        setTimeout(function () {
+        if (refreshTimer) {
+            clearTimeout(refreshTimer);
+        }
+        // Debounce all WooCommerce and DOM events into one refresh.
+        refreshTimer = setTimeout(function () {
+            refreshTimer = null;
             refreshGiftBlocks();
-        }, 500);
+        }, 350);
     }
 
     // Monitor cart changes
@@ -72,8 +109,8 @@ jQuery(document).ready(function ($) {
                 if (cartTotals) {
                     const currentTotal = cartTotals.textContent.trim();
 
-                    // Only proceed if the total has actually changed and no AJAX is in progress
-                    if (currentTotal !== lastCartTotal && !ajaxInProgress) {
+                    // Only proceed if the cart total has actually changed.
+                    if (currentTotal !== lastCartTotal) {
                         lastCartTotal = currentTotal;
                         refreshGiftBlock();
                     }

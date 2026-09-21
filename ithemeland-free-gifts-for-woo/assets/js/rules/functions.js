@@ -145,6 +145,7 @@ function wgbGetProducts() {
                     action: "wgb_get_products",
                     nonce: WGBL_DATA.ajax_nonce,
                     search: params.term,
+                    page: params.page || 1,
                 };
                 return query;
             },
@@ -169,6 +170,7 @@ function wgbGetProductsVariations() {
                     action: "wgb_get_products_variations",
                     nonce: WGBL_DATA.ajax_nonce,
                     search: params.term,
+                    page: params.page || 1,
                 };
                 return query;
             },
@@ -193,6 +195,7 @@ function wgbGetVariations() {
                     action: "wgb_get_variations",
                     nonce: WGBL_DATA.ajax_nonce,
                     search: params.term,
+                    page: params.page || 1,
                 };
                 return query;
             },
@@ -337,6 +340,7 @@ function wgbGetCoupons() {
                     action: "wgb_get_coupons",
                     nonce: WGBL_DATA.ajax_nonce,
                     search: params.term,
+                    page: params.page || 1,
                 };
                 return query;
             },

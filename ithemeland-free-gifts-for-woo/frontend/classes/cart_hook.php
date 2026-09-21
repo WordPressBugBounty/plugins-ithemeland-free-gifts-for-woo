@@ -209,15 +209,17 @@ class iThemeland_cart_hook
     {
 
         $settings = itfreegift_get_settings();
-        $free_txt = get_option('itg_localization_free', 'Free');
+        $free_txt = itfreegift_get_localization('free', 'Free');
         // check if product is a gift product
         if (! isset($cart_item['it_free_gift'])) {
             return $price;
         }
         $multiply_qty = false;
         $product_id = ! empty($cart_item['variation_id']) ? $cart_item['variation_id'] : $cart_item['product_id'];
-        $product    = wc_get_product($product_id);
-        if (! is_object($product)) {
+        $product = (!empty($cart_item['data']) && $cart_item['data'] instanceof \WC_Product)
+            ? $cart_item['data']
+            : wc_get_product($product_id);
+        if (! $product instanceof \WC_Product) {
             return $price;
         }
 
@@ -249,11 +251,13 @@ class iThemeland_cart_hook
             return $price;
         }
         $settings = itfreegift_get_settings();
-        $free_txt = get_option('itg_localization_free', 'Free');
+        $free_txt = itfreegift_get_localization('free', 'Free');
         $multiply_qty = false;
         $product_id = ! empty($cart_item['variation_id']) ? $cart_item['variation_id'] : $cart_item['product_id'];
-        $product    = wc_get_product($product_id);
-        if (! is_object($product)) {
+        $product = (!empty($cart_item['data']) && $cart_item['data'] instanceof \WC_Product)
+            ? $cart_item['data']
+            : wc_get_product($product_id);
+        if (! $product instanceof \WC_Product) {
             return $price;
         }
 
@@ -287,11 +291,13 @@ class iThemeland_cart_hook
             return $price;
         }
         $settings = itfreegift_get_settings();
-        $free_txt = get_option('itg_localization_free', 'Free');
+        $free_txt = itfreegift_get_localization('free', 'Free');
         $multiply_qty = false;
         $product_id = ! empty($cart_item['variation_id']) ? $cart_item['variation_id'] : $cart_item['product_id'];
-        $product    = wc_get_product($product_id);
-        if (! is_object($product)) {
+        $product = (!empty($cart_item['data']) && $cart_item['data'] instanceof \WC_Product)
+            ? $cart_item['data']
+            : wc_get_product($product_id);
+        if (! $product instanceof \WC_Product) {
             return $price;
         }
 
@@ -352,8 +358,8 @@ class iThemeland_cart_hook
                 return $item_data;
             }
 
-            $display_label = esc_html(get_option('itg_localization_our_gift', 'Free Product'));
-            $type_label = esc_html(get_option('itg_localization_gift_cart_type_label', 'Type'));
+            $display_label = esc_html(itfreegift_get_localization('our_gift', 'Free Product'));
+            $type_label = esc_html(itfreegift_get_localization('gift_cart_type_label', 'Type'));
 
             if (empty($type_label) && empty($display_label)) {
                 return $item_data;

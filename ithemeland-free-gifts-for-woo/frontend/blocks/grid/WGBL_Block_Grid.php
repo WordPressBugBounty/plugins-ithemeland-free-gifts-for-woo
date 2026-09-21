@@ -28,10 +28,6 @@ class WGBL_Block_Grid
         wp_enqueue_style('wgb-blocks-grid', WGBL_FRONTEND_URL . 'blocks/grid/editor-style.css', [], WGBL_VERSION);
         wp_enqueue_script('wgb-blocks-grid', WGBL_FRONTEND_URL . 'blocks/grid/grid-block.js', ['wp-blocks', 'wp-element', 'wp-i18n'], WGBL_VERSION); //phpcs:ignore
 
-        wp_register_style('wgb-blocks-front-grid', WGBL_FRONTEND_URL . 'blocks/grid/front-style.css', [], WGBL_VERSION);
-        wp_register_script('wgb-blocks-front-grid', WGBL_FRONTEND_URL . 'blocks/grid/front-js.js', [], WGBL_VERSION); //phpcs:ignore
-
-
         wp_localize_script('wgb-blocks-grid', 'WGBL_GRID_DATA', [
             'images' => [
                 'wc_placeholder' => WGBL_IMAGES_URL . 'woocommerce-placeholder.png'
@@ -41,10 +37,15 @@ class WGBL_Block_Grid
 
     public function register_callback()
     {
+        wp_register_style('wgb-blocks-grid', WGBL_FRONTEND_URL . 'blocks/grid/editor-style.css', ['wgb-blocks-common-style'], WGBL_VERSION);
+        wp_register_style('wgb-blocks-front-grid', WGBL_FRONTEND_URL . 'blocks/grid/front-style.css', ['it-gift-style'], WGBL_VERSION);
+        wp_register_script('wgb-blocks-front-grid', WGBL_FRONTEND_URL . 'blocks/grid/front-js.js', [], WGBL_VERSION); //phpcs:ignore
+
         register_block_type('wgb/gift-grid', [
             'render_callback' => [$this, 'callback'],
             'script' => 'wgb-blocks-front-grid',
             'style' => 'wgb-blocks-front-grid',
+            'editor_style' => 'wgb-blocks-grid',
         ]);
     }
 

@@ -21,20 +21,20 @@ class iThemeland_front_shortcodes
         $this->gift_item_key = array();
         $this->settings = itfreegift_get_settings();
 
-        $this->check_rule_condition = new CheckRuleCondition($this->getCheckRuleConditionData());
-
         add_action('init', [$this, 'init']);
         add_action('wp_ajax_it_gift_shortcode_show_popup', [$this, 'shortcode_show_popup']);
         add_action('wp_ajax_nopriv_it_gift_shortcode_show_popup', [$this, 'shortcode_show_popup']);
+        add_action('wp_ajax_itfreegift_refresh_checkout_gifts', [$this, 'refresh_checkout_gifts']);
+        add_action('wp_ajax_nopriv_itfreegift_refresh_checkout_gifts', [$this, 'refresh_checkout_gifts']);
     }
 
     public function init()
     {
         $shortcodes = apply_filters(
-            'itg_load_shortcodes',
+            'itg_load_shortcodes', //phpcs:ignore
             [
-                'itg_gift_products', 
-                'itg_gift_notice', 
+                'itg_gift_products',
+                'itg_gift_notice',
             ]
         );
 
@@ -106,10 +106,9 @@ class iThemeland_front_shortcodes
             }
         }
 
-
         if ($atts['type'] == 'cart_count') {
             $cart_items = itfreegift_get_cart_contents();
-            $sum_value       = itg_get_wc_cart_sum_of_item_quantities($cart_items);
+            $sum_value = 0; //itg_get_wc_cart_sum_of_item_quantities($cart_items);
             if ($sum_value < $atts['value']) {
                 echo esc_html($atts['value'] - $sum_value);
             }
@@ -121,6 +120,8 @@ class iThemeland_front_shortcodes
      * */
     public function shortcode_gift_products($atts, $content)
     {
+        $this->initialize_rule_condition();
+
         $atts_shortcode = shortcode_atts(
             [
                 'type' => 'dropdown',
@@ -206,6 +207,29 @@ class iThemeland_front_shortcodes
         $type = sanitize_text_field(wp_unslash($_POST['type'])); //phpcs:ignore
         echo do_shortcode('[itg_gift_products type="' . $type . '"]');
         wp_die();
+    }
+
+    /**
+     * Return a fresh gift layout after the checkout cart changes.
+     */
+    public function refresh_checkout_gifts()
+    {
+        check_ajax_referer('jkhKJSdd4576d234Z', 'itg_security');
+
+        $type = isset($_POST['type']) ? sanitize_key(wp_unslash($_POST['type'])) : 'dropdown'; //phpcs:ignore
+        if (!in_array($type, ['carousel', 'grid', 'datatable', 'dropdown'], true)) {
+            $type = 'dropdown';
+        }
+
+        echo do_shortcode('[itg_gift_products type="' . $type . '"]');
+        wp_die();
+    }
+
+    private function initialize_rule_condition()
+    {
+        if (!$this->check_rule_condition instanceof CheckRuleCondition) {
+            $this->check_rule_condition = new CheckRuleCondition($this->getCheckRuleConditionData());
+        }
     }
 }
 

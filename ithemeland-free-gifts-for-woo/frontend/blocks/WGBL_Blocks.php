@@ -25,6 +25,7 @@ class WGBL_Blocks
     private function __construct()
     {
         add_action('woocommerce_blocks_loaded', [$this, 'register'], 10);
+        add_action('init', [$this, 'register_block_styles'], 5);
         add_action('enqueue_block_editor_assets', [$this, 'enqueue_script']);
         $this->register_blocks();
         // Hook to enqueue_block_editor_assets which only runs in the editor
@@ -34,6 +35,7 @@ class WGBL_Blocks
         add_action('wp_enqueue_scripts', [$this, 'enqueue_cart_scripts']);
 
         add_action('wp_ajax_update_block_cart_content', [$this, 'update_block_cart_content']);
+        add_action('wp_ajax_nopriv_update_block_cart_content', [$this, 'update_block_cart_content']);
     }
 
     public function register()
@@ -54,24 +56,42 @@ class WGBL_Blocks
     public function enqueue_script()
     {
         // Enqueue common block editor styles
-        wp_enqueue_style('wgb-blocks-common-style', WGBL_FRONTEND_URL . 'blocks/assets/css/common-style.css', [], WGBL_VERSION);
+        wp_enqueue_style('wgb-blocks-common-style', WGBL_FRONTEND_URL . 'blocks/assets/css/common-style.css', [], WGBL_VERSION . '-unavailable-gifts-1');
+    }
+
+    /**
+     * Register shared styles before the individual gift blocks are registered.
+     *
+     * Declaring these handles as block dependencies makes WordPress load them
+     * inside the iframe-based editor as well as on the frontend.
+     */
+    public function register_block_styles()
+    {
+        wp_register_style('wgb-blocks-common-style', WGBL_FRONTEND_URL . 'blocks/assets/css/common-style.css', [], WGBL_VERSION . '-unavailable-gifts-1');
+        wp_register_style('it-gift-style', plugin_dir_url_wc_advanced_gift . 'assets/css/style/style.css', [], WGBL_VERSION . '-unavailable-gifts-1');
+        wp_register_style('it-gift-owl-carousel-style', plugin_dir_url_wc_advanced_gift . 'assets/css/owl-carousel/owl.carousel.min.css', ['it-gift-style'], WGBL_VERSION);
+        wp_register_style('it-gift-datatables-style', plugin_dir_url_wc_advanced_gift . 'assets/css/datatables/jquery.dataTables.min.css', ['it-gift-style'], WGBL_VERSION);
     }
 
     public function enqueue_cart_scripts()
     {
-        if (!is_cart()) {
+        if (!is_cart() || !itfreegift_is_block_cart()) {
             return;
         }
 
-        // Enqueue jQuery first
-        // wp_enqueue_script('jquery');
+        list($block_name, $layout) = self::get_layout_from_setting('', '');
+        if (!$block_name || !$layout || !\iThemeland_enqueue_css_js::has_candidate_gift_context()) {
+            return;
+        }
+
+        \iThemeland_enqueue_css_js::enqueue_layout($layout);
 
         // Then enqueue our script with jQuery dependency
         wp_enqueue_script(
             'wgb-cart-updates',
             WGBL_FRONTEND_URL . 'blocks/assets/js/cart-updates.js',
             ['jquery'],
-            WGBL_VERSION,
+            WGBL_VERSION . '-conditional-assets-1',
             true
         );
 

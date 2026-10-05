@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                                 <!-- Promotion visibility is now controlled per rule via toggle switches -->
 
                                 <div class="wgb-form-group">
-                                    <label for="wgb-settings-promotion-pages"><?php esc_html_e('Choose pages to show the notice', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                    <label for="wgb-settings-promotion-pages"><?php esc_html_e('Choose pages to show the notice', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                     <div class="wgb-col-6">
                                         <select name="settings[promotion_pages][]" id="wgb-settings-promotion-pages" class="wgb-select2" multiple="multiple" data-placeholder="<?php esc_html_e('Select pages...', 'ithemeland-free-gifts-for-woo'); ?>">
                                             <option value="cart" <?php echo (!empty($settings['promotion_pages']) && in_array('cart', $settings['promotion_pages'])) ? 'selected' : ''; ?>><?php esc_html_e('Cart Page', 'ithemeland-free-gifts-for-woo'); ?></option>
@@ -49,7 +49,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                                     </div>
                                 </div>
                                 <div class="wgb-form-group ">
-                                    <label><?php esc_html_e('Show as:', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                    <label><?php esc_html_e('Show as:', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                     <div>
                                         <label class="wgb-col-1">
                                             <input type="radio" id="wgb-settings-promotion-notice-radio" name="settings[promotion][promotion_layout]" value="notice" <?php echo (empty($settings['promotion']['promotion_layout']) || $settings['promotion']['promotion_layout'] == 'notice') ? 'checked="checked"' : ''; ?>>
@@ -70,17 +70,17 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                                 <!-- Progress Bar Color Settings -->
                                 <div class="wgb-promotion-progressbar-dependent" style="display: none;">
                                     <div class="wgb-form-group wgb-progressbar-bg-color-group">
-                                        <label for="wgb-settings-promotion-progressbar-bg-color"><?php esc_html_e('Progress Bar Background Color', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                        <label for="wgb-settings-promotion-progressbar-bg-color"><?php esc_html_e('Progress Bar Background Color', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                         <input type="color" name="settings[promotion][progressbar_bg_color]" id="wgb-settings-promotion-progressbar-bg-color" value="<?php echo !empty($settings['promotion']['progressbar_bg_color']) ? esc_attr($settings['promotion']['progressbar_bg_color']) : '#4CAF50'; ?>">
                                         <p class="wgb-description"><?php esc_html_e('Choose the background color for progress bar container', 'ithemeland-free-gifts-for-woo'); ?></p>
                                     </div>
                                     <div class="wgb-form-group wgb-progressbar-fill-color-group">
-                                        <label for="wgb-settings-promotion-progressbar-fill-color"><?php esc_html_e('Progress Bar Fill Color', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                        <label for="wgb-settings-promotion-progressbar-fill-color"><?php esc_html_e('Progress Bar Fill Color', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                         <input type="color" name="settings[promotion][progressbar_fill_color]" id="wgb-settings-promotion-progressbar-fill-color" value="<?php echo !empty($settings['promotion']['progressbar_fill_color']) ? esc_attr($settings['promotion']['progressbar_fill_color']) : '#ffffff'; ?>">
                                         <p class="wgb-description"><?php esc_html_e('Choose the fill color for progress bar', 'ithemeland-free-gifts-for-woo'); ?></p>
                                     </div>
                                     <div class="wgb-form-group wgb-progressbar-text-color-group">
-                                        <label for="wgb-settings-promotion-progressbar-text-color"><?php esc_html_e('Progress Bar Text Color', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                        <label for="wgb-settings-promotion-progressbar-text-color"><?php esc_html_e('Progress Bar Text Color', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                         <input type="color" name="settings[promotion][progressbar_text_color]" id="wgb-settings-promotion-progressbar-text-color" value="<?php echo !empty($settings['promotion']['progressbar_text_color']) ? esc_attr($settings['promotion']['progressbar_text_color']) : '#ffffff'; ?>">
                                         <p class="wgb-description"><?php esc_html_e('Choose the text color for progress bar', 'ithemeland-free-gifts-for-woo'); ?></p>
                                     </div>
@@ -88,14 +88,15 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
                                 <div class="wgb-promotion-notice-dependent">
                                     <div class="wgb-form-group ">
-                                        <label for="wgb-settings-promotion-get-products-template-visibility"><?php esc_html_e('Show Get Products', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                        <label for="wgb-settings-promotion-get-products-template-visibility"><?php esc_html_e('Show Get Products', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
+                                        <input type="hidden" name="settings[promotion][get_products_template_visibility]" value="false">
                                         <input type="checkbox" name="settings[promotion][get_products_template_visibility]" id="wgb-settings-promotion-get-products-template-visibility" value="true" <?php echo (!empty($settings['promotion']['get_products_template_visibility']) && $settings['promotion']['get_products_template_visibility'] == 'true') ? 'checked="checked"' : '' ?>>
                                         <p class="wgb-description"><?php esc_html_e('Yes', 'ithemeland-free-gifts-for-woo'); ?></p>
                                     </div>
 
                                     <div class="wgb-promotion-get-products-templates-dependent">
                                         <div class="wgb-form-group ">
-                                            <label for="wgb-settings-promotion-temp-get-product"><?php esc_html_e('Select Template Get Products', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-temp-get-product"><?php esc_html_e('Select Template Get Products', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <div class="wgb-col-2">
                                                 <select name="settings[promotion-temp-get-product]" id="wgb-settings-promotion-temp-get-product" style="width: 100%;">
                                                     <option value="" <?php echo (!empty($settings['promotion-temp-get-product']) && $settings['promotion-temp-get-product'] == '') ? 'selected' : ''; ?>><?php esc_html_e('Select position...', 'ithemeland-free-gifts-for-woo'); ?></option>
@@ -108,38 +109,38 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                                             <p class="wgb-description"><?php esc_html_e('Leave it blank to didnt show the template after promotion notice!', 'ithemeland-free-gifts-for-woo'); ?></p>
                                         </div>
                                         <div class="wgb-form-group wgb-per-page-group">
-                                            <label for="wgb-settings-promotion-product-per-page"><?php esc_html_e('Per Page', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-product-per-page"><?php esc_html_e('Per Page', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="number" min="1" name="settings[promotion][per_page]" id="wgb-settings-promotion-product-per-page" value="<?php echo !empty($settings['promotion']['per_page']) ? esc_attr($settings['promotion']['per_page']) : 5; ?>">
                                         </div>
                                         <div class="wgb-form-group wgb-laptop-column-group">
-                                            <label for="wgb-settings-promotion-laptop-column"><?php esc_html_e('Laptop Columns', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-laptop-column"><?php esc_html_e('Laptop Columns', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="number" min="1" name="settings[promotion][laptop_column]" id="wgb-settings-promotion-laptop-column" value="<?php echo !empty($settings['promotion']['laptop_column']) ? esc_attr($settings['promotion']['laptop_column']) : 6; ?>">
                                         </div>
                                         <div class="wgb-form-group wgb-tablet-column-group">
-                                            <label for="wgb-settings-promotion-tablet-column"><?php esc_html_e('Tablet Columns', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-tablet-column"><?php esc_html_e('Tablet Columns', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="number" min="1" name="settings[promotion][tablet_column]" id="wgb-settings-promotion-tablet-column" value="<?php echo !empty($settings['promotion']['tablet_column']) ? esc_attr($settings['promotion']['tablet_column']) : 6; ?>">
                                         </div>
                                         <div class="wgb-form-group wgb-phone-column-group">
-                                            <label for="wgb-settings-promotion-phone-column"><?php esc_html_e('Phone Columns', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-phone-column"><?php esc_html_e('Phone Columns', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="number" min="1" name="settings[promotion][phone_column]" id="wgb-settings-promotion-phone-column" value="<?php echo !empty($settings['promotion']['phone_column']) ? esc_attr($settings['promotion']['phone_column']) : 4; ?>">
                                         </div>
                                         <div class="wgb-form-group wgb-promotion-template-bg-color-group">
-                                            <label for="wgb-settings-promotion-template-bg-color"><?php esc_html_e('Background Color', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-template-bg-color"><?php esc_html_e('Background Color', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="color" name="settings[promotion][temp_bg_color]" id="wgb-settings-promotion-template-bg-color" value="<?php echo !empty($settings['promotion']['temp_bg_color']) ? esc_attr($settings['promotion']['temp_bg_color']) : '#fff'; ?>">
                                             <p class="wgb-description"><?php esc_html_e('Choose the background color for template', 'ithemeland-free-gifts-for-woo'); ?></p>
                                         </div>
                                         <div class="wgb-form-group wgb-promotion-template-title-color-group">
-                                            <label for="wgb-settings-promotion-template-title-color"><?php esc_html_e('Title Color', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-template-title-color"><?php esc_html_e('Title Color', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="color" name="settings[promotion][temp_title_color]" id="wgb-settings-promotion-template-title-color" value="<?php echo !empty($settings['promotion']['temp_title_color']) ? esc_attr($settings['promotion']['temp_title_color']) : '#17141d'; ?>">
                                             <p class="wgb-description"><?php esc_html_e('Choose the title color for template', 'ithemeland-free-gifts-for-woo'); ?></p>
                                         </div>
                                         <div class="wgb-form-group wgb-promotion-template-title-bg-color-group">
-                                            <label for="wgb-settings-promotion-template-title-bg-color"><?php esc_html_e('Title Background Color', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-template-title-bg-color"><?php esc_html_e('Title Background Color', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="color" name="settings[promotion][temp_title_bg_color]" id="wgb-settings-promotion-template-title-bg-color" value="<?php echo !empty($settings['promotion']['temp_title_bg_color']) ? esc_attr($settings['promotion']['temp_title_bg_color']) : '#c8acff'; ?>">
                                             <p class="wgb-description"><?php esc_html_e('Choose the title background color for template', 'ithemeland-free-gifts-for-woo'); ?></p>
                                         </div>
                                         <div class="wgb-form-group wgb-promotion-template-title-hover-color-group">
-                                            <label for="wgb-settings-promotion-template-title-hover-color"><?php esc_html_e('Title Hover Color', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                            <label for="wgb-settings-promotion-template-title-hover-color"><?php esc_html_e('Title Hover Color', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                             <input type="color" name="settings[promotion][temp_title_hover_color]" id="wgb-settings-promotion-template-title-hover-color" value="<?php echo !empty($settings['promotion']['temp_title_hover_color']) ? esc_attr($settings['promotion']['temp_title_hover_color']) : '#dd2467'; ?>">
                                             <p class="wgb-description"><?php esc_html_e('Choose the title hover color for template', 'ithemeland-free-gifts-for-woo'); ?></p>
                                         </div>

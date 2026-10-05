@@ -849,58 +849,22 @@ function wgbHideQuantitiesBasedOn(id) {
 
 function wgbSettingsDependenciesController(type) {
     let allDependencies = jQuery("#wgb-settings-view-gift-in-cart-dependencies");
-    // hide all dependencies
-    allDependencies.find(".wgb-settings-dependency-item").hide();
-
-    if (type) {
-        let dependencies = allDependencies.find('div[data-type="' + type + '"]');
-        // show selected dependencies
-        dependencies.show();
+    if (allDependencies.length) {
+        allDependencies.find(".wgb-settings-dependency-item").hide();
+        if (type) {
+            let dependencies = allDependencies.find('div[data-type="' + type + '"]');
+            dependencies.show();
+        }
     }
-}
 
-function wgbCheckForUpdate() {
-    jQuery(".wgb-check-for-update-loading").css({ display: "inline-block" });
-    jQuery.ajax({
-        url: WGBL_DATA.ajax_url,
-        type: "post",
-        dataType: "json",
-        data: {
-            action: "wgb_check_for_update",
-            nonce: WGBL_DATA.ajax_nonce,
-        },
-        success: function (response) {
-            jQuery(".wgb-check-for-update-loading").hide();
-            if (response.has_update == "yes") {
-                if (response.license_is_valid == "yes") {
-                    jQuery(".wgb-check-for-update").html(
-                        '<a href="' +
-                        response.update_link +
-                        '" class="wgb-button-blue wgb-button-blue wgb-update-button">Update Now</a><strong class="wgb-new-version">New version: ' +
-                        response.new_version +
-                        "</strong>"
-                    );
-                } else {
-                    swal({
-                        title: " Please purchase Pro version and then activate your plugin.",
-                        type: "warning",
-                    });
-                }
-            } else {
-                swal({
-                    title: "Your plugin is up to date",
-                    type: "success",
-                });
-            }
-        },
-        error: function () {
-            jQuery(".wgb-check-for-update-loading").hide();
-            swal({
-                title: "Error! Try again",
-                type: "warning",
-            });
-        },
-    });
+    let checkoutAllDependencies = jQuery("#wgb-settings-view-gift-in-checkout-dependencies");
+    if (checkoutAllDependencies.length) {
+        checkoutAllDependencies.find(".wgb-settings-dependency-item").hide();
+        if (type) {
+            let checkoutDependencies = checkoutAllDependencies.find('div[data-type="' + type + '"]');
+            checkoutDependencies.show();
+        }
+    }
 }
 
 function wgbShowGetGroupOfProductsItems(id) {

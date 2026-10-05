@@ -218,14 +218,20 @@ function itfreegift_get_settings()
     $settings = Setting::get_instance();
     $settings = $settings->get();
 
-    $settings['position']                             = isset($settings['position']) ? $settings['position'] : 'bottom_cart';
-    $settings['show_stock_quantity']                  = isset($settings['show_stock_quantity']) ? $settings['show_stock_quantity'] : 'false';
-    $settings['layout']                               = isset($settings['layout']) ? $settings['layout'] : 'grid';
-    $settings['child']                                = isset($settings['child']) ? $settings['child'] : 'false';
+    $settings['position'] = isset($settings['position']) ? $settings['position'] : 'bottom_cart';
+    $settings['checkout_position'] = isset($settings['checkout_position']) ? $settings['checkout_position'] : 'before_checkout_form';
+    $settings['show_stock_quantity'] = isset($settings['show_stock_quantity']) ? $settings['show_stock_quantity'] : 'false';
+    $settings['checkout_show_stock_quantity'] = isset($settings['checkout_show_stock_quantity']) ? $settings['checkout_show_stock_quantity'] : 'false';
+    $settings['layout'] = isset($settings['layout']) ? $settings['layout'] : 'grid';
+    $settings['checkout_layout'] = isset($settings['checkout_layout']) ? $settings['checkout_layout'] : 'grid';
+    $settings['child'] = isset($settings['child']) ? $settings['child'] : 'false';
     $settings['number_per_page'] = isset($settings['number_per_page']) ? $settings['number_per_page'] : '4';
+    $settings['checkout_number_per_page'] = isset($settings['checkout_number_per_page']) ? $settings['checkout_number_per_page'] : '4';
+
     $settings['desktop_columns'] = isset($settings['desktop_columns']) ? str_replace('wgbl', 'wgb', $settings['desktop_columns']) : 'wgb-col-md-2';
     $settings['tablet_columns'] = isset($settings['tablet_columns']) ? str_replace('wgbl', 'wgb', $settings['tablet_columns']) : 'wgb-col-sm-2';
     $settings['mobile_columns'] = isset($settings['mobile_columns']) ? str_replace('wgbl', 'wgb', $settings['mobile_columns']) : 'wgb-col-2';
+
     $settings['carousel']['rtl'] = isset($settings['carousel']['rtl']) ? $settings['carousel']['rtl'] : 'false';
     $settings['carousel']['loop'] = isset($settings['carousel']['loop']) ? $settings['carousel']['loop'] : 'false';
     $settings['carousel']['dots'] = isset($settings['carousel']['dots']) ? $settings['carousel']['dots'] : 'false';
@@ -234,6 +240,16 @@ function itfreegift_get_settings()
     $settings['carousel']['desktop'] = isset($settings['carousel']['desktop']) ? $settings['carousel']['desktop'] : '6';
     $settings['carousel']['tablet'] = isset($settings['carousel']['tablet']) ? $settings['carousel']['tablet'] : '2';
     $settings['carousel']['mobile'] = isset($settings['carousel']['mobile']) ? $settings['carousel']['mobile'] : '1';
+
+    $settings['checkout_carousel']['rtl'] = isset($settings['checkout_carousel']['rtl']) ? $settings['checkout_carousel']['rtl'] : 'false';
+    $settings['checkout_carousel']['loop'] = isset($settings['checkout_carousel']['loop']) ? $settings['checkout_carousel']['loop'] : 'false';
+    $settings['checkout_carousel']['dots'] = isset($settings['checkout_carousel']['dots']) ? $settings['checkout_carousel']['dots'] : 'false';
+    $settings['checkout_carousel']['nav'] = isset($settings['checkout_carousel']['nav']) ? $settings['checkout_carousel']['nav'] : 'false';
+    $settings['checkout_carousel']['speed'] = isset($settings['checkout_carousel']['speed']) ? $settings['checkout_carousel']['speed'] : '5000';
+    $settings['checkout_carousel']['desktop'] = isset($settings['checkout_carousel']['desktop']) ? $settings['checkout_carousel']['desktop'] : '6';
+    $settings['checkout_carousel']['tablet'] = isset($settings['checkout_carousel']['tablet']) ? $settings['checkout_carousel']['tablet'] : '2';
+    $settings['checkout_carousel']['mobile'] = isset($settings['checkout_carousel']['mobile']) ? $settings['checkout_carousel']['mobile'] : '1';
+
     $settings['display_price'] = isset($settings['display_price']) ? $settings['display_price'] : 'no';
     $settings['show_description'] = isset($settings['show_description']) ? $settings['show_description'] : 'false';
     $settings['enabled_qty'] = isset($settings['enabled-qty']) ? $settings['enabled-qty'] : 'false';
@@ -242,6 +258,7 @@ function itfreegift_get_settings()
     $settings['enable_ajax_add_to_cart'] = isset($settings['enable_ajax_add_to_cart']) ?  $settings['enable_ajax_add_to_cart'] : 'false';
     $settings['layout_popup'] = isset($settings['layout_popup']) ?  $settings['layout_popup'] : 'carousel';
     $GLOBALS['itfreegift_normalized_settings_cache'] = $settings;
+
     return $settings;
 }
 

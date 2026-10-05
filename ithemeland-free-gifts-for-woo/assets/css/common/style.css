@@ -54,7 +54,7 @@
 
 /**************** End Fonts *******************/
 
-body {
+#wgb-main {
     font: 10pt "Open sans", Calibri, Tahoma;
 }
 
@@ -1298,4 +1298,13 @@ a {
 
 .select2-container .select2-selection--multiple .select2-selection__rendered {
     display: inline-block !important;
+}
+
+.wgb-settings-display-add-gift-color-container {
+    float: left;
+    margin-right: 15px;
+}
+
+.wgb-settings-display-add-gift-color-container span {
+    font-weight: 600;
 }

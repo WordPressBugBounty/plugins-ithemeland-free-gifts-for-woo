@@ -61,7 +61,7 @@ class WGBL
         Api_Handler::init();
         WGBL_Ajax::register_callback();
         WGBL_Post::register_callback();
-        // (new WGBL_Custom_Queries())->init();
+        (new WGBL_Custom_Queries())->init();
 
         $settings_repository = Setting::get_instance();
         if (!$settings_repository->has_settings()) {

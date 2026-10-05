@@ -125,12 +125,12 @@ function itfreegift_load_object($object_id, $store)
     } else if ($method == 'wc_get_order') {
         return wc_get_product($object_id);
     } else if ($method == 'wc_get_customer') {
-        $customer = new WC_Customer($object_id);
+        $customer = new \WC_Customer($object_id);
 
         return $customer->get_id() ? $customer : false;
     } else if ($method == 'wc_get_order_item') {
         try {
-            $order_item = new WC_Order_Item_Product($object_id);
+            $order_item = new \WC_Order_Item_Product($object_id);
 
             return $order_item->get_id() ? $order_item : false;
         } catch (Exception $e) {

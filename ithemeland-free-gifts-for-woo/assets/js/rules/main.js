@@ -433,7 +433,61 @@ jQuery(document).ready(function ($) {
         }
     });
 
+    $(document).on("change", "#wgb-settings-show-notice-checkout", function () {
+        if ($(this).prop("checked") === true) {
+            $("#wgb-settings-notification-show-notice-checkout-dependencies").show();
+        } else {
+            $("#wgb-settings-notification-show-notice-checkout-dependencies").hide();
+        }
+    });
+
+    $(document).on("change", "#wgb-settings-show-notice-cart", function () {
+        if ($(this).prop("checked") === true) {
+            $("#wgb-settings-notification-show-notice-cart-dependencies").show();
+        } else {
+            $("#wgb-settings-notification-show-notice-cart-dependencies").hide();
+        }
+    });
+
+    $(document).on("change", "#wgb-settings-show-variations", function () {
+        if ($(this).prop('checked') === true) {
+            $('.wgb-settings-show-variations-dependent').hide();
+        } else {
+            $('.wgb-settings-show-variations-dependent').show();
+        }
+    });
+    $(document).on("change", "#wgb-settings-show-popup", function () {
+        if ($(this).prop('checked') === true) {
+            $('.wgb-settings-show-popup-dependent').show();
+        } else {
+            $('.wgb-settings-show-popup-dependent').hide();
+        }
+    });
+
+    $(document).on("change", "#wgb-settings-position-in-checkout", function () {
+        let $this = $(this);
+
+        switch ($this.val()) {
+            case "none":
+                $('.wgb-settings-checkout-page-position-dependency').hide().find("input").prop("disabled", true);
+                break;
+            default:
+                $('.wgb-settings-checkout-page-position-dependency').show().find("input").prop("disabled", false);
+                break;
+        }
+
+        if ($this.val() == 'custom_hook') {
+            $('.wgb-settings-custom-hook-dependency').show().find('input').prop('disabled', false);
+        } else {
+            $('.wgb-settings-custom-hook-dependency').hide().find('input').prop('disabled', true);
+        }
+    });
+
+    $('#wgb-settings-show-popup').trigger('change');
+    $('#wgb-settings-show-variations').trigger('change');
+
     $("#wgb-settings-position-in-cart").trigger("change");
+    $("#wgb-settings-position-in-checkout").trigger("change");
 
     wgbSettingsDependenciesController($("#wgb-settings-layout").val());
 

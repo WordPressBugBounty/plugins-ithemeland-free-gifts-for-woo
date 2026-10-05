@@ -29,6 +29,8 @@ class WGBL_Post
         add_action('admin_post_wgb_save_offer_rules', [$this, 'save_offer_rules']);
         add_action('admin_post_wgb_save_settings_general', [$this, 'save_settings_general']);
         add_action('admin_post_wgb_save_settings_localization', [$this, 'save_settings_localization']);
+        add_action('admin_post_wgb_save_settings_cart_page', [$this, 'save_settings_cart_page']);
+        add_action('admin_post_wgb_save_settings_checkout_page', [$this, 'save_settings_checkout_page']);
         add_action('admin_post_wgb_save_settings_notification', [$this, 'save_settings_notification']);
         add_action('admin_post_wgb_save_settings_promotion', [$this, 'save_settings_promotion']);
         add_action('admin_post_wgb_addons_requests', [$this, 'addons_requests']);
@@ -90,14 +92,8 @@ class WGBL_Post
 
     public function save_settings_general()
     {
-        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'wgb_post_nonce')) {
-            die('403 Forbidden');
-        }
-
-        if (!empty($_POST['settings'])) {  //phpcs:ignore
-            $setting_repository = Setting::get_instance();
-            $setting_repository->update_general_settings(Sanitizer::array($_POST['settings']));  //phpcs:ignore
-        }
+        $this->verify_settings_nonce();
+        $this->save_posted_settings(['popup_pages']);
 
         $this->redirect('settings&sub-tab=general', [
             'message' => esc_html__('Your changes have been successfully saved.', 'ithemeland-free-gifts-for-woo'),
@@ -107,19 +103,8 @@ class WGBL_Post
 
     public function save_settings_localization()
     {
-        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'wgb_post_nonce')) {
-            die('403 Forbidden');
-        }
-
-        if (!empty($_POST['localization']) || is_array($_POST['localization'])) { //phpcs:ignore
-            $prefix = "itg_localization_";
-            foreach ($_POST['localization'] as $field_name => $field_value) { //phpcs:ignore
-                update_option($prefix . sanitize_text_field($field_name), sanitize_text_field($field_value));
-            }
-            if (function_exists('itfreegift_reset_localization_cache')) {
-                itfreegift_reset_localization_cache();
-            }
-        }
+        $this->verify_settings_nonce();
+        $this->save_posted_localization();
 
         $this->redirect('settings&sub-tab=localization', [
             'message' => esc_html__('Your changes have been successfully saved.', 'ithemeland-free-gifts-for-woo'),
@@ -127,26 +112,35 @@ class WGBL_Post
         ]);
     }
 
+    public function save_settings_cart_page()
+    {
+        $this->verify_settings_nonce();
+        $this->save_posted_settings();
+        $this->save_posted_localization();
+
+        $this->redirect('settings&sub-tab=cart_page', [
+            'message' => esc_html__('Your changes have been successfully saved.', 'ithemeland-free-gifts-for-woo'),
+            'color' => 'green'
+        ]);
+    }
+
+    public function save_settings_checkout_page()
+    {
+        $this->verify_settings_nonce();
+        $this->save_posted_settings();
+        $this->save_posted_localization();
+
+        $this->redirect('settings&sub-tab=checkout_page', [
+            'message' => esc_html__('Your changes have been successfully saved.', 'ithemeland-free-gifts-for-woo'),
+            'color' => 'green'
+        ]);
+    }
+
     public function save_settings_notification()
     {
-        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'wgb_post_nonce')) {
-            die('403 Forbidden');
-        }
-
-        if (!empty($_POST['settings'])) { //phpcs:ignore
-            $setting_repository = Setting::get_instance();
-            $setting_repository->update_general_settings(Sanitizer::array($_POST['settings'])); //phpcs:ignore
-        }
-
-        if (!empty($_POST['localization']) || is_array($_POST['localization'])) { //phpcs:ignore
-            $prefix = "itg_localization_";
-            foreach ($_POST['localization'] as $field_name => $field_value) { //phpcs:ignore
-                update_option($prefix . sanitize_text_field($field_name), sanitize_text_field($field_value));
-            }
-            if (function_exists('itfreegift_reset_localization_cache')) {
-                itfreegift_reset_localization_cache();
-            }
-        }
+        $this->verify_settings_nonce();
+        $this->save_posted_settings();
+        $this->save_posted_localization();
 
         $this->redirect('settings&sub-tab=display', [
             'message' => esc_html__('Your changes have been successfully saved.', 'ithemeland-free-gifts-for-woo'),
@@ -156,24 +150,9 @@ class WGBL_Post
 
     public function save_settings_promotion()
     {
-        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'wgb_post_nonce')) {
-            die('403 Forbidden');
-        }
-
-        if (!empty($_POST['settings'])) {
-            $setting_repository = Setting::get_instance();
-            $setting_repository->update_general_settings(Sanitizer::array($_POST['settings'])); //phpcs:ignore
-        }
-
-        if (!empty($_POST['localization']) || is_array($_POST['localization'])) { //phpcs:ignore
-            $prefix = "itg_localization_";
-            foreach ($_POST['localization'] as $field_name => $field_value) { //phpcs:ignore
-                update_option($prefix . sanitize_text_field($field_name), sanitize_text_field($field_value));
-            }
-            if (function_exists('itfreegift_reset_localization_cache')) {
-                itfreegift_reset_localization_cache();
-            }
-        }
+        $this->verify_settings_nonce();
+        $this->save_posted_settings(['promotion_pages']);
+        $this->save_posted_localization();
 
         $this->redirect('settings&sub-tab=promotion', [
             'message' => esc_html__('Your changes have been successfully saved.', 'ithemeland-free-gifts-for-woo'),
@@ -196,6 +175,50 @@ class WGBL_Post
         }
 
         $this->redirect('rules');
+    }
+
+    private function verify_settings_nonce()
+    {
+        if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'wgb_post_nonce')) {
+            die('403 Forbidden');
+        }
+    }
+
+    private function save_posted_settings($empty_array_fields = [])
+    {
+        if (empty($_POST['settings']) || !is_array($_POST['settings'])) { //phpcs:ignore
+            return;
+        }
+
+        $posted_settings = Sanitizer::array($_POST['settings']); //phpcs:ignore
+        if (!is_array($posted_settings)) {
+            return;
+        }
+
+        // Multi-select fields are omitted from the request when all options are
+        // deselected. Store an empty array so their previous values are cleared.
+        foreach ($empty_array_fields as $field_name) {
+            if (!isset($_POST['settings'][$field_name])) { //phpcs:ignore
+                $posted_settings[$field_name] = [];
+            }
+        }
+
+        Setting::get_instance()->update_general_settings($posted_settings);
+    }
+
+    private function save_posted_localization()
+    {
+        if (empty($_POST['localization']) || !is_array($_POST['localization'])) { //phpcs:ignore
+            return;
+        }
+
+        foreach (Sanitizer::array($_POST['localization']) as $field_name => $field_value) { //phpcs:ignore
+            update_option('itg_localization_' . sanitize_key($field_name), sanitize_text_field($field_value));
+        }
+
+        if (function_exists('itfreegift_reset_localization_cache')) {
+            itfreegift_reset_localization_cache();
+        }
     }
 
     private function redirect($active_tab = null, $message = null)

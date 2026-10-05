@@ -69,6 +69,12 @@ class iThemeland_enqueue_css_js
             }
         }
 
+        if (is_checkout()) {
+            if (!empty($settings['checkout_position']) && $settings['checkout_position'] !== 'none') {
+                $layouts[$this->layout($settings['checkout_layout'] ?? 'carousel')] = false;
+            }
+        }
+
         // Popup assets are enqueued by layout_popup() only when rule evaluation
         // has produced gift UI. This keeps checkout pages with no eligible gift
         // free of popup, carousel, and scrollbar assets.
@@ -124,11 +130,13 @@ class iThemeland_enqueue_css_js
         if (!empty(self::$loaded['core'])) return;
         self::$loaded['core'] = true;
         self::settings();
-        wp_enqueue_style('it-gift-style', plugin_dir_url_wc_advanced_gift . 'assets/css/style/style.css', [], WGBL_VERSION . '-unavailable-gifts-1');
-        wp_enqueue_script('pw-gift-add-jquery-adv', plugin_dir_url_wc_advanced_gift . 'assets/js/custom-jquery-gift.js', ['jquery'], WGBL_VERSION . '-conditional-assets-2-unavailable-gifts-1', true);
+        wp_enqueue_style('it-gift-style', plugin_dir_url_wc_advanced_gift . 'assets/css/style/style.css', [], WGBL_VERSION);
+        wp_enqueue_script('pw-gift-add-jquery-adv', plugin_dir_url_wc_advanced_gift . 'assets/js/custom-jquery-gift.js', ['jquery'], WGBL_VERSION, true);
 
         $s = self::$settings;
-        $carousel = $s['carousel'] ?? [];
+        $carousel = itfreegift_is_checkout_page()
+            ? ($s['checkout_carousel'] ?? $s['carousel'] ?? [])
+            : ($s['carousel'] ?? []);
         $permalink = apply_filters('itfreegift_redirect_after_click_gift_item', get_permalink());
         $select = itfreegift_get_localization('select_gift', 'Select Gift');
         wp_localize_script('pw-gift-add-jquery-adv', 'pw_wc_gift_adv_ajax', [
@@ -151,6 +159,7 @@ class iThemeland_enqueue_css_js
             'checkout_auto_load' => $s['checkout_auto_load'] ?? 'false',
             'add_gift_ajax_manual' => $s['enable_ajax_add_to_cart'] ?? 'false',
             'is_checkout' => itfreegift_is_checkout_page(),
+            'checkout_popup_allowed' => ($s['checkout_position'] ?? 'none') !== 'none',
             'is_block_cart' => itfreegift_is_block_cart(),
             'is_block_checkout' => itfreegift_is_block_checkout(),
             'loop' => $carousel['loop'] ?? 'false', 'rtl' => $carousel['rtl'] ?? 'false',

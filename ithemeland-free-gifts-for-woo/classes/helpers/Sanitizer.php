@@ -8,7 +8,7 @@ class Sanitizer
 {
     public static function array($val)
     {
-        $sanitized = null;
+        $sanitized = is_array($val) ? [] : null;
         if (is_array($val)) {
             if (count($val) > 0) {
                 foreach ($val as $key => $value) {

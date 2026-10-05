@@ -1,128 +1,281 @@
 === GIFTiT - Free Gifts for WooCommerce ===
 Contributors: ithemelandco
 Donate link: https://ithemelandco.com/
-Tags: woocommerce gift, boost sale, free gift, buy one get one , Gift Product Woocommerce
+Tags: free gift, woocommerce gift, gift with purchase, buy one get one, bogo
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 4.3.0
+Stable tag: 4.4
 Requires PHP: 7.0
 License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Free Gifts for WooCommerce allows you to offer Free Gifts to your customers whenever they make a purchase on your site.
 
 == Description ==
 
-<strong>What are the Free Gifts for Woocommerce?</strong>
-<a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">Free Gifts For WooCommerce plugin</a> comes with several options to help you offer free gifts to the customers of your online store in a robust and flexible way. As an applicable and professional extension, free gifts for Woocommerce plugin lets you adjust different rules and techniques such as BOGO, &ldquo;Buy x Get y&rdquo;, Subtotal, etc. And set restricted conditions on special products, users, card items, sales date, etc.</p>
+**GIFTiT – Free Gifts for WooCommerce**
+GIFTiT is a WooCommerce free gift plugin that helps you reward customers based on what they buy, how much they spend, and who they are.
+With the free version, you can create straightforward gift promotions such as offering a specific free product or unlocking a gift when the cart subtotal reaches a certain amount.
+When you need more advanced campaigns, GIFTiT Pro adds BOGO and Buy X Get Y offers, repeatable and tiered gifts, cheapest-product rewards, free shipping rewards, percentage discounts, advanced customer and cart conditions, automatic gifts, customer gift selection, more display options, reporting, and additional campaign controls.
 
-<strong>What are the general advantages of offering gifts in your shop?</strong>
-<p>Free gift promotion plays an essential role on boosting your sale in different ways including:</p>
-<ul>
-	<li>Motivate your new customers to come back and buy from your online shop again</li>
-	<li>Encourage potential customers to come and purchase the goods from your online store</li>
-	<li>Make the customers to choose your eCommerce website over your competitors</li>
-	<li>Hit the real customers to offer your online shop to their friends and relatives</li>
-	<li>Help the new customers to get familiar with the various products you are selling</li>
-</ul>
-<h3>Offering Free Gifts on your Woocommerce Shop</h3>
-<p>Free gifts for Woocommerce plugin helps you for offering to your customers.</p>
-<h3>Encouraging your customers for more purchases</h3>
-<p>Promotional gifts are the most effective way for encouraging new customers to purchase products over and over from your online store.</p>
-<h3>Increase customer retention</h3>
-<p>According to <a href="https://retailtouchpoints.com/topics/customer-experience/90-of-consumers-say-free-gift-with-purchase-increases-brand-loyalty">retailtouchpoints</a>, 90% of customers respond, receiving free gifts from a brand by loyalty. Increasing customer retention is a great result of offering promotional gifts by free gifts for Woocommerce.</p>
-<h3>Returning customer to your shop</h3>
-<p>Offering free gifts by using the free gifts for Woocommerce plugin can make your customers have a great feeling about purchasing goods from your shop. When they get what they expected in your online store, you can see that they will return to shop from your website over and over again.</p>
+= What Can You Do With GIFTiT Free Version? =
+GIFTiT Free is designed for stores that need simple WooCommerce free gift campaigns without complex promotional rules.
+The free version includes two gift methods:
+**Simple Adjustment**
+Give customers a specific product as a free gift when the rule conditions are met.
+For example:
+* Add a free sample to qualifying orders.
+* Give a promotional product to eligible customers.
+* Offer a specific gift when a defined rule is matched.
+* Add a selected product as a free gift to qualifying WooCommerce orders.
+This method works well when you already know exactly which product you want to offer as the gift.
+**Subtotal**
+Offer a free gift when the customer's cart reaches a specific subtotal.
+For example:
+* Spend $100 → Get a free gift
+* Cart subtotal reaches $150 → Unlock Product X for free
+Subtotal-based gifts can encourage customers to add more products to their cart before completing the order.
+= GIFTiT Free Features =
+With the free version, you can:
+* Create WooCommerce free gift rules.
+* Use the Simple Adjustment gift method.
+* Create cart subtotal free gift promotions.
+* Select products to use as free gifts.
+* Create basic conditions for gift eligibility.
+* Run simple gift-with-purchase campaigns.
+* Carousel, grid and dropdown layout for gift offer.
+* Date & time conditions.
+* Manage gift rules directly from your WordPress dashboard.
+* Start offering WooCommerce free gifts without upgrading to Pro.
+* Limited Reports & Statistics
+If your promotion is relatively simple, GIFTiT Free may be all you need.
 
-</p><h3 >Key Features</h3>
-<strong>Free version features</strong>
-<ul class="elementor-price-table__features-list">
-<li>2 methods:
-	<ul>
-		<li>Simple Adjustment</li>
-		<li>Subtotal</li>
-	</ul>
-</li>
-<li>
-Limited Reports &amp; Statistics
-</li>
-<li class="elementor-repeater-item-a916139">
-Carousel,Grid and DropDown Layout
-</li>
-<li class="elementor-repeater-item-3844012">
-Date &amp; Time Conditions
-</li>
-<li class="elementor-repeater-item-97be016">
-Offering specific gifts
-</li>
-<li class="elementor-repeater-item-fefe648">
-Quantity based on Each individual Product
-</li>
-</ul>
-
-<strong>Pro version features</strong>
-<ul><li>User-friendly design</li><li>Admin can create any number of rules in advance</li><li>Flexible Gifting Rules</li><li>Award Free Gifts for making purchases on the site</li><li>Customers can choose their Free Gifts</li><li>Unlimited gift-giving</li><li>Integrates tightly with WooCommerce</li><li>Create as many rules as you want (Unlimited gift rules)</li><li>Ten methods:<ul><li>Simple Adjustment</li><li>Buy X – Get X</li><li>Buy X – Get Y Repeat</li><li>Buy X – Get Y</li><li>Buy X – Get Y Repeat</li><li>Subtotal</li><li>Subtotal Repeat</li><li>Bulk Quantity</li><li>Tiered Quantity</li><li>Bulk Pricing</li></ul></li><li>Support for variable products</li><li>Attribute specific gift&nbsp;&nbsp;</li><li>Number of line items (count) based discount (Example: Purchase 4 different products or variants and get a free product)</li><li>Let your Decide Customers can choose a Free Gift if they meet your conditions</li><li>Common Conditions<ul><li>Date &amp; Time</li><li>Cart</li><li>Cart Items</li><li>Cart Items Quantity</li><li>Cart Items Subtotal</li><li>Customer</li><li>Customer Value</li><li>Purchase History</li><li>Purchase History Quantity</li><li>Purchase History Value</li><li>Value purchased – Tags</li></ul></li><li>Free Gifts can be automatically added to the user’s cart</li><li>Show available gifts on:<ul><li>Besides of Coupon button</li><li>Bottom of cart</li></ul></li><li>Display available gifts in the different layout:<ul><li>Grid</li><li>Carousel</li><li>Data-table</li><li>Dropdown</li><li>Popup (For variation products)</li></ul></li><li>Powerful Report &amp; Statistics for:<ul><li>Rules</li><li>Orders that used Gifts</li><li>Customers that used Gifts</li><li>Received gifts by customer</li></ul></li></ul>
-<strong> Please check <a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">Pro Version</a> </strong>
-
+= Need More Advanced WooCommerce Free Gift Campaigns? =
+GIFTiT Pro is designed for WooCommerce stores that want to go beyond simple gift rules. It gives you more control over what customers must buy, who qualifies, when the promotion is available, and what reward customers receive.
+Instead of treating promotion methods, conditions, and examples as separate concepts, the sections below show practical campaigns you can build with GIFTiT Pro.
+[Learn more about GIFTiT Pro](https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/)
 [youtube https://youtu.be/QMs7YpJbWYo]
+= Offer Free Gifts Based on What Customers Buy =
+Turn products, quantities, categories, and cart value into powerful gift incentives.
+**BOGO Offers (Buy One, Get One)**
+Create classic [WooCommerce BOGO](https://ithemelandco.com/blog/woocommerce-buy-one-get-one-free/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/) deals and repeatable same-product promotions for selected products.
+Example:
+* Buy 1 → Get 1 Same Product Free
+* Buy 2 → Get 1 Same Product Free
+* Buy 3 → Get 1 More Same Product Free
 
-<strong> Please check other videos in <a href="https://www.youtube.com/playlist?list=PLo0x1Hax3FuvhwPqSHJQWXT4DqLeqyOCu">free gifts for WooCommerce</a> channel</strong>
+**Buy X, Get Y as a Free Gift**
+Use one product, category, or qualifying purchase to unlock a different product as the free gift.
+Example:
+* Buy a Laptop → Get a Wireless Mouse Free
+* Buy a Camera → Get a Memory Card Free
 
-<strong>How can you benefit from it?</strong>
+[Read the Buy X Get Y guide](https://ithemelandco.com/blog/woocommerce-buy-x-get-y-free-offer/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/)
+**Spend More, Get Rewarded**
+Increase customers’ cart value by unlocking gifts at specific spending thresholds.
+Example:
+* Spend $100 → Get a Free Gift
+* Spend $200 → Get 2 Gifts
+* Spend $500 → Unlock a Premium Gift
+**Buy More, Get More Free Gifts**
+Reward customers based on the number of products they purchase, so the reward grows as the quantity increases.
+Example:
+* Buy 2 → Get 1 Free
+* Buy 4 → Get 2 Free
+* Buy 10 Items → Get 3 Gifts
+**Category & Product-Based Gifts**
+Create promotions around specific products, categories, tags, attributes, or variations.
+Example:
+* Buy From Shoes → Get Free Socks
+* Buy Any Product With “Summer” Tag → Unlock a Gift
 
-<p>Let&rsquo;s quickly overview the tools and options provided in <a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">Free Gifts For WooCommerce plugin</a>!(Most of theme are available in <a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">Pro Version</a></p>
-<h3>Unlimited Rules</h3>
-<p>There are no restrictions on the <a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">gifts product for wooCommerce plugin</a> for offering free gifts with various rules and conditions.</p>
+**Tiered & Progressive Rewards**
+Give customers a stronger reason to reach the next purchase level by unlocking better or additional rewards at higher thresholds.
+Example:
+* Spend $50 → Gift A
+* Spend $100 → Gift A + Gift B
+* Spend $200 → Unlock a Premium Gift
 
-<h4>&#9989;&nbsp;<a href="https://ithemelandco.com/docs/free-gifts-for-woocommerce/how-to-create-a-simple-method-promotion-in-your-woocommerce-shop-store/">Simple method</a>(Free Version / Pro Version)</h4>
-<p>It means you can set special products to be offered as a free gift when customers add any products to their cards from your online store.</p>
+[Read the Tiered Free Gifts guide](https://ithemelandco.com/blog/offer-free-gifts-based-on-tiered-quantity/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/)
+**Cheapest Item as a Free Gift**
+Turn the lowest-priced eligible product into the free reward instead of selecting one fixed gift product.
+Example:
+* Buy 3 Eligible Products → Get the Cheapest One Free
+* Buy 5 Products From Accessories → Get the Cheapest One Free
 
-<h4>&#9989;&nbsp;<a href="https://ithemelandco.com/docs/free-gifts-for-woocommerce/setup-woocommerce-free-gifts-and-buy-one-get-one-deal-method/">Buy X &ndash; Get X method</a>(Pro Version)</h4>
-<p>It means you can Buy product(s) and Get same product(s) as gifts.</p>
+[Read the Cheapest Item guide](https://ithemelandco.com/blog/woocommerce-cheapest-cart-item-as-gift/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/)
+**Free Shipping as a Reward**
+Use free shipping instead of a physical gift when customers meet the required purchase conditions.
+Example:
+* Spend $150 → Unlock Free Shipping
+* Buy Selected Products → Get Free Shipping
 
-<h4>&#9989;&nbsp;Buy X &ndash; Get X repeat Method(Pro Version)</h4>
-<p>In fact this method is the same as &ldquo;Buy X - Get X but for once more.</p>
+= Offer Free Gifts Based on Who Your Customer Is =
+Create more personal promotions based on customer value, loyalty, roles, and purchase history.
+**First Purchase Gift**
+Welcome new customers with a free gift on their first order and turn a first purchase into a stronger brand experience.
+Example:
+* First Order → Welcome Gift
+* New Customer → Free Sample
+**Returning Customer Rewards**
+Give existing customers another reason to come back by rewarding them after a defined number of completed orders.
+Example:
+* After 3 Orders → Unlock a Special Gift
+**VIP Customer Gifts**
+Reward your highest-value customers with more valuable or exclusive gifts based on lifetime spend or average order value.
+Example:
+* Lifetime Spend Over $1,000 → Premium Gift
+* Average Order Value Over $200 → VIP Reward
+**Previous Purchase-Based Gifts**
+Create rewards based on products or categories customers bought in earlier WooCommerce orders.
+Example:
+* Previously Bought a Laptop → Get a Wireless Mouse on the Next Order
+* Previously Bought a Camera → Unlock a Memory Card Gift
+**Purchased Quantity Gifts**
+Reward customers who have repeatedly purchased a specific product or products from a selected category.
+Example:
+* Bought 5 Notebooks Before → Get a Free Planner
+* Purchased 10 Coffee Packs → Unlock a Special Gift
+**Purchased Value Gifts**
+Use previous spending on selected products or categories as the trigger for a new reward.
+Example:
+* Spent $300 on Sports Products → Get a Free Bottle
+* Spent $500 on Beauty Products → Unlock a Premium Gift
+**Customer Role-Based Rewards**
+Create different gift experiences for customer groups such as wholesale buyers, subscribers, members, or other WordPress user roles.
+Example:
+* Wholesale Customer → Business Gift
+* Subscriber → Bonus Reward
+= Offer Free Gifts Based on When & How Customers Shop =
+Run time-sensitive, seasonal, checkout-based, and context-aware gift campaigns.
+**Customer Birthday Gifts**
+Celebrate customers with a personalized gift on or around their saved birthday.
+Example:
+Customer Birthday → Free Gift
+**Holiday & Seasonal Gift Campaigns**
+Create gift offers for periods when customers are already more likely to buy, from major holidays to store-specific events.
+Example:
+* Christmas → Free Gift With Purchase
+* Valentine’s Day → Special Reward
 
-<h4>&#9989;&nbsp;<a href="https://ithemelandco.com/docs/free-gifts-for-woocommerce/create-buy-x-get-y-free-promotion-woocommerce-shop-store/">Buy X &ndash; Get Y</a>(Free Version / Pro Version)</h4>
-<p>Offering a specific product or category as a gift to the customers purchasing other products from your shop.</p>
+**Limited-Time Promotions**
+Create urgency by making gifts available only during a selected date range, day, or time period.
+Example:
+* Weekend Only → Free Gift
+* Until Midnight → Unlock Bonus Gift
+* Friday 6 PM–12 AM → Special Promotion
+**Coupon-Based Gifts**
+Connect a free gift to a specific WooCommerce coupon or campaign code.
+Example:
+* Apply SUMMER20 → Unlock a Free Gift
 
-<h4>&#9989;&nbsp;<a href="https://ithemelandco.com/docs/free-gifts-for-woocommerce/setup-buy-any-three-products-get-one-free-gift-repeat/">Buy X &ndash; Get Y repeat method</a>(Pro Version)</h4>
-<p>In fact this method is the same as &ldquo;Buy X - Get Y but for once more.</p>
+**Payment Method Rewards**
+Offer gifts based on the payment method customers choose during checkout.
+Example:
+* Pay With PayPal → Get a Gift
+* Bank Transfer → Receive a Free Product
 
-<h4>&#9989;&nbsp;<a href="https://ithemelandco.com/docs/free-gifts-for-woocommerce/setup-buy-any-1000-and-get-1-free-gift-repeat/">Subtotal method</a></h4>
-<p>Offering free gifts based on Subtotal is a great strategy to encourage customers to buy more products or purchase more valuable products from your eCommerce website.</p>
-<p>The only thing that matters is the subtotal amount of the customer card.</p>
+**Shipping-Based Gifts**
+Create rewards based on shipping destination, shipping class, or the shipping method selected by the customer.
+Example:
+* Shipping to Canada → Free Gift
+* Express Shipping → Bonus Reward
 
-<h4>&#9989;&nbsp;Subtotal repeat method(Pro Version)</h4>
-<p>For example, you can set a rule that offers 1 free gift as per $100 subtotal amount, repeatedly. So, if one of your customers buys $500 from your shop, 5 gifts will be available.</p>
+**Cart & Checkout Condition Gifts**
+Make the final reward depend on what is actually happening in the customer’s cart or checkout, and combine multiple conditions when needed.
+Example:
+* Cart Contains Electronics + Spend $300 → Unlock Gift
+* No Coupon Applied + Cart Over $100 → Free Gift
+* Buy Product X + Choose Express Shipping → Bonus Reward
 
-<h3>Unlimited Conditions</h3>
-<p>Some of the unlimited conditions you can set in the <strong>Rule</strong> page include:</p>
+**More GIFTiT Pro Features**
+GIFTiT Pro includes additional tools that give you more control over how free gift campaigns are delivered, displayed, and managed in your WooCommerce store.
+Here are some of the key GIFTiT Pro features that can help you create more flexible and engaging gift campaigns.
+**Automatically Add Free Gifts to the Cart**
+[Automatically add free gifts to the cart](https://ithemelandco.com/blog/woo-automatically-add-free-gifts-to-orders/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/) as soon as the customer meets the rule requirements.
+Example:
+* Spend $100 → Product X is automatically added for free
+**Let Customers Choose Their Free Gift**
+Show several eligible products and let customers choose the reward they prefer.
+Example:
+* Spend $100 → Choose 1 Free Gift From 4 Available Products
+**Apply a Percentage Discount Instead of a Gift**
+Use a percentage discount as the reward when a discount fits your promotion better than a physical product.
+Example:
+* Spend $200 → Get 10% Off
+* Purchase Selected Products → Receive 15% Off
+**Show Customers How to Unlock Their Gift**
+Display promotional messages and progress information so shoppers know what they need to do to qualify.
+Example:
+* Spend $25 More to Unlock Your Free Gift
+* Add One More Product to Receive a Free Gift
+**Display Gift Products in Different Layouts**
+Present selectable gifts using layouts that fit your store and campaign experience, including grid, carousel, data table, dropdown, and popup.
+Example:
+* A customer qualifies → Show eligible gifts in a carousel or popup and let them select one
+**Use Variable Products as Free Gifts**
+Build campaigns with variable products and individual variations using attributes such as size, color, or style.
+Example:
+* Buy Selected Product → Choose a Free T-Shirt in an Eligible Size or Color
+**Track Your Gift Campaigns**
+Use GIFTiT Pro reporting to review gift rules, orders, customers, and the gift products selected in your campaigns.
+Example:
+* Compare which gift rules are used most often and which rewards customers select
+[Learn more about GIFTiT Pro](https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/)
 
-<h4>&#9989;&nbsp;<a href="https://ithemelandco.com/docs/free-gifts-for-woocommerce/setup-a-free-gift-based-on-day-of-week/">Date &amp; Time</a>(Free Version / Pro Version)</h4>
-<p>You can exactly specify a date - days of weeks, days of months, etc.- for offering free gifts to your customers.</p>
+= GIFTiT Free vs GIFTiT Pro =
+Here is the simplest way to choose between the two versions.
+**GIFTiT Free**
+Best for straightforward WooCommerce free gift promotions.
+Includes:
+* Simple Adjustment
+* Subtotal-based free gifts
+* Basic gift rules
+* Basic eligibility conditions
+* Free gift products
+* Simple gift-with-purchase campaigns
+If you need to offer a specific gift or unlock a free product after the cart reaches a required subtotal, GIFTiT Free is a good place to start.
 
-<h4>&#9989;&nbsp;Cart(Pro Version)</h4>
-<p>You can set the conditions based on Cart total weight, Cart total quantity, Cart item count, Coupons applied.</p>
-
-<h4>&#9989;&nbsp;Cart items(Pro Version)</h4>
-<p>By choosing the items related to this condition, you can set the rules based on Products, variations, categories, Tags and Shipping classes of products that the customers added to their cards.</p>
-
-<h4>&#9989;&nbsp;Customer(Pro Version)</h4>
-<p>You can offer the free gift to some special customers according to their user role, User capability, User Meta, all your customers or only to ones who are registered</p>
-
-<h4>&#9989;&nbsp;Purchase History(Pro Version)</h4>
-<p>The items provided in this condition include purchased history based on products, variations, attributes, etc. For example during the last month or the last year how many of them are purchased.</p>
-
-<h3>Display Gift in Multiple Layouts</h3>
-<p>You can choose multiple layouts to let your customers pick their desired gifts from a list displaying either as a combo box or a carousel.</p>
-
-<h3>Awesome Reports &amp; Statistics</h3>
-<p>Reports and statistics are the incredible features of free gifts for Woocommerce plugin enabling you to track the result of offering free gifts on your website based on the customer usage and product sales.</p>
-
-<strong>Conclusion</strong>
-<p>free gifts for Woocommerce plugin is a professional and well-designed extension for offering promotional gifts based on the marketing strategies of your eCommerce stores.</p>
-Check demo version: <a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">Pro Version</a>
+**GIFTiT Pro**
+Best for stores that use promotions as a more important part of their WooCommerce marketing strategy.
+GIFTiT Pro adds:
+**Advanced Campaign Methods**
+* BOGO
+* Buy X Get X
+* Buy X Get Y
+* Advanced subtotal campaigns
+* Repeatable gift campaigns
+* Repeatable subtotal rewards
+* Tiered free gifts
+* Cheapest product as a free gift
+* Free shipping as a reward
+* Percentage discount instead of a gift
+**Gift Experience & Automation**
+* Automatically add gifts to the cart
+* Let customers choose their free gift
+* Multiple gift-selection layouts
+* Promotional gift messages
+* Gift progress experiences
+**Advanced Conditions & Targeting**
+* Advanced cart conditions
+* Product and variation conditions
+* Category, tag, and attribute conditions
+* Customer targeting
+* User role conditions
+* Purchase-history targeting
+* Customer spending and order-history conditions
+* Customer birthday conditions
+* Payment method conditions
+* Coupon conditions
+* Date and time conditions
+**Campaign Management**
+* Variable product support
+* Advanced campaign controls
+* Scheduling
+* Gift reporting
+Start with GIFTiT Free if you need a simple WooCommerce free gift plugin.
+Upgrade to GIFTiT Pro when you need advanced campaign methods, customer targeting, automation, multiple reward types, and greater control over the promotional experience.
+[Learn more about GIFTiT Pro](https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/)
 
 == Installation ==
 
@@ -134,82 +287,88 @@ e.g.
 2. Activate the plugin through the 'Plugins' screen in WordPress
 3. After Install and Activate this plugin a menu will be added in your admin menu named “Woo Free Gift”.
 
+== Frequently Asked Questions ==
 
-== Frequently Asked Questions == 
-
-= How to check this plugin before purchasing that? = 
-There are two ways to check the free gifts for WooCommerce plugin before buying:
-
-**Build Test Drive**
-<a href="https://demo.ithemelandco.com/free-gifts-for-woocommerce/">Build Test-Drive(Amin Demo)</a> and work with plugins in a real environment. For this, Please go to the WooCommerce Bulk Product Editing plugin page and then click the Live Preview button to enter the plugin demo page. In the top bar that appears, click Launch Admin Demo. A popup will appear asking you to enter your email and submit the form. The relevant link will now be sent to your email.
-
-= What kind of method use in Free Gifts For WooCommerce(Pro Version)? = 
-In this plugin, we have 10 types of methods for giving gifts
-
-**1. simple adjustment**
-In this method, you can create a simple rule and specify how many and what gifts users can add to their shopping cart based on the conditions
-
-**2. buy x get x**
-allows to set up the gifts if rule is made to specifically “get” condition for the same product(s) that you “buy”
-
-**2. buy x get x-Repeating**
-allows to set up the gifts if rule is made to specifically “get” condition for the same product(s) that you “buy” . Repeating” also means that it may be applied more than once
-
-**4. buy x get y**
-allows to set up the gifts for specific amount of product if some other amount purchased
-
-**5. buy x get y-Repeating**
-allows to set up the gifts for specific amount of product if some other amount purchased. Repeating” also means that it may be applied more than once
-
-**6. subtotal**
-If customers spend $X on your shop, they will get some gifts, this is “Subtotal” method.
-
-**7. subtotal – repeat**
-If customers spend $X on your shop, they will get some gifts, this is “Subtotal” method(once more)
-
-**8. Bulk Quantity**
-Place unique purchase quantity range-triggers for gifts to be delivered to the customers.
-
-**9. Tiered Quantity**
-
-**10. Bulk Pricing**
-
-
-= What kind of method use in Free Gifts For WooCommerce(Free Version)? = 
-In this plugin, we have 2 types of methods for giving gifts
-
-**1. simple adjustment**
-In this method, you can create a simple rule and specify how many and what gifts users can add to their shopping cart based on the conditions
-
-**2. buy x get y**
-allows to set up the gifts for specific amount of product if some other amount purchased
-
-= What are the required systems for Free Gifts For WooCommerce Plugin? =
-PHP compatibility: from 7.x
-WordPress compatibility: from v5.x to the latest WordPress version.
-WooCommerce compatibility: from v.3.6 to the latest WooCommerce version.
-
-= Does Free Gifts For WooCommerce Plugin support product variations ? = 
-**Yes** , you can either select parent product to apply one discount for all variations or pick individual variations to set the gifts . you can select variations in conditions also select products to the gift by their attributes, tags or even custom field values
-
-= Where can I see video tutorials? =
-Please check <a href="https://www.youtube.com/playlist?list=PLo0x1Hax3FuvhwPqSHJQWXT4DqLeqyOCu">Free Gifts for woocommerce youtube channel</a>
-
-= Where can I get the Premium version of this plugin? =
-Please check <a href="https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy/">Free Gifts for woocommerce</a>
-
-= I need more information about this plugin =
-Please check the <a href="https://ithemelandco.com/docs/free-gifts-for-woocommerce">knowledge base</a>
-
-= I have an idea, can I discuss it with you? =
-Please leave your message in our <a href="https://ithemelandco.com/support-center">support system</a>
-
-= How to translate Free Gifts For WooCommerce to other languages? = 
-You can use free gifts for WooCommerce in any language, this means you can translate this plugin to another language.
-
-There is a translate file in the “Language” folder as ‘.pot’ extension.
-
-You can easily translate the plugin into the desired languages by using translation plugins such as WPML and Loco Translate.
+= What can I do with GIFTiT Free? =
+GIFTiT Free is designed for straightforward WooCommerce free gift campaigns.
+The Free version includes Simple Adjustment and Subtotal gift methods, so you can offer a specific free product or unlock a gift when the customer's cart reaches a required subtotal.
+For example:
+Spend $100 → Get a free gift
+If you need BOGO, Buy X Get Y, repeatable or tiered campaigns, advanced targeting, automatic gifts, or additional reward types, those capabilities are available with GIFTiT Pro.
+= Can I offer a free gift when a customer spends a certain amount? =
+Yes. This is available in GIFTiT Free through the Subtotal method.
+For example, you can create a rule such as:
+Spend $100 → Get a free gift
+GIFTiT Pro adds more advanced subtotal options, including repeatable and tiered campaigns.
+= Can I create Buy One Get One Free or Buy X Get Y promotions? =
+Yes, with GIFTiT Pro.
+You can create promotions such as:
+Buy 1 → Get 1 Free
+Buy 2 → Get 1 Free
+Buy Product A → Get Product B Free
+Repeatable rules can also increase the reward as customers purchase more.
+= What advanced campaign methods are available in GIFTiT Pro? =
+GIFTiT Pro adds advanced promotion methods including:
+* BOGO / Buy X Get X
+* Buy X Get Y
+* Repeatable gift campaigns
+* Repeatable subtotal campaigns
+* Tiered free gifts
+* Cheapest product as a free gift
+* Free shipping as a reward
+* Percentage discount instead of a gift
+This allows you to use GIFTiT for more than a simple fixed free-product promotion.
+= Can GIFTiT automatically add a free gift to the cart? =
+Yes, with GIFTiT Pro.
+When a customer qualifies for a promotion, an eligible gift can be automatically added to the WooCommerce cart.
+You can also configure campaigns where customers choose their preferred gift from several available products.
+= Can customers choose their own free gift? =
+Yes, with GIFTiT Pro.
+Instead of giving every eligible customer the same product, you can display several gift options and let the customer choose the one they prefer.
+For example:
+Spend $100 → Choose 1 gift from 4 available products
+= Can I offer something other than a free product? =
+Yes. GIFTiT Pro supports different types of rewards.
+Depending on your campaign, you can offer:
+* A free product
+* The cheapest eligible product for free
+* Free shipping
+* A percentage discount
+This lets you choose the reward that best fits each promotion.
+= What conditions can I use with GIFTiT Pro? =
+GIFTiT Pro provides advanced conditions based on cart data, products, customers, purchase history, dates, and checkout information.
+You can create conditions using information such as:
+* Cart subtotal, total, quantity, weight, or item count
+* Products, variations, categories, tags, and attributes
+* Coupons
+* Customer and user role
+* Previous purchases and order history
+* Customer spending and order count
+* Customer birthday: Unlock birthday gifts based on the customer’s saved birthday information.
+* Payment method
+* Date and time
+For example, you could offer a birthday gift, reward returning customers, or make a promotion available only for a selected payment method.
+= Can I create tiered or repeatable free gift promotions? =
+Yes, with GIFTiT Pro.
+Repeatable campaigns can increase the number of rewards as customers buy or spend more:
+* Spend $100 → Get 1 gift
+* Spend $200 → Get 2 gifts
+* Spend $300 → Get 3 gifts
+Tiered campaigns can unlock different rewards at different thresholds:
+* Spend $100 → Gift A
+* Spend $200 → Gift B
+* Spend $300 → Gift C
+= Does GIFTiT support variable products? =
+GIFTiT Pro supports WooCommerce variable products and individual variations, allowing you to build gift campaigns around attributes such as size, color, or style.
+= Can I schedule a free gift campaign? =
+Yes.
+GIFTiT supports date and time conditions, allowing you to prepare campaigns for specific dates, days, or promotional periods.
+This is useful for campaigns such as Black Friday, Christmas, weekends, product launches, or other limited-time offers.
+= What is the difference between GIFTiT Free and Pro? =
+GIFTiT Free is intended for straightforward free gift campaigns and includes the Simple Adjustment and Subtotal methods.
+GIFTiT Pro adds advanced campaign methods and controls such as BOGO, Buy X Get Y, repeatable and tiered rewards, cheapest-product gifts, free shipping, percentage discounts, advanced conditions, automatic gifts, customer gift selection, targeting, reporting, and additional campaign controls.
+If you only need a simple free gift or cart-subtotal promotion, start with GIFTiT Free.
+If promotions are an important part of your WooCommerce marketing strategy, GIFTiT Pro provides considerably more flexibility.
 
 == Screenshots ==
 
@@ -238,20 +397,12 @@ You can easily translate the plugin into the desired languages by using translat
 12. free gifts for woocommerce datatable layout
 
 == Changelog ==
-
-= 4.3 =
-* Fixed : Fixed Passed the Check Plugin issues
-* Fixed : Change codes for performance plugin
-* Fixed : Prevent Javascript running on ALL pages
-* Fixed : warning issue Critical Error
+= 4.4 =
+* Fixed: Compatibility issues with the FOX Currency Switcher plugin
+* Changed: Settings UI
+* Fixed: Critical error warnings
 Tested up to: WP 7.1.x
-Tested up to: WC 11.1.1
-
-= 4.2 =
-* Fixed : compatible with pro version 4.2.0
-* Fixed : warning issue Critical Error
-Tested up to: WP 7.0.x
-Tested up to: WC 11.0.1
+Tested up to: WC 11.1.x
 
 = 4.1 =
 * Fixed : Fixed Passed the Check Plugin issues
@@ -260,279 +411,11 @@ Tested up to: WC 11.0.1
 Tested up to: WP 7.0.x
 Tested up to: WC 10.9.x
 
-== Changelog ==
-= 4.0 =
-* Fixed : compatible with pro version 4.0.0
-* Fixed : block notices
-* Fixed : change settings
-Tested up to: WP 6.9.x
-Tested up to: WC 10.5.x
-
-= 3.2 =
-* Fixed : compatible with pro version
-* Fixed : set default settings 
-* Fixed : compatible wit gutenberg block woocommerce
-
-= 3.1 =
-* Fixed : warning issue Critical Error
-
-
-= 3.0 =
-* Added: Comparison Operator operand
-* Added: Add Ajax Manual Gift Products Add To Cart
-* Added: Shortcodes 
-* Added: Gift Title Length
-* Added: Show Gift Type Lable
-* Added: Display price for gift
-* Added: Enable Quantity For Gift
-* Added: Show Available gift Quantity
-* Fixed : Important Security issues
-Tested up to: WP 6.8.x
-Tested up to: WC 10.2.x
-
-= 2.8.1 =
-* Fixed : Remove leading empty spaces to prevent header errors
-
-= 2.8.0 =
-* Fixed : Important Security issues
-
-= 2.7.6 =
-Tested up to: WP 6.8.x
-Tested up to: WC 9.8.x
-
-
-= 2.7.5 =
-Tested up to: WP 6.8.x
-Tested up to: WC 9.8.x
-Fixed : Fixed Passed the Check Plugin issues
-Fixed : Remove "a" Additional code
-
-= 2.7.4 =
-Tested up to: WP 6.8.x
-Tested up to: WC 9.8.x
-Fixed : Fixed Passed the Check Plugin issues
-Fixed : Tracking usage in lite
-
-= 2.7.2 =
-Tested up to: WP 6.8.x
-Tested up to: WC 9.8.x
-Fixed : Tracking usage in lite
-
-= 2.7.0 =
-Tested up to: WP 6.7.x
-Tested up to: WC 9.6.x
-Added: Tracking usage in lite
-Added: Framework for pro version
-
-= 2.3.9 =
-Tested up to: WP 6.7.x
-Tested up to: WC 9.6.x
-
-= 2.3.8 =
-Added : Black Friday Discount Banner
-Tested up to: WP 6.7.x
-Tested up to: WC 9.4.x
-
-= 2.3.7 =
-Fixed : Fixed Passed the Check Plugin issues
-Fixed : Some Issues
-Tested up to: WP 6.6.x
-Tested up to: WC 9.3.x
-
-= 2.3.6 =
-Added : Halloween Discount Banner
-Tested up to: WP 6.6.x
-Tested up to: WC 9.3.x
-
-= 2.3.5 =
-Fixed : Compatible with jQuery 4.0 
-Fixed : limit -1 in get_products
-
-= 2.3.4 =
-Fixed : add free gift button redirect a white page with a 0  value  
-
-= 2.3.3 =
-Added : Hooks for display gift items in the cart content
-Fixed : WordPress Security EscapeOutput . OutputNotEscaped 
-
-= 2.3.2 =
-Fixed : save get products in rules
-Fixed : WordPress Security EscapeOutput . OutputNotEscaped 
- 
-= 2.3.1 =
-Fixed :check array if rules isn't applicable
-
-= 2.3.0 =
-Added : Ajax add to the cart 
-improve Ui structure for display gift
-improve jQuery file codes
-Fixed :issue #error notice in generate item gifts
-Fixed :rule counter
-
-Fixed : issue dependency rules
-Tested up to: WC 9.1.x
-
-= 2.2.7 =
-Fixed : issue on save rules
-Tested up to: WC 9.0.x
-
-= 2.2.4 =
-Tested up to: WP 6.5.x
-Tested up to: WC 8.9.x
-
-= 2.2.3 =
-Tested up to: WP 6.5.x
-Tested up to: WC 8.8.x
-Fixed : jQuery Destroy Data table 
-Fixed : Error warning for PHP version 8.2
-
-= 2.2.2 =
-Tested up to: WP 6.4.x
-Tested up to: WC 8.6.x
-Fixed : Change h1 to h2 tag title for optimize seo
-
-= 2.2.1 =
-Fixed : Some strings for translate
-
-= 2.2.0 =
-Tested up to: WP 6.3.2
-Tested up to: WC 8.2.1
-Fixed : check wp_enqueue_scripts in the cart page and the checkout page
-
-= 2.1.0 =
-Tested up to: WP 6.3
-Tested up to: WC 8.0.2
-Fixed : check quantity gifts in session
-
-
-= 2.0.3 =
-Tested up to: WP 6.2.2
-Change demo Link in description
-
-= 2.0.2 =
-Added : Compatible WPML Plugin
-Added : added pot file
-Fixed : action for load_textdomain
-Fixed : Some string for translate
-Tested up Woocommerce 7.8.2 
-
-= 2.0.0 =
-Added : compatibility with WC HPOS
-Tested up Woocommerce 7.8.0 
-Tested up Wordpress 6.2.2 
-
-= 1.9.2 =
-Add "Select Your Gift" for dropdown in localization
-
-= 1.9.1 =
-Tested up Woocommerce 7.6.1
-Fixed : check stock quantity for dropown
-
-= 1.9.0 =
-Fixed : fixed some strings for multilingual site
-
-= 1.8.9 =
-Fixed : fixed some strings for multilingual site
-Tested up Woocommerce 7.4.0 
-
-= 1.8.8 =
-Fixed : layout dropdown 
-
-= 1.8.7 =
-Tested up Woocommerce 7.2.2
-
-= 1.8.6 =
-Fixed : Notification popup for select the Gifts
-Tested up Wordpress 6.1.1
-
-
-= 1.8.5 =
-Tested up Wordpress 6.1.0
-Tested up Woocommerce 7.1.0
-
-= 1.8.4 =
-Fixed : you can select "none" for 'Your Gifts' position 
-
-= 1.8.2 =
-Fixed : issue for save rules 
-
-= 1.8 =
-Fixed : continue if the gifts isn't a object
-
-= 1.7.9 =
-Fixed : Function in Datatable products variation 
-Fixed : Check if the gift is a object product 
-
-= 1.7.8 =
-Added : .po .mo files to plugin
-= 1.7.7 =
-Minified js file
-Clean codes
-
-= 1.7.6 =
-Added : add "free" word for localization
-Tested up Woocommerce 6.8.1
-
-= 1.7.5 =
-add description in add new plugin wordpress 
-Tested up Woocommerce 6.8.0
-
-= 1.7.4 =
-change "class" directory to "classes"
-change Description wordpress repository
-
-= 1.7.3 =
-Tested up WordPress 6.0.1
-Tested up Woocommerce 6.7.0
-
-= 1.7.2 =
-Added : Apply Filter before Select gift Buttons
-Tested up WordPress 6.0
-
-= 1.7.1 =
-Fixed : add "free" string for multilingual site
-Tested up WordPress 6.0
-
-= 1.7 =
-Fixed : fixed some strings for multilingual site
-
-= 1.6 =
-Fixed : Array offset on value of type
-
-= 1.5 =
-Tested up WordPress 5.9.3
-
-= 1.4 =
-Fixed : translate the plugin in the front-end
-added : po/pot/mo files
-Tested up WordPress 5.8.3
-
-= 1.3 =
-Fixed : conflict jquery for create rules
-Tested up WordPress 5.8.2
-
-= 1.2 =
-Fixed : apply rules in the cart page
-Tested up WordPress 5.8.1
-
-= 1.1 =
-compatible with WordPress  5.8
-compatible with WooCommerce 5.5.2
-
-= 1.0 =
-* Hello World!
-
-
-== Upgrade Notice ==
-= 2.2.0 =
-This version checked with last wordpress(6.3.2) and woocommerce(8.0.2) version.
-
-
 == External Services ==
 This plugin uses the following external services:
 **iThemeland Usage Tracking Service**
 	- **Purpose:** To improve plugin quality, compatibility, and user experience by collecting anonymous, non-personal data about your site configuration . https://ithemelandco.com/usage-tracking/
 	- **When Data is Sent:** Only when the user explicitly enables this feature, and once per week thereafter.
-	- **Data Handling:** All data is anonymized and contains no personally identifiable information (PII).   
+	- **Data Handling:** All data is anonymized and contains no personally identifiable information (PII).
 	- **Privacy Policy:** [https://ithemelandco.com/privacy-policy/](https://ithemelandco.com/privacy-policy/)
 	- **Terms of Service:** [https://ithemelandco.com/term-of-use/](https://ithemelandco.com/term-of-use/)

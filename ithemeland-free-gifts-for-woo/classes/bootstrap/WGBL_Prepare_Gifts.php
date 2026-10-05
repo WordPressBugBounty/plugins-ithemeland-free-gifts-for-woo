@@ -26,6 +26,8 @@ class WGBL_Prepare_Gifts
 
     public function enqueue_scripts()
     {
-        wp_enqueue_script('wgb-egift', WGBL_JS_URL . 'common/egift.js', ['jquery'], WGBL_VERSION, true); //phpcs:ignore
+        if ((is_admin() && isset($_GET['page']) && $_GET['page'] == 'wgb') || !is_admin()) { //phpcs:ignore
+            wp_enqueue_script('wgb-egift', WGBL_JS_URL . 'common/egift.js', ['jquery'], WGBL_VERSION, true); //phpcs:ignore
+        }
     }
 }

@@ -15,6 +15,7 @@ class iThemeland_front_shortcodes
     private $gift_item_key;
     private $settings;
     private $check_rule_condition;
+    private $rendering_checkout = false;
 
     public function __construct()
     {
@@ -120,7 +121,24 @@ class iThemeland_front_shortcodes
      * */
     public function shortcode_gift_products($atts, $content)
     {
+        if (itfreegift_is_cart_page() && ($this->settings['position'] ?? 'none') === 'none') {
+            return;
+        }
+
+        $is_checkout_context = $this->rendering_checkout || itfreegift_is_checkout_page();
+
+        if ($is_checkout_context && ($this->settings['checkout_position'] ?? 'none') === 'none') {
+            return;
+        }
+
         $this->initialize_rule_condition();
+
+        $render_settings = $this->settings;
+        if ($is_checkout_context) {
+            $render_settings['number_per_page'] = $this->settings['checkout_number_per_page'] ?? $this->settings['number_per_page'];
+            $render_settings['show_stock_quantity'] = $this->settings['checkout_show_stock_quantity'] ?? $this->settings['show_stock_quantity'];
+            $render_settings['carousel'] = $this->settings['checkout_carousel'] ?? $this->settings['carousel'];
+        }
 
         $atts_shortcode = shortcode_atts(
             [
@@ -186,7 +204,7 @@ class iThemeland_front_shortcodes
                 'quantity_products_in_cart' => $this->check_rule_condition->getProductQtyInCart(),
                 'gifts_items_cart' => $gifts_data,
                 'all_gift_items' => $this->check_rule_condition->getGiftItemVariable(),
-                'settings' => $this->settings,
+                'settings' => $render_settings,
                 'multi_level' => false,
                 'is_child'  => true,
             ];
@@ -221,7 +239,9 @@ class iThemeland_front_shortcodes
             $type = 'dropdown';
         }
 
+        $this->rendering_checkout = true;
         echo do_shortcode('[itg_gift_products type="' . $type . '"]');
+        $this->rendering_checkout = false;
         wp_die();
     }
 

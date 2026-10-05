@@ -123,23 +123,31 @@ class Rules_Controller
 
         $settings_tabs_title = apply_filters('itfreegift_rules_settings_tabs_title', [
             'general' => esc_html__('General', 'ithemeland-free-gifts-for-woo'),
-            'display' => esc_html__('Display', 'ithemeland-free-gifts-for-woo'),
+            'cart_page' => esc_html__('Cart Page', 'ithemeland-free-gifts-for-woo'),
+            'checkout_page' => esc_html__('Checkout Page', 'ithemeland-free-gifts-for-woo'),
             'localization' => esc_html__('Localization', 'ithemeland-free-gifts-for-woo'),
-            'promotion' => esc_html__('Promotion', 'ithemeland-free-gifts-for-woo')
+            'promotion' => esc_html__('Promotion', 'ithemeland-free-gifts-for-woo'),
         ]);
 
         $flush_message_repository = new Flush_Message();
         $flush_message = $flush_message_repository->get();
         $setting_repository = Setting::get_instance();
-        $settings = $setting_repository->get();
+        $itfreegift_settings = $setting_repository->get();
+        // Some Lite settings views still use the legacy $settings variable.
+        // Keep both names pointed at the same raw option so every saved value
+        // is rendered back into its form after the page reloads.
+        $settings = $itfreegift_settings;
         $localization = $setting_repository->get_localization();
 
         switch ($_GET['sub-tab']) { //phpcs:ignore
             case 'general':
                 include_once WGBL_VIEWS_DIR . "settings/general.php";
                 break;
-            case 'display':
-                include_once WGBL_VIEWS_DIR . "settings/display.php";
+            case 'cart_page':
+                include_once WGBL_VIEWS_DIR . "settings/cart_page.php";
+                break;
+            case 'checkout_page':
+                include_once WGBL_VIEWS_DIR . "settings/checkout_page.php";
                 break;
             case 'localization':
                 include_once WGBL_VIEWS_DIR . "settings/localization.php";

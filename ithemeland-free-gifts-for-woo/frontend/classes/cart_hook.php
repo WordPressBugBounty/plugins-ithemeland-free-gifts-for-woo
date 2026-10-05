@@ -54,7 +54,7 @@ class iThemeland_cart_hook
     public function format_custom_meta_data($item_id, $item)
     {
         $settings = itfreegift_get_settings();
-        if ($settings['show_description'] == 'yes') {
+        if ($settings['show_description'] == 'true') {
             $dynamic_rules = $item->get_meta('_ywdpd_discounts');
             if (! empty($dynamic_rules)) {
                 $custom_meta = '';

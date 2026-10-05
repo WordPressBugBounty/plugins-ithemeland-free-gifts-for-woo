@@ -36,7 +36,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                                     <input type="text" placeholder="<?php esc_html_e('Our Gift', 'ithemeland-free-gifts-for-woo'); ?> ..." name="localization[our_gift]" value="<?php echo (isset($localization['itg_localization_our_gift'])) ? esc_attr($localization['itg_localization_our_gift']) : 'Our Gift' ?>">
                                 </div>
                                 <div class="wgb-form-group">
-                                    <label><?php esc_html_e('Related Gift', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                    <label><?php esc_html_e('Related Gift', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                     <input type="text" placeholder="<?php esc_html_e('Related Gift', 'ithemeland-free-gifts-for-woo'); ?> ..." name="localization[related_gift]" value="<?php echo (isset($localization['itg_localization_related_gift'])) ? esc_attr($localization['itg_localization_related_gift']) : 'Related Gift' ?>">
                                 </div>
                                 <div class="wgb-form-group">
@@ -52,7 +52,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                                     <input type="text" placeholder="<?php esc_html_e('No Thanks', 'ithemeland-free-gifts-for-woo'); ?> ..." name="localization[no_thanks]" value="<?php echo (isset($localization['itg_localization_no_thanks'])) ? esc_attr($localization['itg_localization_no_thanks']) : 'No Thanks' ?>">
                                 </div>
                                 <div class="wgb-form-group">
-                                    <label><?php esc_html_e('Forced Gift', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                    <label><?php esc_html_e('Forced Gift', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                     <input type="text" placeholder="<?php esc_html_e('select a gift for proceed', 'ithemeland-free-gifts-for-woo'); ?> ..." name="localization[gift_require_checkout]" value="<?php echo (isset($localization['itg_localization_gift_require_checkout'])) ? esc_attr($localization['itg_localization_gift_require_checkout']) : 'select a gift for proceed' ?>">
                                 </div>
                                 <div class="wgb-form-group">
@@ -60,7 +60,7 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
                                     <input type="text" placeholder="<?php esc_html_e('Cart Gift Type Label', 'ithemeland-free-gifts-for-woo'); ?> ..." name="localization[gift_cart_type_label]" value="<?php echo (isset($localization['itg_localization_gift_cart_type_label'])) ? esc_attr($localization['itg_localization_gift_cart_type_label']) : 'Type' ?>">
                                 </div>
                                 <div class="wgb-form-group">
-                                    <label><?php esc_html_e('Cart Free Gift Label', 'ithemeland-free-gifts-for-woo'); ?></label>
+                                    <label><?php esc_html_e('Cart Free Gift Label', 'ithemeland-free-gifts-for-woo'); ?> - <span style="color: #e32626;">In Pro Version</span></label>
                                     <input type="text" placeholder="<?php esc_html_e('Cart Gift Label', 'ithemeland-free-gifts-for-woo'); ?> ..." name="localization[gift_cart_label]" value="<?php echo (isset($localization['itg_localization_gift_cart_label'])) ? esc_attr($localization['itg_localization_gift_cart_label']) : 'Free Product' ?>">
                                 </div>
                                 <div class="wgb-form-group">

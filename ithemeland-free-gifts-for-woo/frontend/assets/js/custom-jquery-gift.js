@@ -162,6 +162,7 @@ jQuery(document).ready(function ($) {
                     pw_gift_variable: jQuery(this).data("id"),
                     pw_gift_uid: jQuery(this).data("rule-id"),
                     security: pw_wc_gift_adv_ajax.security,
+                    page_context: pw_wc_gift_adv_ajax.is_checkout ? "checkout" : "other",
                 },
                 success: function (resp) {
                     $(".wgb-popup-loading").hide();
@@ -255,6 +256,10 @@ jQuery(document).ready(function ($) {
      * Update on payment method change
      */
     function set_up_payment_method_checkout_update() {
+        if (pw_wc_gift_adv_ajax.is_checkout && !pw_wc_gift_adv_ajax.checkout_popup_allowed) {
+            return;
+        }
+
         jQuery('form.checkout input[name="payment_method"]').each(function () {
             if (typeof jQuery(this).data("itg_payment_method_checkout_update") === "undefined") {
                 jQuery(this).on("change", function () {
@@ -289,6 +294,11 @@ jQuery(document).ready(function ($) {
     }
 
     function show_popup_in_checkout() {
+        if (pw_wc_gift_adv_ajax.is_checkout && !pw_wc_gift_adv_ajax.checkout_popup_allowed) {
+            $(".itg-popup-close").trigger("click");
+            return;
+        }
+
         $(".popup-inner-loader").removeClass("wgb-d-none");
         $(".wgb-popup-posts").html("");
         $(".wgb-popup-loading").show();
@@ -302,6 +312,7 @@ jQuery(document).ready(function ($) {
                 data: {
                     action: pw_wc_gift_adv_ajax.action_gift_show_popup_checkout,
                     security: pw_wc_gift_adv_ajax.security,
+                    page_context: pw_wc_gift_adv_ajax.is_checkout ? "checkout" : "other",
                 },
                 success: function (response) {
                     $(".wgb-popup-posts")

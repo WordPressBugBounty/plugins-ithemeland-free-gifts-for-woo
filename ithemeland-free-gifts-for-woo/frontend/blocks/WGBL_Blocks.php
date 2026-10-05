@@ -56,7 +56,7 @@ class WGBL_Blocks
     public function enqueue_script()
     {
         // Enqueue common block editor styles
-        wp_enqueue_style('wgb-blocks-common-style', WGBL_FRONTEND_URL . 'blocks/assets/css/common-style.css', [], WGBL_VERSION . '-unavailable-gifts-1');
+        wp_enqueue_style('wgb-blocks-common-style', WGBL_FRONTEND_URL . 'blocks/assets/css/common-style.css', [], WGBL_VERSION);
     }
 
     /**
@@ -67,8 +67,8 @@ class WGBL_Blocks
      */
     public function register_block_styles()
     {
-        wp_register_style('wgb-blocks-common-style', WGBL_FRONTEND_URL . 'blocks/assets/css/common-style.css', [], WGBL_VERSION . '-unavailable-gifts-1');
-        wp_register_style('it-gift-style', plugin_dir_url_wc_advanced_gift . 'assets/css/style/style.css', [], WGBL_VERSION . '-unavailable-gifts-1');
+        wp_register_style('wgb-blocks-common-style', WGBL_FRONTEND_URL . 'blocks/assets/css/common-style.css', [], WGBL_VERSION);
+        wp_register_style('it-gift-style', plugin_dir_url_wc_advanced_gift . 'assets/css/style/style.css', [], WGBL_VERSION);
         wp_register_style('it-gift-owl-carousel-style', plugin_dir_url_wc_advanced_gift . 'assets/css/owl-carousel/owl.carousel.min.css', ['it-gift-style'], WGBL_VERSION);
         wp_register_style('it-gift-datatables-style', plugin_dir_url_wc_advanced_gift . 'assets/css/datatables/jquery.dataTables.min.css', ['it-gift-style'], WGBL_VERSION);
     }
@@ -91,7 +91,7 @@ class WGBL_Blocks
             'wgb-cart-updates',
             WGBL_FRONTEND_URL . 'blocks/assets/js/cart-updates.js',
             ['jquery'],
-            WGBL_VERSION . '-conditional-assets-1',
+            WGBL_VERSION,
             true
         );
 

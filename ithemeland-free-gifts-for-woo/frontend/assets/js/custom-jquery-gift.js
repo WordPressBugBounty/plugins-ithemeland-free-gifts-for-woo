@@ -1,5 +1,6 @@
 "use strict";
 jQuery(document).ready(function ($) {
+    var giftAddRequestInFlight = false;
     // Debug AJAX settings
     //   console.log("Gift plugin AJAX settings:", {
     //     ajax_url: pw_wc_gift_adv_ajax.ajaxurl,
@@ -105,6 +106,9 @@ jQuery(document).ready(function ($) {
     //Add Gift Button
     jQuery(document).on("click", ".btn-click-add-gift-button", function (e) {
         e.preventDefault();
+        if (giftAddRequestInFlight) {
+            return false;
+        }
 
         jQuery(this).css({ color: "transparent" });
         jQuery(".gift_cart_ajax").show();
@@ -125,19 +129,7 @@ jQuery(document).ready(function ($) {
         // Check if AJAX is enabled and working
         if (pw_wc_gift_adv_ajax.add_gift_ajax_manual == "true" && pw_wc_gift_adv_ajax.ajaxurl) {
 
-            // Add a fallback for status 204 issues
-            var ajaxTimeout = setTimeout(function () {
-                $(".wgb-loading-icon").addClass("wgb-d-none");
-                $(".popup-inner-loader").addClass("wgb-d-none");
-                ReloadCall_addToCart(gift_id, qty);
-            }, 10000);
-
             AjaxCall_addToCart(gift_id, qty, mode);
-
-            // Clear timeout on success
-            $(document).one("ajaxSuccess", function () {
-                clearTimeout(ajaxTimeout);
-            });
         } else {
             ReloadCall_addToCart(gift_id, qty);
         }
@@ -447,6 +439,10 @@ jQuery(document).ready(function ($) {
 
     // A more robust and modern AjaxCall_addToCart function
     async function AjaxCall_addToCart(gift_id, qty = 1, mode = "") {
+        if (giftAddRequestInFlight) {
+            return false;
+        }
+        giftAddRequestInFlight = true;
         // Show loading state immediately
         $(".wgb-loading-icon").removeClass("wgb-d-none");
         $(".popup-inner-loader").removeClass("wgb-d-none");
@@ -503,9 +499,11 @@ jQuery(document).ready(function ($) {
             $(".wgb-loading-icon").addClass("wgb-d-none");
             $(".popup-inner-loader").addClass("wgb-d-none");
 
-            // const errorResponse = parseErrorResponse(xhr);
-            // alert(errorResponse);
-        }
+      // const errorResponse = parseErrorResponse(xhr);
+      // alert(errorResponse);
+  } finally {
+      giftAddRequestInFlight = false;
+  }
     }
 
     /**

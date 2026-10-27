@@ -45,6 +45,99 @@ function itfreegift_check_quantity_gift_in_session($session_content, $get_cart_i
     return $count_infoa;
 }
 
+if (!function_exists('itfreegift_acquire_cart_gift_lock')) {
+    /**
+     * Acquire a short database-backed lock for a cart/rule mutation.
+     *
+     * WooCommerce AJAX requests for the same customer can overlap. Without an
+     * atomic lock, both requests can read the old quantity and both add the
+     * full remaining allowance. add_option() is atomic because option names
+     * are unique in the database, and the short expiry recovers abandoned
+     * requests safely.
+     */
+    function itfreegift_acquire_cart_gift_lock($rule_id, $ttl = 15)
+    {
+        if (!function_exists('WC') || !WC() || !WC()->session) {
+            return '';
+        }
+
+        $customer_id = method_exists(WC()->session, 'get_customer_id')
+            ? (string) WC()->session->get_customer_id()
+            : '';
+        if ($customer_id === '') {
+            $customer_id = (string) WC()->session->get('customer_id', 'guest');
+        }
+
+        $lock_name = '_wgb_gift_lock_' . md5($customer_id . '|' . (string) $rule_id);
+
+        // The automatic gift loop can legitimately acquire the same rule lock
+        // more than once while adding different products. Treat a lock already
+        // owned by this PHP request as re-entrant, while the database option
+        // continues to block overlapping Store API/AJAX requests.
+        global $itfreegift_owned_cart_gift_locks;
+        if (!is_array($itfreegift_owned_cart_gift_locks)) {
+            $itfreegift_owned_cart_gift_locks = [];
+        }
+        if (isset($itfreegift_owned_cart_gift_locks[$lock_name])) {
+            $itfreegift_owned_cart_gift_locks[$lock_name]++;
+            return $lock_name;
+        }
+
+        $now = time();
+        $created = add_option($lock_name, $now, '', false);
+
+        if (!$created) {
+            $created_at = (int) get_option($lock_name, 0);
+            if ($created_at > 0 && ($now - $created_at) > max(5, (int) $ttl)) {
+                delete_option($lock_name);
+                $created = add_option($lock_name, $now, '', false);
+            }
+        }
+
+        if (!$created) {
+            return '';
+        }
+
+        $itfreegift_owned_cart_gift_locks[$lock_name] = 1;
+        register_shutdown_function(static function () use ($lock_name) {
+            global $itfreegift_owned_cart_gift_locks;
+            if (is_array($itfreegift_owned_cart_gift_locks)) {
+                unset($itfreegift_owned_cart_gift_locks[$lock_name]);
+            }
+            delete_option($lock_name);
+        });
+
+        return $lock_name;
+    }
+}
+
+if (!function_exists('itfreegift_release_cart_gift_lock')) {
+    function itfreegift_release_cart_gift_lock($lock_name)
+    {
+        if (is_string($lock_name) && $lock_name !== '') {
+            global $itfreegift_owned_cart_gift_locks;
+            if (is_array($itfreegift_owned_cart_gift_locks) && isset($itfreegift_owned_cart_gift_locks[$lock_name])) {
+                if ($itfreegift_owned_cart_gift_locks[$lock_name] > 1) {
+                    $itfreegift_owned_cart_gift_locks[$lock_name]--;
+                    return;
+                }
+                unset($itfreegift_owned_cart_gift_locks[$lock_name]);
+            }
+            delete_option($lock_name);
+        }
+    }
+}
+
+if (!function_exists('itfreegift_restore_notices')) {
+    /** Restore notices captured before an internal add-to-cart attempt. */
+    function itfreegift_restore_notices($notices)
+    {
+        if (function_exists('wc_set_notices')) {
+            wc_set_notices(is_array($notices) ? $notices : []);
+        }
+    }
+}
+
 if (!function_exists('itfreegift_get_cart_item_stock_quantities')) {
     function itfreegift_get_cart_item_stock_quantities($item_cart)
     {

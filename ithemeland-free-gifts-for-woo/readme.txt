@@ -4,7 +4,7 @@ Donate link: https://ithemelandco.com/
 Tags: free gift, woocommerce gift, gift with purchase, buy one get one, bogo
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 4.4
+Stable tag: 4.5
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -608,19 +608,16 @@ If you only need a simple free gift or cart-subtotal promotion, start with GIFTi
 If promotions are an important part of your WooCommerce marketing strategy, GIFTiT Pro provides considerably more flexibility.
 
 == Changelog ==
-= 4.4 =
-* Fixed: Compatibility issues with the FOX Currency Switcher plugin
-* Changed: Settings UI
-* Fixed: Critical error warnings
-Tested up to: WP 7.1.x
-Tested up to: WC 11.1.x
-
-= 4.1 =
-* Fixed : Fixed Passed the Check Plugin issues
-* Fixed : compatible with pro version 4.1.0
-* Fixed : warning issue Critical Error
-Tested up to: WP 7.0.x
-Tested up to: WC 10.9.x
+= 4.5 =
+* Fixed: Duplicate gift additions caused by repeated clicks, overlapping requests, or slow AJAX responses.
+* Fixed: Gift quantity limits when adding gifts, including requests exceeding the remaining allowance.
+* Fixed: Outdated gift eligibility and quantities after cart changes.
+* Fixed: Cart totals synchronization after gifts are removed or their quantities are adjusted.
+* Fixed: Valid free gifts being rejected as non-purchasable in WooCommerce Cart and Checkout Blocks.
+* Fixed: Gift rule state being overwritten during shipping calculations.
+* Fixed: Incorrect gift quantities reported in AJAX responses.
+* Fixed: Unwanted WooCommerce notices remaining after failed AJAX gift additions.
+* Improved: Gift quantity input validation and AJAX security token verification.
 
 == External Services ==
 This plugin uses the following external services:

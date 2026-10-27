@@ -17,6 +17,8 @@ class iThemeland_front_order
     private $settings;
     private $check_rule_condition;
     private $rule_evaluation_in_progress = false;
+    private $stabilizing_cart_rules = false;
+    private $synchronizing_store_api_response = false;
 
 
     public function __construct()
@@ -30,6 +32,10 @@ class iThemeland_front_order
         //add_action('wp_head', array($this, 'check_session_gift'));
         //add_action('woocommerce_cart_loaded_from_session', array($this, 'check_session_gift'));
         add_action('woocommerce_after_calculate_totals', array($this, 'check_session_gift_woocommerce_after_calculate_totals'));
+        add_action('woocommerce_add_to_cart', array($this, 'synchronize_store_api_cart_after_add'), 999, 6);
+        // CartSchema validates the cart before taking its item snapshot. This
+        // covers add/update/remove, batch requests and GET using the same state.
+        add_action('woocommerce_store_api_cart_errors', array($this, 'synchronize_store_api_cart_response'), 1, 2);
 
         add_action('wp', array($this, 'pw_add_free_gifts'));
 
@@ -105,165 +111,253 @@ class iThemeland_front_order
     public function check_session_gift_woocommerce_after_calculate_totals($cart = null)
     //public function check_session_gift($cart = null)
     {
-        if ($this->rule_evaluation_in_progress) {
+        if ($this->rule_evaluation_in_progress || $this->stabilizing_cart_rules) {
             return;
         }
 
         $this->rule_evaluation_in_progress = true;
         try {
-            global $woocommerce;
-
-            // Return if cart object is not initialized.
-            if (!is_object(WC()->cart)) {
-                return;
-            }
-
-            // Return if cart is empty.
-            if (WC()->cart->get_cart_contents_count() == 0) {
-                return;
-            }
-            if (!$this->check_rule_condition->pw_get_gift_for_cart_checkout()) {
-                $products_removed = false;
-                foreach (WC()->cart->get_cart() as $key => $value) {
-                    if (!isset($value['it_free_gift'])) {
-                        continue;
-                    }
-                    WC()->cart->remove_cart_item($key);
-                    $products_removed = true;
+            // Reconcile rules and quantities before exposing the cart. Nested
+            // calculations triggered by add_to_cart must not re-enter this loop.
+            for ($pass = 0; $pass < 5; $pass++) {
+                $before = $this->get_gift_cart_state_signature();
+                $this->process_cart_rules_after_totals($cart);
+                if ($before === $this->get_gift_cart_state_signature()) {
+                    break;
                 }
-
-                if ($products_removed) {
-                    if (WC()->cart->get_cart_contents_count() > 0) {
-                        Notice::add(itfreegift_get_localization('free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
-                    }
-                }
-                itfreegift_unset_removed_automatic_free_gift_products_from_session();
-                return;
-            }
-
-            $show_notice = false;
-            if (!is_array($this->settings) || count($this->settings) <= 0) {
-                $this->settings = itfreegift_get_settings();
-            }
-
-            /** Check session if time rule changed and remove automatically session **/
-            $session_gift_products = itfreegift_get_removed_automatic_free_gift_products_from_session();
-            if (itfreegift_check_is_array($session_gift_products) || isset($session_gift_products['time'])) {
-                if ($this->check_rule_condition->getGiftItemVariable()['rule_time'] != $session_gift_products['time']) {
-                    itfreegift_unset_removed_automatic_free_gift_products_from_session();
-                }
-            }
-
-            $count_info = itfreegift_check_quantity_gift_in_session(WC()->cart->get_cart());
-            foreach (WC()->cart->get_cart() as $key => $value) {
-                if (!isset($value['it_free_gift'])) {
-                    continue;
-                }
-
-                if (!isset($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']])) {
-                    WC()->cart->remove_cart_item($key);
-                    $show_notice = true;
-                    continue;
-                }
-
-                $uid = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['uid'];
-
-                if ($value['it_free_gift']['time_add'] != $this->check_rule_condition->getGiftItemVariable()['rule_time']) {
-                    WC()->cart->remove_cart_item($key);
-                    itfreegift_unset_removed_automatic_free_gift_products_from_session();
-                    $show_notice = true;
-                    continue;
-                }
-
-                if (!array_key_exists($value['it_free_gift']['rule_gift_key'], $this->check_rule_condition->getGiftItemVariable()['all_gifts'])) {
-                    WC()->cart->remove_cart_item($key);
-                    $show_notice = true;
-                    continue;
-                }
-
-                //Number Allow For Simple Method
-                $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()[$uid]['pw_number_gift_allowed'];
-
-                //Number Allow For Other Method
-                if (in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array(
-                    'buy_x_get_x_repeat'
-                ), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] == 'ind') {
-
-                    $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['q'];
-                }
-
-                //For Quantity is update
-                $quantity_gift = $value['quantity'];
-                if (
-                    isset($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'])
-                    &&
-                    (!in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'), true) || $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] != 'ind')
-                )
-                //if(isset($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']))
-                {
-                    for ($i = 0; $i < $value['quantity']; $i++) {
-                        if ($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'] > $pw_number_gift_allowed) {
-                            if ($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'] <= 1) {
-                                WC()->cart->remove_cart_item($key);
-                                $count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']--;
-
-                                continue 2;
-                            } else {
-                                $quantity_gift = $quantity_gift - 1;
-                                WC()->cart->set_quantity($key, $quantity_gift);
-
-                                $count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']--;
-                            }
-                        } else {
-                            //break;
-                        }
-                    }
-                }
-                //For Quantity is update buy x get x ind
-                if (array_key_exists(
-                    $value['it_free_gift']['rule_id'],
-                    $count_info['count_rule_gift']
-                ) && $value['quantity'] > $pw_number_gift_allowed  && in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] == 'ind') {
-                    //if Quantity gift is <= 1  from Quantity less , else  kola less
-                    if ($value['quantity'] <= 1) {
-                        WC()->cart->remove_cart_item($key);
-                    } else {
-                        WC()->cart->set_quantity($key, $pw_number_gift_allowed);
-                    }
-                }
-                //check if any confuse and if item session wasn't in apply gift
-                if (!array_key_exists(
-                    $value['it_free_gift']['rule_gift_key'],
-                    $this->check_rule_condition->getGiftItemVariable()['all_gifts']
-                ) || count($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]) <= 0) {
-                    $show_notice = true;
-                    WC()->cart->remove_cart_item($key);
-                    continue;
-                }
-            }
-
-            if ($show_notice) {
-                Notice::add(itfreegift_get_localization('free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
-            }
-
-            if (isset($this->check_rule_condition->getShowGiftItemForCart()['gifts'])) {
-                if ($this->settings['position'] == 'bottom_cart') {
-                    add_action('woocommerce_after_cart_table', [$this, 'display_gifts_bottom_cart']);
-                }
-                if ($this->settings['position'] == 'above_cart') {
-                    add_action('woocommerce_before_cart_table', [$this, 'display_gifts_bottom_cart']);
-                } elseif ($this->settings['position'] == 'beside_coupon') {
-                    add_action('woocommerce_cart_coupon', [$this, 'display_gifts_in_Coupon_dropdown']);
-                }
-
-                //Show Popup
-                if (!itfreegift_is_checkout_page() || $this->is_checkout_popup_allowed()) {
-                    add_action('wp_footer', array($this, 'layout_popup'));
-                }
+                $this->stabilize_cart_after_gift_mutation();
             }
         } finally {
             $this->rule_evaluation_in_progress = false;
         }
+    }
+
+    private function process_cart_rules_after_totals($cart = null)
+    {
+        global $woocommerce;
+
+        // Return if cart object is not initialized.
+        if (!is_object(WC()->cart)) {
+            return;
+        }
+
+        // Return if cart is empty.
+        if (WC()->cart->get_cart_contents_count() == 0) {
+            return;
+        }
+        if (!$this->check_rule_condition->pw_get_gift_for_cart_checkout()) {
+            $products_removed = false;
+            foreach (WC()->cart->get_cart() as $key => $value) {
+                if (!isset($value['it_free_gift'])) {
+                    continue;
+                }
+                WC()->cart->remove_cart_item($key);
+                $products_removed = true;
+            }
+
+            if ($products_removed) {
+                if (WC()->cart->get_cart_contents_count() > 0) {
+                    Notice::add(itfreegift_get_localization('free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
+                }
+            }
+            itfreegift_unset_removed_automatic_free_gift_products_from_session();
+            return;
+        }
+
+        $show_notice = false;
+        if (!is_array($this->settings) || count($this->settings) <= 0) {
+            $this->settings = itfreegift_get_settings();
+        }
+
+        /** Check session if time rule changed and remove automatically session **/
+        $session_gift_products = itfreegift_get_removed_automatic_free_gift_products_from_session();
+        if (itfreegift_check_is_array($session_gift_products) || isset($session_gift_products['time'])) {
+            if ($this->check_rule_condition->getGiftItemVariable()['rule_time'] != $session_gift_products['time']) {
+                itfreegift_unset_removed_automatic_free_gift_products_from_session();
+            }
+        }
+
+        $count_info = itfreegift_check_quantity_gift_in_session(WC()->cart->get_cart());
+        foreach (WC()->cart->get_cart() as $key => $value) {
+            if (!isset($value['it_free_gift'])) {
+                continue;
+            }
+
+            if (!isset($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']])) {
+                WC()->cart->remove_cart_item($key);
+                $show_notice = true;
+                continue;
+            }
+
+            $uid = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['uid'];
+
+            if ($value['it_free_gift']['time_add'] != $this->check_rule_condition->getGiftItemVariable()['rule_time']) {
+                WC()->cart->remove_cart_item($key);
+                itfreegift_unset_removed_automatic_free_gift_products_from_session();
+                $show_notice = true;
+                continue;
+            }
+
+            if (!array_key_exists($value['it_free_gift']['rule_gift_key'], $this->check_rule_condition->getGiftItemVariable()['all_gifts'])) {
+                WC()->cart->remove_cart_item($key);
+                $show_notice = true;
+                continue;
+            }
+
+            //Number Allow For Simple Method
+            $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()[$uid]['pw_number_gift_allowed'];
+
+            //Number Allow For Other Method
+            if (in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array(
+                'buy_x_get_x_repeat'
+            ), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] == 'ind') {
+
+                $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['q'];
+            }
+
+            //For Quantity is update
+            $quantity_gift = $value['quantity'];
+            if (
+                isset($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'])
+                &&
+                (!in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'), true) || $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] != 'ind')
+            )
+            //if(isset($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']))
+            {
+                for ($i = 0; $i < $value['quantity']; $i++) {
+                    if ($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'] > $pw_number_gift_allowed) {
+                        if ($count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q'] <= 1) {
+                            WC()->cart->remove_cart_item($key);
+                            $count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']--;
+
+                            continue 2;
+                        } else {
+                            $quantity_gift = $quantity_gift - 1;
+                            WC()->cart->set_quantity($key, $quantity_gift);
+
+                            $count_info['count_rule_gift'][$value['it_free_gift']['rule_id']]['q']--;
+                        }
+                    } else {
+                        //break;
+                    }
+                }
+            }
+            //For Quantity is update buy x get x ind
+            if (array_key_exists(
+                $value['it_free_gift']['rule_id'],
+                $count_info['count_rule_gift']
+            ) && $value['quantity'] > $pw_number_gift_allowed  && in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'), true) && $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]['base_q'] == 'ind') {
+                //if Quantity gift is <= 1  from Quantity less , else  kola less
+                if ($value['quantity'] <= 1) {
+                    WC()->cart->remove_cart_item($key);
+                } else {
+                    WC()->cart->set_quantity($key, $pw_number_gift_allowed);
+                }
+            }
+            //check if any confuse and if item session wasn't in apply gift
+            if (!array_key_exists(
+                $value['it_free_gift']['rule_gift_key'],
+                $this->check_rule_condition->getGiftItemVariable()['all_gifts']
+            ) || count($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$value['it_free_gift']['rule_gift_key']]) <= 0) {
+                $show_notice = true;
+                WC()->cart->remove_cart_item($key);
+                continue;
+            }
+        }
+
+        if ($show_notice) {
+            Notice::add(itfreegift_get_localization('free_gift_removed', 'Your Free Gift(s) were removed because your current cart contents is not eligible for a free gift'), 'notice');
+        }
+
+        if (isset($this->check_rule_condition->getShowGiftItemForCart()['gifts'])) {
+            if ($this->settings['position'] == 'bottom_cart') {
+                add_action('woocommerce_after_cart_table', [$this, 'display_gifts_bottom_cart']);
+            }
+            if ($this->settings['position'] == 'above_cart') {
+                add_action('woocommerce_before_cart_table', [$this, 'display_gifts_bottom_cart']);
+            } elseif ($this->settings['position'] == 'beside_coupon') {
+                add_action('woocommerce_cart_coupon', [$this, 'display_gifts_in_Coupon_dropdown']);
+            }
+
+            //Show Popup
+            if (!itfreegift_is_checkout_page() || $this->is_checkout_popup_allowed()) {
+                add_action('wp_footer', array($this, 'layout_popup'));
+            }
+        }
+    }
+
+    /**
+     * Settle Free-edition rule state before Store API or WooCommerce AJAX
+     * serializes the cart. This does not add Pro auto-add behavior to Free.
+     */
+    public function synchronize_store_api_cart_after_add($cart_item_key, $product_id, $quantity, $variation_id, $variation, $cart_item_data)
+    {
+        if ($this->rule_evaluation_in_progress || $this->stabilizing_cart_rules || !function_exists('WC') || !WC() || !is_object(WC()->cart)) {
+            return;
+        }
+
+        $is_store_api = isset(WC()->cart->cart_context) && WC()->cart->cart_context === 'store-api';
+        $is_ajax = function_exists('wp_doing_ajax')
+            ? wp_doing_ajax()
+            : (defined('DOING_AJAX') && DOING_AJAX);
+        if (!$is_store_api && !$is_ajax) {
+            return;
+        }
+
+        if (isset($cart_item_data['it_free_gift'])) {
+            return;
+        }
+
+        WC()->cart->calculate_totals();
+    }
+
+    public function synchronize_store_api_cart_response($errors, $cart)
+    {
+        if ($this->synchronizing_store_api_response || $this->rule_evaluation_in_progress || $this->stabilizing_cart_rules || !is_object($cart)) {
+            return;
+        }
+        $this->synchronizing_store_api_response = true;
+        try {
+            $cart->calculate_totals();
+        } finally {
+            $this->synchronizing_store_api_response = false;
+        }
+    }
+
+    private function stabilize_cart_after_gift_mutation()
+    {
+        if ($this->stabilizing_cart_rules || !function_exists('WC') || !WC() || !is_object(WC()->cart)) {
+            return;
+        }
+
+        $this->stabilizing_cart_rules = true;
+        try {
+            WC()->cart->calculate_totals();
+        } finally {
+            $this->stabilizing_cart_rules = false;
+        }
+    }
+
+    private function get_gift_cart_state_signature()
+    {
+        if (!function_exists('WC') || !WC() || !is_object(WC()->cart)) {
+            return '';
+        }
+
+        $gift_state = array();
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+            if (!isset($cart_item['it_free_gift'])) {
+                continue;
+            }
+
+            $gift_state[$cart_item_key] = array(
+                'quantity' => isset($cart_item['quantity']) ? (float) $cart_item['quantity'] : 0,
+                'gift' => $cart_item['it_free_gift'],
+            );
+        }
+        ksort($gift_state);
+
+        return md5(wp_json_encode($gift_state));
     }
 
     public function apply_on_cart_item($cart_object)
@@ -395,8 +489,11 @@ class iThemeland_front_order
 
     public function filter_shipping_methods($rates, $package)
     {
-        $this->check_rule_condition->pw_get_gift_for_cart_checkout();
-        $free_shipping_exists = $this->check_rule_condition->free_shipping_exists();
+        // Shipping can run inside auto-add totals. Use a separate evaluator so
+        // it cannot overwrite the rule snapshot currently reconciling gifts.
+        $shipping_rules = new CheckRuleCondition($this->getCheckRuleConditionData());
+        $shipping_rules->pw_get_gift_for_cart_checkout();
+        $free_shipping_exists = $shipping_rules->free_shipping_exists();
 
         if (!itfreegift_check_is_array($free_shipping_exists)) {
             return $rates;
@@ -475,7 +572,7 @@ class iThemeland_front_order
         if (!isset($_REQUEST['qty']) || !is_numeric($_REQUEST['qty'])) { //phpcs:ignore
             $qty = 1;
         } else
-            $qty = sanitize_text_field(wp_unslash($_REQUEST['qty']));  //phpcs:ignore
+            $qty = max(1, absint(wp_unslash($_REQUEST['qty'])));  //phpcs:ignore
 
 
         if (!array_key_exists($gift, $this->check_rule_condition->getGiftItemVariable()['all_gifts'])) {
@@ -490,6 +587,26 @@ class iThemeland_front_order
         $count_info = itfreegift_check_quantity_gift_in_session($retrieved_group_input_value);
 
         $uid        = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['uid'];
+        $id_product = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['id_product'];
+
+        $gift_lock = itfreegift_acquire_cart_gift_lock($uid);
+        if ($gift_lock === '') {
+            wp_safe_redirect(get_permalink());
+            exit();
+        }
+
+        $this->check_rule_condition = new CheckRuleCondition($this->getCheckRuleConditionData());
+        if (
+            !$this->check_rule_condition->pw_get_gift_for_cart_checkout()
+            || !isset($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift])
+        ) {
+            wp_safe_redirect(get_permalink());
+            exit();
+        }
+
+        $retrieved_group_input_value = WC()->cart->get_cart();
+        $count_info = itfreegift_check_quantity_gift_in_session($retrieved_group_input_value);
+        $uid = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['uid'];
         $id_product = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$gift]['id_product'];
 
 
@@ -610,8 +727,10 @@ class iThemeland_front_order
     {
         // Add error logging for debugging
 
+        $gift_lock = '';
+
         // Check nonce with better error handling
-        if (!isset($_REQUEST['itg_security']) && !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['itg_security'])), 'jkhKJSdd4576d234Z')) {
+        if (!isset($_REQUEST['itg_security']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['itg_security'])), 'jkhKJSdd4576d234Z')) {
             wp_send_json_error(array('error' => 'Security check failed'));
             return;
         }
@@ -641,7 +760,7 @@ class iThemeland_front_order
             if (!isset($_POST['add_qty']) || !is_numeric($_POST['add_qty'])) {
                 $qty = 1;
             } else {
-                $qty = (isset($_REQUEST['add_qty'])) ? sanitize_text_field(wp_unslash($_REQUEST['add_qty'])) : 0; //
+                $qty = max(1, absint(wp_unslash($_REQUEST['add_qty'])));
             }
 
 
@@ -649,6 +768,22 @@ class iThemeland_front_order
 
             if (!array_key_exists($itfreegift_gift_product_id, $this->check_rule_condition->getGiftItemVariable()['all_gifts'])) {
                 throw new exception(__('Cannot process action6', 'ithemeland-free-gifts-for-woo'));
+            }
+
+            $initial_uid = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$itfreegift_gift_product_id]['uid'];
+            $gift_lock = itfreegift_acquire_cart_gift_lock($initial_uid);
+            if ($gift_lock === '') {
+                throw new exception(__('Another gift request is already being processed. Please try again.', 'ithemeland-free-gifts-for-woo'));
+            }
+
+            // Re-evaluate after acquiring the lock. A concurrent request may
+            // have changed the cart between the initial render and this call.
+            $this->check_rule_condition = new CheckRuleCondition($this->getCheckRuleConditionData());
+            if (
+                !$this->check_rule_condition->pw_get_gift_for_cart_checkout()
+                || !isset($this->check_rule_condition->getGiftItemVariable()['all_gifts'][$itfreegift_gift_product_id])
+            ) {
+                throw new exception(__('This gift is no longer available.', 'ithemeland-free-gifts-for-woo'));
             }
 
             $retrieved_group_input_value = WC()->cart->get_cart();
@@ -664,18 +799,13 @@ class iThemeland_front_order
                 $pw_number_gift_allowed = $this->check_rule_condition->getGiftItemVariable()['all_gifts'][$itfreegift_gift_product_id]['q'];
             }
 
-            if (
-                !in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'))
-                ||
-                $this->check_rule_condition->getGiftItemVariable()[$uid]['based_on'] != 'ind'
-            ) {
-                if (
-                    array_key_exists($uid, $count_info['count_rule_gift'])
-                    &&
-                    $qty > ($pw_number_gift_allowed - $count_info['count_rule_gift'][$uid]['q'])
-                ) {
-                    throw new exception(__('Cannot process action7', 'ithemeland-free-gifts-for-woo'));
-                }
+            $individual_repeat = in_array($this->check_rule_condition->getGiftItemVariable()[$uid]['method'], array('buy_x_get_x_repeat'), true)
+                && $this->check_rule_condition->getGiftItemVariable()[$uid]['based_on'] == 'ind';
+            if (!$individual_repeat) {
+                $current_rule_quantity = isset($count_info['count_rule_gift'][$uid]['q'])
+                    ? (int) $count_info['count_rule_gift'][$uid]['q']
+                    : 0;
+                $qty = min($qty, max(0, (int) $pw_number_gift_allowed - $current_rule_quantity));
             }
 
             if (isset($count_info['count_rule_product'][$itfreegift_gift_product_id]) && $count_info['count_rule_product'][$itfreegift_gift_product_id]['q'] >= $pw_number_gift_allowed) {
@@ -698,6 +828,10 @@ class iThemeland_front_order
 
             if ($qty > $result) {
                 $qty = $result;
+            }
+
+            if ($qty <= 0) {
+                throw new exception(__('The maximum number of gifts for this rule is already in the cart.', 'ithemeland-free-gifts-for-woo'));
             }
 
             if ($qty > 1 && $this->check_rule_condition->getGiftItemVariable()[$uid]['can_several_gift'] == 'no') {
@@ -732,9 +866,13 @@ class iThemeland_front_order
             $cart_item_data = apply_filters('itfreegift_array_addtocart', $cart_item_data);
 
             // Add to cart with error handling
+            $notices_before_add = function_exists('wc_get_notices') ? wc_get_notices() : [];
             $cart_item_key = WC()->cart->add_to_cart($id_product, $qty, 0, array(), $cart_item_data);
 
             if (!$cart_item_key) {
+                itfreegift_restore_notices($notices_before_add);
+                itfreegift_release_cart_gift_lock($gift_lock);
+                $gift_lock = '';
                 throw new exception(__('Failed to add gift to cart', 'ithemeland-free-gifts-for-woo'));
             }
 
@@ -746,13 +884,14 @@ class iThemeland_front_order
             // Send success response
             $response = array(
                 'ok' => 1,
-                'qty_add' => $result,
+                'qty_add' => $qty,
                 'notice' => $notice,
                 'cart_item_key' => $cart_item_key
             );
 
             wp_send_json_success($response);
         } catch (Exception $ex) {
+            itfreegift_release_cart_gift_lock($gift_lock);
             wp_send_json_error(array('error' => $ex->getMessage()));
         }
     }

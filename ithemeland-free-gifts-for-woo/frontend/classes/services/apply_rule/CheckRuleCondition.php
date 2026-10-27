@@ -84,6 +84,9 @@ class CheckRuleCondition
 
     public function pw_get_gift_for_cart_checkout()
     {
+        // Each evaluation describes the current cart, not an accumulation of
+        // earlier tiers evaluated during this request.
+        $this->initializeProperties([]);
         $this->item_cart = CartHandlerService::get_cart_contents();
 
         if (!$this->validate_cart()) return false;

@@ -24,6 +24,10 @@ class WGBL_Blocks
 
     private function __construct()
     {
+        // Register validation filters immediately. The Store API callback is
+        // retried on woocommerce_blocks_loaded when its registration function
+        // becomes available.
+        WGBL_Blocks_Store_API::init();
         add_action('woocommerce_blocks_loaded', [$this, 'register'], 10);
         add_action('init', [$this, 'register_block_styles'], 5);
         add_action('enqueue_block_editor_assets', [$this, 'enqueue_script']);

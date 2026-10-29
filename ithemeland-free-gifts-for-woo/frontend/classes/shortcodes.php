@@ -160,6 +160,8 @@ class iThemeland_front_shortcodes
             'itg_products_gift'
         );
 
+        $atts_shortcode['type'] = $this->normalize_gift_layout($atts_shortcode['type']);
+
         $flag = true;
         $gift_items = $this->check_rule_condition->pw_get_gift_for_cart_checkout();
 
@@ -196,7 +198,7 @@ class iThemeland_front_shortcodes
             }
         }
 
-        echo wp_kses('<span class="itg-shortoces-products" data-type="' . $atts['type'] . '"  >', Sanitizer::allowed_html());
+        echo wp_kses('<span class="itg-shortoces-products" data-type="' . esc_attr($atts_shortcode['type']) . '"  >', Sanitizer::allowed_html());
 
         if ($flag) {
             $args_data = [
@@ -211,7 +213,7 @@ class iThemeland_front_shortcodes
 
             $rule_products = [
                 'data_args' => itfreegift_get_gift_products_data_multilevel($args_data),
-                'template' => $atts['type']
+                'template' => $atts_shortcode['type']
             ];
 
             itfreegift_get_template('shortcode-layout.php', $rule_products);
@@ -220,10 +222,21 @@ class iThemeland_front_shortcodes
         return;
     }
 
+    /**
+     * Only registered gift layouts may reach template selection.
+     */
+    private function normalize_gift_layout($type)
+    {
+        $type = is_string($type) ? sanitize_key($type) : '';
+        return in_array($type, ['carousel', 'grid', 'datatable', 'dropdown'], true) ? $type : 'dropdown';
+    }
+
     public function shortcode_show_popup()
     {
-        $type = sanitize_text_field(wp_unslash($_POST['type'])); //phpcs:ignore
-        echo do_shortcode('[itg_gift_products type="' . $type . '"]');
+        $raw_type = isset($_POST['type']) && is_string($_POST['type']) ? wp_unslash($_POST['type']) : '';
+        $type = $this->normalize_gift_layout($raw_type);
+        // Invoke our renderer directly; never parse request input as shortcode source.
+        $this->shortcode_gift_products(['type' => $type], '');
         wp_die();
     }
 
@@ -234,13 +247,11 @@ class iThemeland_front_shortcodes
     {
         check_ajax_referer('jkhKJSdd4576d234Z', 'itg_security');
 
-        $type = isset($_POST['type']) ? sanitize_key(wp_unslash($_POST['type'])) : 'dropdown'; //phpcs:ignore
-        if (!in_array($type, ['carousel', 'grid', 'datatable', 'dropdown'], true)) {
-            $type = 'dropdown';
-        }
+        $raw_type = isset($_POST['type']) && is_string($_POST['type']) ? wp_unslash($_POST['type']) : '';
+        $type = $this->normalize_gift_layout($raw_type);
 
         $this->rendering_checkout = true;
-        echo do_shortcode('[itg_gift_products type="' . $type . '"]');
+        $this->shortcode_gift_products(['type' => $type], '');
         $this->rendering_checkout = false;
         wp_die();
     }

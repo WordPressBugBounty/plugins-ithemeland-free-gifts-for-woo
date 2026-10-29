@@ -4,7 +4,7 @@ Donate link: https://ithemelandco.com/
 Tags: free gift, woocommerce gift, gift with purchase, buy one get one, bogo
 Requires at least: 5.0
 Tested up to: 7.1
-Stable tag: 4.5
+Stable tag: 4.6
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -608,6 +608,10 @@ If you only need a simple free gift or cart-subtotal promotion, start with GIFTi
 If promotions are an important part of your WooCommerce marketing strategy, GIFTiT Pro provides considerably more flexibility.
 
 == Changelog ==
+4.6
+* Security: Fixed an unauthenticated arbitrary shortcode execution vulnerability in the gift popup AJAX handler.
+* Security: Restricted gift layouts to supported values and improved shortcode attribute validation and escaping.
+Credits: Thanks to Nguyen Quang Tan and Patchstack for responsibly reporting this vulnerability.
 = 4.5 =
 * Fixed: Duplicate gift additions caused by repeated clicks, overlapping requests, or slow AJAX responses.
 * Fixed: Gift quantity limits when adding gifts, including requests exceeding the remaining allowance.

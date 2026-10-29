@@ -4,7 +4,7 @@
 	Plugin URI: https://ithemelandco.com/plugins/free-gifts-for-woocommerce/?utm_source=wp.org&utm_medium=web_links&utm_campaign=user-lite-buy
 	Description: Free Gifts for WooCommerce allows you to offer Free Gifts to your customers whenever they make a purchase on your site.
 	Author: iThemelandco
-	Version: 4.5
+	Version: 4.6
 	Tags: woocommerce,woocommerce gift
 	Text Domain: ithemeland-free-gifts-for-woo
 	Domain Path: /languages
@@ -54,7 +54,7 @@ define('WGBL_UPGRADE_URL', 'https://ithemelandco.com/plugins/free-gifts-for-wooc
 define('WGBL_UPGRADE_TEXT', 'Download Pro Version');
 //define('WGBL_WP_TESTED', '6.6');
 define('WGBL_WP_REQUIRE', '5.0.0');
-define('WGBL_VERSION', '4.5');
+define('WGBL_VERSION', '4.6');
 
 register_activation_hook(__FILE__, ['ITFreeGift\classes\bootstrap\WGBL', 'activate']);
 register_deactivation_hook(__FILE__, ['ITFreeGift\classes\bootstrap\WGBL', 'deactivate']);
